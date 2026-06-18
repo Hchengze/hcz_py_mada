@@ -1,0 +1,466 @@
+# Project Status
+
+Generated on 2026-06-18 from the current repository.
+
+## Project Identity
+
+pymadagascar is a Python-friendly local RSF/geophysics toolkit. It supports RSF
+I/O, selected Madagascar-style CLI workflows, Pythonic `RSFData` processing,
+small-data geophysical processing examples, tests, and documentation.
+
+It is not a complete Madagascar clone. Full `user/*`, VPlot, SCons/book,
+IWAVE/RVL, MPI/CUDA/PETSc, and large imaging/modeling systems are not near-term
+targets.
+
+Pure Python is the main line. The hybrid C++ layer is optional acceleration only
+and must never be a hard dependency.
+
+## Current Counts
+
+| Item | Current value |
+| --- | ---: |
+| User-facing CLI modules | 134 |
+| Registered `pymada-*` console scripts | 25 |
+| Pytest files | 77 |
+| Top-level example scripts | 34 |
+| Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
+| Current docs markdown files | 8 |
+| Mindmap artifacts | 1 |
+
+## Current Coverage
+
+| Coverage scope | Current value |
+| --- | ---: |
+| Full Madagascar/alias command surface | `86 / 2114 = 4.07%` |
+| Core `system/` + `plot/main` command surface | `73 / 301 = 24.25%` |
+| Direct `system/main` source-backed commands | `32 / 39 = 82.05%` |
+| `user/*` command surface | about `12 / 1792 = 0.67%` |
+
+Full coverage and core coverage are different denominators and must not be
+mixed.
+
+## Current Test Baseline
+
+Recommended local interpreter:
+
+```powershell
+D:\HczApp\Anaconda\envs\mywork\python.exe
+```
+
+Latest Windows full-suite result:
+
+```text
+965 passed, 94 skipped
+```
+
+Skip summary:
+
+- 93 skips are optional original Madagascar comparison tests because upstream
+  `sf*` commands are not available on the current Windows PATH.
+- 1 skip is the optional C++ extension test because `pymadagascar._core` is not
+  compiled.
+
+Plain `python` is not available on the current PowerShell PATH; use the explicit
+interpreter above for local status checks.
+
+The validated WSL `ubuntu2204` environment uses
+`/home/hcz/Software/Anaconda/envs/pymadagascar-dev` with Python 3.11 and
+Madagascar 4.2-git. Its current full-suite result is:
+
+```text
+1031 passed, 28 skipped
+```
+
+The WSL `original_madagascar` marker result is `66 passed, 27 skipped`.
+The remaining marker skips are explicit unavailable-command or designed-subset
+cases; there are no remaining comparison bridge failures.
+
+## Stage Progress
+
+- Stage 0: handoff and baseline audit completed.
+- Stage A: release stabilization docs, checks, and release tools completed.
+- Stage B-1: `sfcp`, `sfrm`, `sfmin`, and `sfmax` subsets completed.
+- Stage B-2: `sfmul`, `sfdiv`, `sftpow`, and `sfinterleave` subsets completed.
+- Stage B-3-1: `sfheaderwindow` and `sfheadercut` ordinary-RSF mask/header
+  subsets completed.
+- Stage B-3-2: minimal RSF header table model plus `sfheaderattr`,
+  `sfheadermath`, and `sfheadersort` Python subsets completed.
+- Stage B-4: minimal linear-operator model plus `sfdottest`, `sfcdottest`,
+  `sfconjgrad`, and `sfcconjgrad` Python subsets completed.
+- Stage C-1: signal/preprocessing small batch with `sfcostaper`,
+  `sfthreshold`, `sfspectra`, and `sfenvelope` Python subsets completed.
+- Stage C-2: generic/sampling small batch with `sflinear`, `sfbin`,
+  `sfslice`, and `sfmax1` Python subsets completed.
+- Stage C-3: signal/correlation/data-conditioning batch with `sfautocorr`,
+  `sfconvolve`, `sfcconv`, `sfenvcorr`, `sfshifts`, and `sfstacks` Python
+  subsets completed.
+- Stage C-4: axis calculus/amplitude conditioning/seismic QC batch with
+  `sfderiv`, `sfcausint`, `sfintegral`, `sfclip2`, `sfmutter`, and `sfdiff`
+  Python subsets completed.
+- Stage C-5: unary amplitude transforms and distribution QC with module-only
+  `abs`, `sign`, `sqrt`, `log`, `exp`, `pow`, `histogram`, and `quantile`
+  Python subsets completed. The first six are explicit convenience surfaces;
+  only histogram and quantile add previously uncovered upstream commands.
+- Stage C-6: robust statistics and non-finite QC with module-only `mean`, `rms`,
+  `var`, `std`, `median`, `range`, `isnan`, and `fillnan` completed. Only the
+  `sfmedian` axis-1 reduction is counted as a newly covered upstream command;
+  the other entry points are documented Pythonic conveniences over NumPy,
+  `sfattr`, or `sfstack`-like capabilities.
+- Quality Pass Q1: public API/CLI/examples inventory, RSFData double-input and
+  inplace contracts, shape/header/dtype documentation, all-example smoke
+  coverage, and release-tool consistency checks completed.
+- Release Quality Pass Q2: pure-Python editable-install metadata, all-CLI help
+  smoke, console-script target validation, package/version checks, optional WSL
+  probe behavior, example output policy, and release-tool checks completed.
+- Roadmap Reassessment R1: current APIs, CLIs, examples, workflows, and
+  prototype modules classified into ten technical topics; capability matrix,
+  maturity boundaries, shortfalls, and six candidate routes documented.
+  R1 adds no commands and does not change command-surface coverage.
+- Stage D-1: DAS engineering workflow skeleton completed. The new
+  `das_void_diffraction_workflow.py` generates a small kinematic
+  time-by-channel shot gather, applies the existing FK prototype, overlays
+  theoretical and fitted void-diffraction curves, and inverts simulated picks
+  for `void_x`, `void_depth`, and Rayleigh velocity. It adds no public API,
+  CLI, console script, or command-surface coverage.
+- Stage C-7: signal and small-gather QC foundation completed with module-only
+  `demean`, `detrend`, `decimate`, `bandstop`, `notch`, and `localrms` CLIs,
+  shared NumPy APIs, RSF wrappers, RSFData methods, and a focused demo.
+  Source audit found no matching standalone upstream programs for the first
+  five names. `user/luke/Mrms.c` is related but has different multidimensional
+  window and boundary semantics, so all six remain uncounted conveniences.
+- Stage C-8: spectral QC and window-function foundation completed with
+  `windowfunc`, `psd`, `csd`, `coherence`, `spectrogram`, and `snr`
+  module-only CLIs, shared NumPy APIs, RSFData methods, and a focused demo.
+  These are explicit Pythonic conveniences: upstream `sfspectra` is an
+  amplitude-spectrum tool, `user/chen/Mcoherence.c` is a local coherence cube,
+  and `user/yliu/Mstft.c`/`Msnr.c` have different command names and contracts.
+  Coverage is unchanged.
+- Stage C-9: spectral averaging, response estimation, conditioning, and
+  attributes completed with module-only `welch`, `welchcsd`, `transfer`,
+  `whiten`, `specnorm`, and `freqattr` CLIs, shared NumPy APIs, RSFData
+  methods, and a focused demo. The upstream audit found related amplitude
+  spectrum, STFT, dominant-frequency printout, and spectral-balance programs,
+  but no matching standalone contracts. All six remain uncounted Pythonic
+  conveniences and coverage is unchanged.
+- Stage C-10: FIR design, filter application, response diagnostics, and
+  frequency-band QC completed with module-only `firwin`, `firfilter`,
+  `filtfilt`, `freqz`, `bandenergy`, and `filterbank` CLIs, shared NumPy
+  APIs, RSF wrappers, four RSFData methods, and a focused demo. Core
+  `sfbandpass` is a Butterworth implementation; `user/chen/sfir` consumes an
+  existing FIR and `user/chen/sffbank1/sffbank2` are interpolation filter
+  banks with different contracts. All six C-10 names remain uncounted
+  Pythonic conveniences and coverage is unchanged.
+- WSL-1: original Madagascar comparison infrastructure repaired. The runner
+  now uses binary-safe subprocess capture, explicit stdin/stdout file
+  redirection, text decoding only when requested, local DATAPATH sidecars, and
+  readable failure diagnostics. The WSL probe now supports distro/user/shell/
+  Conda selection plus strict and non-strict modes. No command, stable API, or
+  coverage count changed.
+- Mindmap Documentation Pass M1: `docs/PYMADAGASCAR_MINDMAP.xmind` now provides
+  an XMind visual index of the current interfaces, technical
+  topics, maturity boundaries, tests, workflows, and roadmap through Stage
+  C-10. `tools/check_mindmap.py` keeps its counts, CLI inventories, baseline
+  fields, and roadmap boundaries synchronized. M1 adds no command, stable API,
+  or coverage entry.
+- Topic Architecture Pass T1: repository-only reassessment of ten technical
+  topics completed. The continuous Stage C feature-batch sequence ends at
+  C-10, C-11 is not recommended, and seismic data signal analysis and
+  processing is selected as the first topic. T1 changes documentation only:
+  no feature, CLI, console script, stable API, coverage value, test, example,
+  or mindmap artifact changes.
+- Seismic Topic S1: Contract and Fixture Foundation completed. It adds
+  `pymadagascar.testing.seismic_fixtures` as an internal/testing module,
+  `tests/test_seismic_signal_contracts.py`, and
+  `examples/my_workflows/seismic_signal_contract_workflow.py`. The pass defines
+  trace, regular panel, regular signed-offset gather, processing pipeline, and
+  validation contracts using existing APIs. It adds no feature command, CLI
+  module, console script, stable public API, command-surface coverage, original
+  Madagascar dependency, or C++ dependency.
+- Seismic Topic S2: Pipeline Metrics and QC Report Foundation completed. It
+  adds the internal `pymadagascar.testing.seismic_metrics` module,
+  `tests/test_seismic_signal_metrics.py`, and
+  `examples/my_workflows/seismic_signal_metrics_workflow.py`. S2 measures
+  explicit-window SNR, target/reject frequency-band energy, dominant frequency,
+  mute coverage, stack noise reduction, finite values, and header/axis
+  preservation. Its deterministic JSON report is a workflow/testing contract,
+  not a stable public format. S2 adds no feature command, CLI module, console
+  script, stable public API, command-surface coverage, original Madagascar
+  dependency, or C++ dependency.
+- Seismic Topic S3: NMO Prototype Contract Hardening with S1/S2 Fixtures
+  completed. It hardens the existing NMO prototype for finite small regular
+  CMP-like signed-offset gathers, explicit or regular offset geometry, positive
+  velocity, positive time sampling, finite parameters, deterministic linear
+  interpolation, and metadata preservation. It adds
+  `tests/test_seismic_nmo_contract.py` and
+  `examples/my_workflows/seismic_nmo_contract_workflow.py` for correct-vs-wrong
+  velocity, flattening, stack, finite-value, header-axis, CLI, JSON report, and
+  output-isolation checks. It adds no feature command, CLI module, console
+  script, stable public API, command-surface coverage, original Madagascar
+  dependency, or C++ dependency.
+- Seismic Topic S4-0: Madagascar Source Alignment and Bounded Selection
+  completed as a documentation-only source audit. It aligns the existing NMO,
+  Semblance, FK/FK-filter, and Radon prototypes with located Madagascar sources
+  under `../src-master`, records the current differences and risks, and selects
+  Semblance prototype contract hardening as the next bounded task. It adds no
+  feature command, CLI module, console script, stable public API, test,
+  example, workflow, command-surface coverage, XMind update, original
+  Madagascar dependency, or C++ dependency.
+- Seismic Topic S4-1: Semblance Prototype Contract Hardening completed. It
+  audits `../src-master/system/seismic/Mvscan.c`, hardens the existing
+  Semblance prototype for finite small regular CMP-like signed-offset gathers
+  or length-compatible explicit offsets, records velocity-panel metadata and
+  input-offset provenance, rejects invalid velocity/time/offset/finite-value
+  cases, and validates true-velocity versus wrong-velocity behavior on the
+  S1/S2/S3 fixture base. It adds
+  `tests/test_seismic_semblance_contract.py` and
+  `examples/my_workflows/seismic_semblance_contract_workflow.py`, but no
+  feature command, CLI module, console script, stable public API,
+  command-surface coverage, XMind update, original Madagascar dependency, or
+  C++ dependency.
+- Seismic Topic S4-2: Small-Gather Geometry Adapter Design completed. It adds
+  the internal/testing `pymadagascar.testing.seismic_geometry` module,
+  `tests/test_seismic_geometry_contract.py`, and
+  `examples/my_workflows/seismic_geometry_contract_workflow.py`. S4-2 defines
+  the boundary between regular signed-offset RSF axis metadata, explicit
+  trace-compatible offset vectors, and a minimal numeric source/receiver table
+  for deterministic small fixtures. It is not SEG-Y trace-header support, not
+  a production survey geometry database, and adds no feature command, CLI
+  module, console script, stable public API, command-surface coverage, XMind
+  update, original Madagascar dependency, or C++ dependency.
+- Seismic Topic S4-3: FK Prototype Source-Aligned Validation completed. It
+  audits the absence of a direct `Mfk.c` transform source, records
+  `../src-master/system/generic/Mdipfilter.c` as the nearest dip/f-k/fan filter
+  reference, hardens the existing FK prototype for finite small regular
+  time-space panels, finite positive axis sampling, and finite fan-filter
+  parameters, and validates analytic plane-wave FK peaks plus target/reject
+  slope fan filtering. It adds `tests/test_seismic_fk_contract.py` and
+  `examples/my_workflows/seismic_fk_contract_workflow.py`, but no feature
+  command, CLI module, console script, stable public API, command-surface
+  coverage, XMind update, original Madagascar dependency, or C++ dependency.
+- Seismic Topic S5: Integrated Small-Gather Processing Workflow v0 completed.
+  It adds `tests/test_seismic_integrated_workflow.py` and
+  `examples/my_workflows/seismic_small_gather_processing_workflow.py` to combine
+  existing S1/S2/S3/S4 fixture, metric, geometry, NMO, Semblance, FK, stack,
+  quicklook, and path-free JSON-report contracts into one deterministic
+  workflow-level regression. It adds no new algorithm, feature command, CLI
+  module, console script, stable public API, command-surface coverage, XMind
+  update, original Madagascar dependency, or C++ dependency.
+- Seismic Topic S6-0: Topic v0 Summary and Next-Route Decision completed as a
+  documentation-only route decision. It summarizes the S1-S5 small-gather v0
+  capability, confirms the remaining limits, and recommends the next bounded
+  pass as Radon/slant source-aligned design before any implementation or
+  velocity-picking work. It adds no algorithm, feature command, CLI module,
+  console script, stable public API, workflow, test, command-surface coverage,
+  XMind update, original Madagascar dependency, or C++ dependency.
+- Seismic Topic S6-1: Radon/slant Source-Aligned Design completed as a
+  documentation-only source audit and route decision. It audits the current
+  direct time-domain Radon forward/adjoint prototype against
+  `../src-master/system/seismic/Mslant.c`, `slant.c`, `Mradon.c`, and
+  `radon.c`, then selects a two-stage route: first an `sfslant`-style small
+  slant-stack contract/validation pass, later a separate high-resolution
+  `sfradon` design only after operator/inversion foundations are ready. It
+  adds no algorithm, feature command, CLI module, console script, stable public
+  API, workflow, test, command-surface coverage, XMind update, original
+  Madagascar dependency, or C++ dependency.
+- Seismic Topic S6-2: Small Slant-Stack Contract Hardening and Validation
+  completed. It hardens the existing direct time-domain Radon/slant prototype
+  for finite small gathers, positive finite time/offset/p-axis sampling,
+  length-compatible explicit offset vectors, finite model/data samples, and
+  clearer operator metadata. `radon` remains the adjoint slant-stack direction
+  `m=A^T d`; `iradon` remains deterministic modeling `d=A m`, not a solved
+  inverse. S6-2 adds `tests/test_seismic_slant_stack_contract.py` and
+  `examples/my_workflows/seismic_slant_stack_contract_workflow.py`, but no new
+  algorithm, feature command, CLI module, console script, stable public API,
+  command-surface coverage, XMind update, original Madagascar dependency, or
+  C++ dependency.
+- Seismic Topic S7-0: Closeout and Handoff to Inversion/Operator Topic
+  completed as a documentation-only route decision. It closes Seismic Topic v0
+  as a fixture-backed small-gather regression harness, recommends pausing
+  seismic work before S6-3/high-resolution `sfradon`/velocity picking, and
+  selects Inversion / Operator Foundation as the next topic. It adds no
+  algorithm, feature command, CLI module, console script, stable public API,
+  workflow, test, example, command-surface coverage, XMind update, original
+  Madagascar dependency, or C++ dependency.
+- Inversion / Operator Foundation I0-0: Current Capability Audit and Contract
+  Design completed as a documentation-only pass. It audits the existing B-4
+  `LinearOperator`, `MatrixOperator`, `CallableLinearOperator`, real/complex
+  dot tests, real/complex conjugate-gradient and normal-equation helpers,
+  Radon forward/adjoint pair, D-1 workflow-only least-squares helper,
+  acoustic2d/Kirchhoff prototype boundaries, and Madagascar dottest/conjgrad
+  source references. It defines initial inversion data/operator/solver
+  contracts and selects operator composition plus history contracts as the next
+  bounded task. It adds no algorithm, solver, feature command, CLI module,
+  console script, stable public API, workflow, test, example, command-surface
+  coverage, XMind update, original Madagascar dependency, or C++ dependency.
+- Inversion / Operator Foundation I0-1: Operator Composition and History
+  Contract Foundation completed. It adds small in-memory `ScaledOperator`,
+  `SumOperator`, `ComposedOperator`, and `StackedOperator` composition
+  primitives plus internal/prototype `SolverIterationRecord`, `SolverHistory`,
+  and `SolverResult` diagnostics containers in
+  `pymadagascar.generic.linear_operator`. Existing CG helpers keep their
+  return contract and are not wired to the new history containers. I0-1 adds
+  `tests/test_operator_composition_contract.py` and
+  `tests/test_solver_history_contract.py`, but no geophysical algorithm,
+  solver, feature command, CLI module, console script, stable root/API export,
+  workflow, command-surface coverage, XMind update, original Madagascar
+  dependency, or C++ dependency.
+- Inversion / Operator Foundation I0-2: Regularization Operator Subset
+  completed. It adds small in-memory `DiagonalRegularization`,
+  `FirstDifferenceRegularization`, and `SecondDifferenceRegularization`
+  operators in `pymadagascar.generic.linear_operator`; damping continues to be
+  expressed as a scaled `IdentityOperator`. The first- and second-difference
+  operators use flattened valid-boundary stencils and exact matching adjoints.
+  I0-2 adds `tests/test_regularization_operator_contract.py`, but no
+  geophysical algorithm, solver, CGLS/LSQR, feature command, CLI module,
+  console script, stable root/API export, workflow, command-surface coverage,
+  XMind update, original Madagascar dependency, or C++ dependency.
+- Inversion / Operator Foundation I0-3: Objective / Residual / Diagnostics
+  Problem Layer completed. It adds small in-memory `LeastSquaresProblem`,
+  `ObjectiveDiagnostics`, and `StoppingDiagnostics` prototype structures in
+  `pymadagascar.generic.linear_operator`. The problem layer evaluates
+  unregularized and regularized residuals, objective terms, total residuals,
+  normal-equation gradients, stopping diagnostics, and
+  SolverHistory/SolverResult-compatible summaries. I0-3 adds
+  `tests/test_inversion_problem_contract.py` and
+  `tests/test_objective_diagnostics_contract.py`, but no geophysical
+  algorithm, solver, CGLS/LSQR, feature command, CLI module, console script,
+  stable root/API export, workflow, example, command-surface coverage, XMind
+  update, original Madagascar dependency, or C++ dependency.
+- Inversion / Operator Foundation I0-4: Solver Diagnostics Integration and
+  CGLS/LSQR Design completed. It adds direct-module prototype helpers
+  `run_cg_with_history` and `run_cgnr_with_history` over the existing CG core.
+  Ordinary CG records linear-system residual energy; CGNR records augmented
+  least-squares residual/objective diagnostics through `LeastSquaresProblem`
+  while retaining normal-equation residual stopping. Existing solver
+  functions, `ConjugateGradientResult`, and CLI output remain unchanged. I0-4
+  audits and designs, but does not implement, CGLS or LSQR. It adds no solver
+  algorithm, CLI module, console script, stable root/API export, workflow,
+  example, command-surface coverage, XMind update, original Madagascar
+  dependency, or C++ dependency.
+
+The route is now topic-oriented. D-1 stays as a bounded workflow prototype and
+D-2 remains paused. S1 establishes canonical trace/panel/gather data and
+regular geometry; S2 establishes deterministic pipeline metrics and QC-report
+acceptance using existing functionality; S3 hardens the existing NMO prototype
+inside those boundaries. S4-0 adds the source-alignment rule: when a
+Madagascar classic source exists, audit it before hardening the Python
+prototype. S4-1 applies that rule to Semblance while keeping it a bounded
+prototype, not a full `sfvscan` clone. S4-2 adds the small-gather geometry
+adapter contract needed before broader FK/Radon/localization/imaging/inversion
+work, while still excluding SEG-Y trace headers and production survey geometry.
+S4-3 applies the source-alignment rule to the current Python FK/FK-filter
+prototype without claiming a full `sfdipfilter` clone. S5 closes the first
+small-gather loop by combining the existing contracts into one integrated
+workflow, without adding algorithms or promoting prototype maturity. S6-0
+closes Seismic Topic v0 as a documentation-only decision point: the first
+recommended next pass is Radon/slant source-aligned design, followed by a
+minimal velocity-picking design only after the Radon/slant boundary is clear.
+S6-1 completes that Radon/slant design pass and keeps the current Pythonic
+Radon pair separate from both `sfslant` and high-resolution `sfradon`. S6-2
+then hardens the small `sfslant`-style shared subset with analytic slant-event
+validation, dot-test consistency, regular/explicit offset checks, path-free
+workflow JSON, and clear failure behavior. S7-0 formally closes Seismic Topic
+v0 and hands off the next route to Inversion / Operator Foundation. I0-0 starts
+that topic as audit/design only. I0-1 implements the first bounded foundation:
+shape-checked in-memory scale/sum/composition/vertical-stack operators and an
+internal/prototype solver-history/result schema. I0-2 adds the first reusable
+small in-memory regularization subset. I0-3 adds the small objective/residual/
+diagnostics problem layer. I0-4 optionally connects that layer to the existing
+CG core and completes CGLS/LSQR design, while leaving CGLS/LSQR implementation,
+preconditioning, and domain inversions for later passes. Broad
+velocity picking, high-resolution or solved Radon inversion, FK algorithm
+expansion, localization, modeling, and imaging expansion remain outside the
+current pass. Localization and forward modeling remain design-only; imaging and
+SEG-Y/header expansion remain deferred. Hybrid
+benchmarking, B-3-3 `sfsegyheader`, release, licensing, and tagging remain
+separate.
+
+## Topic Capability Overview
+
+| Topic | Current maturity | T1 decision | Largest shortfall |
+| --- | --- | --- | --- |
+| Seismic data signal analysis and processing | stable subset, with prototype NMO/Semblance/FK/Radon | S1 contracts, S2 metrics/QC, S3 NMO hardening, S4-0 source alignment, S4-1 Semblance hardening, S4-2 small-gather geometry design, S4-3 FK validation, S5 integrated workflow, S6-0/S6-1 route decisions, S6-2 small slant-stack hardening, and S7-0 closeout complete; pause by default | field-scale/non-regular geometry, multi-gather validation, velocity picking, high-resolution Radon, and production processing |
+| DAS / engineering workflows | workflow-only | retain workflow-first; no D-2 or adapter | domain geometry, gauge response, field fixtures |
+| Localization | workflow-only foundation | design only | reusable picks, travel-time, uncertainty, and coordinate contracts |
+| Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, and I0-4 optional CG/CGNR diagnostics integration plus CGLS/LSQR design complete; next bounded task is minimal CGLS implementation or preconditioner design before domain inversion | reusable CGLS/LSQR, preconditioners, and domain inversion workflows |
+| Forward modeling | simplified prototype | design only | reusable model/acquisition geometry and accuracy evidence |
+| Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
+| SEG-Y / headers | stable RSF / partial headers / prototype SEG-Y | independent defer | trace ownership, scalars/units, synchronized reorder |
+| Plot / visualization | partial quicklook substitute | support work only | composition, overlays, and domain QC presentation |
+| General RSF / data processing | stable / stable subset | freeze except topic-driven gaps | streaming and out-of-core execution |
+| Statistics QC / spectral QC | stable subset | cross-cutting validation support | grouped/weighted/confidence and streaming behavior |
+
+The full per-topic data, geometry, validation, first-batch, non-goal, and
+documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
+
+## Module Overview
+
+- `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
+- `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
+- `pymadagascar/cli`: 134 module entry points, 25 registered console scripts.
+- `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
+  array math, interleave, header mask/window/cut, byte, mask/cut/reverse,
+  minimal header table attr/math/sort, linear operators, composition helpers,
+  regularization operators, least-squares problem diagnostics, optional
+  CG/CGNR history adapters, internal solver-history containers, dottest/conjgrad,
+  generic sampling/bin/slice/max1 tools, whole-dataset difference metrics,
+  unary transforms, histogram/quantile QC, robust statistics, non-finite
+  masks/filling, complex tools, dd, pad/spray/tile, cat/transp.
+- `pymadagascar/signal`: FFT, filters, smoothing, convolution/correlation,
+  circular/envelope correlation, shifts, axis calculus, amplitude clipping,
+  wavelets, signal preprocessing, demean/detrend, integer decimation,
+  band-stop/notch filtering, local-RMS QC, standard windows, periodogram
+  PSD/CSD, short-segment coherence, spectrogram, SNR, Welch PSD/CSD, H1/H2
+  transfer estimates, spectral whitening/normalization, and frequency
+  attributes, plus FIR design/filtering, response QC, band energy, and filter
+  banks.
+- `pymadagascar/seismic`: gain, AGC, mute/mutter, stack, NMO, semblance, FK,
+  Radon.
+- `pymadagascar/imaging`: simplified Kirchhoff prototype.
+- `pymadagascar/modeling`: simplified acoustic2d prototype.
+- `pymadagascar/plot`: Matplotlib quicklook replacements.
+- `pymadagascar/hybrid`: optional C++ wrappers with NumPy fallback.
+- `pymadagascar/testing`: fixtures, internal seismic regression metrics,
+  internal small-gather geometry helpers, RSF comparisons, and the optional
+  binary-safe original Madagascar command runner.
+- `tools`: package/release, CLI runtime/docs command, live examples inventory,
+  mindmap inventory, and optional WSL checks; live checks intentionally exclude
+  `archive_docs`.
+
+## Mindmap Artifact
+
+`docs/PYMADAGASCAR_MINDMAP.xmind` is a visual feature index, not a replacement
+for the eight authoritative Markdown documents. XMind remains frozen at the
+Stage C-10 / M1 snapshot. T1, S1, and S2 intentionally do not regenerate it.
+`tools/check_mindmap.py` validates the frozen snapshot, unchanged CLI/coverage
+boundaries, and the current Markdown inventory separately. S3 intentionally
+does not regenerate the workbook. S4-0, S4-1, S4-2, and S4-3 also leave
+XMind unchanged. S5 also leaves XMind unchanged.
+S6-0 also leaves XMind unchanged because it is a documentation-only route
+decision with no new command, API, test, example, workflow, or coverage
+surface. S6-1 also leaves XMind unchanged because it is a documentation-only
+source audit and route decision with the same unchanged command/API/test/
+example/workflow/coverage surface. S6-2 also leaves XMind unchanged because it
+hardens an existing prototype and adds only testing/workflow documentation
+around the frozen command/API/coverage surface. S7-0 also leaves XMind
+unchanged because it is a closeout/handoff decision with no inventory,
+coverage, API, or command-surface change. I0-0 also leaves XMind unchanged
+because it is an audit/design pass with no inventory, coverage, API, CLI,
+workflow, test, or command-surface change. I0-1 also leaves XMind unchanged
+because it adds no CLI, console script, workflow, example, coverage entry, or
+root/API stable export. I0-2 also leaves XMind unchanged because it adds only
+direct-module prototype regularization operators and focused tests. I0-3 also
+leaves XMind unchanged because it adds only direct-module prototype
+problem/diagnostics structures and focused tests; any roadmap map refresh
+should be a separate dedicated pass.
+I0-4 also leaves XMind unchanged because it adds only optional direct-module
+diagnostics adapters and focused tests, with no CLI, workflow, example,
+coverage, or stable API change.
+
+## Hybrid Status
+
+The current machine has no compiled C++ extension. `pymadagascar.hybrid`
+reports the NumPy fallback backend. C++ sources exist, but compiling and
+benchmarking C++ is not part of the current baseline. Default editable install
+builds a pure-Python wheel and does not invoke CMake; C++ requires an explicit
+opt-in build.

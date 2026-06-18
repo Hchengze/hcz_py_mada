@@ -1,0 +1,109 @@
+from __future__ import annotations
+
+import json
+import os
+from pathlib import Path
+import runpy
+import subprocess
+import sys
+
+import numpy as np
+import pytest
+
+from pymadagascar.io.rsf import read_rsf
+
+
+ROOT = Path(__file__).resolve().parents[1]
+EXAMPLES = ROOT / "examples"
+WORKFLOWS = EXAMPLES / "my_workflows"
+WORKFLOW = WORKFLOWS / "das_void_diffraction_workflow.py"
+
+
+def test_workflow_helpers_recover_noise_free_geometry(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.syspath_prepend(str(WORKFLOWS))
+    namespace = runpy.run_path(str(WORKFLOW))
+    travel_times = namespace["_diffraction_travel_times"]
+    invert = namespace["_invert_diffraction_picks"]
+
+    receiver_x = np.linspace(0.0, 35.5, 24)
+    picks = travel_times(
+        receiver_x,
+        source_x=-6.0,
+        void_x=17.5,
+        void_depth=2.5,
+        vr=240.0,
+    )
+    result = invert(
+        receiver_x,
+        picks,
+        source_x=-6.0,
+        x_bounds=(0.0, 35.5),
+        depth_bounds=(0.5, 6.0),
+        velocity_bounds=(150.0, 400.0),
+    )
+
+    assert result.void_x == pytest.approx(17.5, abs=0.1)
+    assert result.void_depth == pytest.approx(2.5, rel=0.03)
+    assert result.vr == pytest.approx(240.0, rel=0.01)
+    assert result.rmse < 1.0e-5
+
+
+def test_workflow_subprocess_outputs_and_inversion(tmp_path: Path) -> None:
+    before = _example_files()
+    output_dir = tmp_path / "das_void"
+    env = os.environ.copy()
+    env["PYTHONPATH"] = (
+        str(ROOT)
+        if not env.get("PYTHONPATH")
+        else str(ROOT) + os.pathsep + env["PYTHONPATH"]
+    )
+
+    result = subprocess.run(
+        [sys.executable, str(WORKFLOW), str(output_dir)],
+        cwd=ROOT,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=60,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "true:" in result.stdout
+    assert "inverted:" in result.stdout
+    assert _example_files() == before
+
+    expected = {
+        "das_void_raw.rsf",
+        "das_void_raw.rsf@",
+        "das_void_fk_filtered.rsf",
+        "das_void_fk_filtered.rsf@",
+        "das_void_raw.png",
+        "das_void_fk_filtered_with_curves.png",
+        "das_void_diffraction_picks.csv",
+        "das_void_inversion.json",
+    }
+    assert expected <= {path.name for path in output_dir.iterdir()}
+
+    raw = read_rsf(output_dir / "das_void_raw.rsf")
+    filtered = read_rsf(output_dir / "das_void_fk_filtered.rsf")
+    assert raw.data.shape == (72, 480)
+    assert filtered.data.shape == raw.data.shape
+    assert raw.header["label1"] == "Time"
+    assert raw.header["label2"] == "DAS Channel X"
+    assert filtered.header["fkfilter_vmin"] == "300"
+
+    payload = json.loads((output_dir / "das_void_inversion.json").read_text(encoding="utf-8"))
+    assert payload["pick_count"] >= 20
+    assert payload["relative_error"]["void_depth"] < 0.10
+    assert payload["relative_error"]["void_x"] < 0.03
+    assert payload["relative_error"]["vr"] < 0.03
+    assert payload["inverted"]["rmse"] < 0.001
+
+
+def _example_files() -> set[Path]:
+    return {
+        path.relative_to(EXAMPLES)
+        for path in EXAMPLES.rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts
+    }

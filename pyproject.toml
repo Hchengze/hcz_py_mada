@@ -1,0 +1,60 @@
+[build-system]
+requires = [
+    "scikit-build-core>=0.8",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pymadagascar-hybrid"
+version = "0.1.0"
+description = "Python-friendly local Madagascar/RSF toolkit with optional C++ acceleration."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.23",
+]
+
+[project.scripts]
+pymada-info = "pymadagascar.cli.info:main"
+pymada-get = "pymadagascar.cli.get:main"
+pymada-disfil = "pymadagascar.cli.disfil:main"
+pymada-real = "pymadagascar.cli.real:main"
+pymada-imag = "pymadagascar.cli.imag:main"
+pymada-cmplx = "pymadagascar.cli.cmplx:main"
+pymada-rtoc = "pymadagascar.cli.rtoc:main"
+pymada-noise = "pymadagascar.cli.noise:main"
+pymada-ricker = "pymadagascar.cli.ricker:main"
+pymada-spike = "pymadagascar.cli.spike:main"
+pymada-math = "pymadagascar.cli.math:main"
+pymada-window = "pymadagascar.cli.window:main"
+pymada-attr = "pymadagascar.cli.attr:main"
+pymada-put = "pymadagascar.cli.put:main"
+pymada-dd = "pymadagascar.cli.dd:main"
+pymada-cat = "pymadagascar.cli.cat:main"
+pymada-transp = "pymadagascar.cli.transp:main"
+pymada-fft = "pymadagascar.cli.fft:main"
+pymada-bandpass = "pymadagascar.cli.bandpass:main"
+pymada-byte = "pymadagascar.cli.byte:main"
+pymada-smooth = "pymadagascar.cli.smooth:main"
+pymada-boxsmooth = "pymadagascar.cli.boxsmooth:main"
+pymada-mask = "pymadagascar.cli.mask:main"
+pymada-cut = "pymadagascar.cli.cut:main"
+pymada-reverse = "pymadagascar.cli.reverse:main"
+
+[project.optional-dependencies]
+test = [
+    "matplotlib",
+    "pytest",
+]
+cpp = [
+    "ninja>=1.11",
+    "pybind11>=2.11",
+]
+
+[tool.scikit-build]
+cmake.version = ">=3.20"
+wheel.packages = ["pymadagascar"]
+wheel.cmake = false
+
+[tool.scikit-build.cmake.define]
+PYMADAGASCAR_BUILD_CPP = "OFF"
