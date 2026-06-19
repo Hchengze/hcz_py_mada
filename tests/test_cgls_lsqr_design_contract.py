@@ -38,8 +38,10 @@ def test_i0_4_cgls_lsqr_design_is_documented() -> None:
     assert "not implemented" in compatibility
 
 
-def test_cgls_and_lsqr_are_not_implemented_or_exported() -> None:
-    for name in ["cgls", "lsqr", "CGLS", "LSQR"]:
+def test_cgls_is_direct_module_only_and_lsqr_remains_unimplemented() -> None:
+    assert hasattr(linear_operator, "run_cgls")
+    assert hasattr(linear_operator, "run_cgls_problem")
+    for name in ["lsqr", "LSQR"]:
         assert not hasattr(linear_operator, name)
 
     module_names = {module.name for module in pkgutil.iter_modules(cli_package.__path__)}

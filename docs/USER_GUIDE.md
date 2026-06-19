@@ -96,7 +96,7 @@ the API stability authority; use `API_AND_COMPATIBILITY.md` for API contracts
 and `KNOWN_LIMITATIONS.md` for detailed boundaries. Topic Architecture Pass T1
 and Seismic Topic S1/S2/S3/S4-0/S4-1/S4-2/S4-3/S5/S6-0/S6-1/S6-2 are documented in the Markdown
 authorities, as are S7-0 and Inversion / Operator Foundation
-I0-0/I0-1/I0-2/I0-3/I0-4; the mindmap is intentionally not regenerated during
+I0-0/I0-1/I0-2/I0-3/I0-4/I0-5; the mindmap is intentionally not regenerated during
 these topic passes.
 
 ## Console Scripts
@@ -492,9 +492,12 @@ dataset.
   CG/CGNR default functions retain their original result contract. The
   direct-module prototype helpers `run_cg_with_history` and
   `run_cgnr_with_history` optionally produce `SolverResult`/`SolverHistory`;
-  they are not root/API exports or CLI features. CGLS and LSQR remain designed
-  but unimplemented. Start with `linear_operator_tools_demo.py` for the stable
-  small operator subset.
+  they are not root/API exports or CLI features. Bounded unpreconditioned
+  `run_cgls` and `run_cgls_problem` now solve small real/complex in-memory
+  problems and return the same diagnostics containers. Regularization must be
+  supplied through `LeastSquaresProblem`; LSQR, preconditioning, and domain
+  inversion remain unimplemented. Start with `linear_operator_tools_demo.py`
+  for the stable small operator subset.
 - **Prototype geophysics:** NMO, semblance, FK, Radon, SEG-Y, acoustic2d, and
   Kirchhoff require their documented dimensionality and geometry assumptions.
   Treat them as controlled prototypes, not drop-in Madagascar replacements.

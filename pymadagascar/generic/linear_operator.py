@@ -1342,6 +1342,202 @@ def run_cgnr_with_history(
     )
 
 
+def run_cgls(
+    A: LinearOperator | np.ndarray,
+    b: np.ndarray,
+    *,
+    x0: np.ndarray | None = None,
+    maxiter: int = 10,
+    tol: float = 1e-6,
+    track_history: bool = True,
+    metadata: dict[str, Any] | None = None,
+) -> SolverResult:
+    """Solve a bounded unregularized least-squares problem with CGLS.
+
+    This direct-module prototype minimizes ``0.5 * ||A x - b||**2`` and
+    delegates diagnostics/result construction to :class:`LeastSquaresProblem`.
+    Convergence uses the normal-residual norm ``||A^H (b - A x)||`` relative
+    to its initial value (with a unit floor). Use :func:`run_cgls_problem` for
+    existing regularized problems.
+    """
+
+    problem = LeastSquaresProblem(A, b)
+    return run_cgls_problem(
+        problem,
+        x0=x0,
+        maxiter=maxiter,
+        tol=tol,
+        track_history=track_history,
+        metadata=metadata,
+    )
+
+
+def run_cgls_problem(
+    problem: LeastSquaresProblem,
+    *,
+    x0: np.ndarray | None = None,
+    maxiter: int = 10,
+    tol: float = 1e-6,
+    track_history: bool = True,
+    metadata: dict[str, Any] | None = None,
+) -> SolverResult:
+    """Solve a small existing :class:`LeastSquaresProblem` with CGLS.
+
+    Active regularization reuses the augmented system ``[A; lambda L]`` and
+    ``[b; 0]``. The data residual is ``b - A x``; for regularized problems the
+    CGLS recurrence uses the full augmented residual while problem diagnostics
+    retain separate data and regularization norms/objective terms.
+    """
+
+    if not isinstance(problem, LeastSquaresProblem):
+        raise LinearOperatorError("problem must be a LeastSquaresProblem")
+    if isinstance(maxiter, (bool, np.bool_)) or int(maxiter) != maxiter or int(maxiter) <= 0:
+        raise LinearOperatorError("maxiter must be a positive integer")
+    maxiter_value = int(maxiter)
+    tol_value = _finite_nonnegative_float(tol, "tol")
+
+    operator, rhs = _augmented_least_squares_system(problem)
+    rhs_vec = _flatten_finite_to_size(rhs, operator.data_size, "augmented data")
+    if x0 is None:
+        start = np.zeros(problem.model_shape, dtype=np.result_type(operator.dtype, rhs_vec.dtype))
+    else:
+        start = _flatten_finite_to_size(x0, problem.model_size, "x0").reshape(
+            problem.model_shape
+        )
+    dtype = np.result_type(operator.dtype, rhs_vec.dtype, start.dtype)
+    x = np.asarray(start, dtype=dtype).copy()
+    residual = rhs_vec.astype(dtype, copy=False) - np.asarray(
+        operator.forward(x), dtype=dtype
+    ).reshape(-1)
+    normal_residual = np.asarray(
+        operator.adjoint(residual.reshape(operator.data_shape)), dtype=dtype
+    ).reshape(-1)
+    search_direction = normal_residual.copy()
+    gamma = _norm2(normal_residual)
+    initial_gradient_norm = float(np.sqrt(gamma))
+    threshold = tol_value * max(initial_gradient_norm, 1.0)
+
+    records: list[SolverIterationRecord] = []
+
+    def append_record(iteration: int, step_length: float | None) -> None:
+        if not track_history:
+            return
+        diagnostics = problem.diagnostics(
+            x,
+            iteration=iteration,
+            include_gradient=True,
+        )
+        records.append(
+            SolverIterationRecord(
+                iteration=iteration,
+                residual_norm=diagnostics.total_residual_norm,
+                objective=diagnostics.objective,
+                gradient_norm=diagnostics.gradient_norm,
+                step_length=step_length,
+                metadata={
+                    "solver": "cgls",
+                    "residual_space": (
+                        "augmented_least_squares"
+                        if problem.has_regularization
+                        else "data"
+                    ),
+                    "data_residual_convention": "b_minus_Ax",
+                    "data_residual_norm": diagnostics.data_residual_norm,
+                    "regularization_residual_norm": diagnostics.regularization_residual_norm,
+                    "normal_residual_norm": float(np.sqrt(_norm2(normal_residual))),
+                    "convergence_residual_space": "normal_equation",
+                    "objective_kind": "least_squares",
+                },
+            )
+        )
+
+    append_record(0, None)
+    converged = initial_gradient_norm <= threshold
+    stopping_reason = "gradient_tolerance" if converged else "max_iterations"
+    invalid_state: str | None = None
+    completed_iterations = 0
+
+    for iteration in range(1, maxiter_value + 1):
+        if converged:
+            break
+        projected = np.asarray(
+            operator.forward(search_direction.reshape(problem.model_shape)), dtype=dtype
+        ).reshape(-1)
+        curvature = _norm2(projected)
+        if curvature <= np.finfo(float).eps:
+            invalid_state = "CGLS breakdown: projected search direction has zero norm"
+            stopping_reason = "invalid_state"
+            break
+        alpha = gamma / curvature
+        x = x + alpha * search_direction.reshape(problem.model_shape)
+        residual = residual - alpha * projected
+        next_normal_residual = np.asarray(
+            operator.adjoint(residual.reshape(operator.data_shape)), dtype=dtype
+        ).reshape(-1)
+        next_gamma = _norm2(next_normal_residual)
+        normal_residual = next_normal_residual
+        completed_iterations = iteration
+        append_record(iteration, float(alpha))
+        gradient_norm = float(np.sqrt(next_gamma))
+        if gradient_norm <= threshold:
+            converged = True
+            stopping_reason = "gradient_tolerance"
+            gamma = next_gamma
+            break
+        if gamma <= np.finfo(float).eps:
+            invalid_state = "CGLS breakdown: normal residual lost positive norm"
+            stopping_reason = "invalid_state"
+            gamma = next_gamma
+            break
+        beta = next_gamma / gamma
+        search_direction = next_normal_residual + beta * search_direction
+        gamma = next_gamma
+
+    final_diagnostics = problem.diagnostics(x, include_gradient=True)
+    run_metadata = {
+        "solver": "cgls",
+        "max_iterations": maxiter_value,
+        "tolerance": tol_value,
+        "tolerance_kind": "relative_initial_normal_residual_with_unit_floor",
+        "initial_normal_residual_norm": initial_gradient_norm,
+        "normal_residual_norm": final_diagnostics.gradient_norm,
+        "residual_space": (
+            "augmented_least_squares" if problem.has_regularization else "data"
+        ),
+        "data_residual_convention": "b_minus_Ax",
+        "convergence_residual_space": "normal_equation",
+        "data_residual_norm": final_diagnostics.data_residual_norm,
+        "regularization_residual_norm": final_diagnostics.regularization_residual_norm,
+        "regularization_via": (
+            "StackedOperator[A, lambda*L]" if problem.has_regularization else None
+        ),
+        "objective_kind": "least_squares",
+        "track_history": bool(track_history),
+        **dict(metadata or {}),
+    }
+    if invalid_state is not None:
+        run_metadata["invalid_state"] = invalid_state
+    history = (
+        SolverHistory(
+            tuple(records),
+            converged=converged,
+            stopping_reason=stopping_reason,
+            metadata=run_metadata,
+        )
+        if track_history
+        else None
+    )
+    return problem.solver_result(
+        x,
+        iterations=completed_iterations,
+        converged=converged,
+        stopping_reason=stopping_reason,
+        history=history,
+        include_gradient=True,
+        metadata=run_metadata,
+    )
+
+
 def conjgrad_solve(
     A: LinearOperator | np.ndarray,
     b: np.ndarray,
@@ -1679,6 +1875,21 @@ def _finite_solver_options(niter: int, tol: float, damp: float) -> tuple[int, fl
 
 def _norm2(vector: np.ndarray) -> float:
     return float(np.real(np.vdot(vector, vector)))
+
+
+def _augmented_least_squares_system(
+    problem: LeastSquaresProblem,
+) -> tuple[LinearOperator, np.ndarray]:
+    if not problem.has_regularization or problem.regularization is None:
+        return problem.operator, problem.data.copy()
+    regularization = problem.reg_weight * problem.regularization
+    operator = StackedOperator((problem.operator, regularization))
+    zeros = np.zeros(
+        problem.regularization.data_size,
+        dtype=np.result_type(problem.data.dtype, regularization.dtype),
+    )
+    rhs = np.concatenate([problem.data.reshape(-1), zeros])
+    return operator, rhs.reshape(operator.data_shape)
 
 
 def _format_scalar(value: complex | float) -> str:

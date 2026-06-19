@@ -551,6 +551,28 @@ book MATLAB file `../src-master/book/slim/geo2008NewInsightsPareto/Matfcts/priva
 and RVL C++ header `../src-master/trip/rvl/umin/include/lsqr.hh`, not as a
 pure-C core `system/main` solver suitable for direct cloning.
 
+## Inversion / Operator Foundation I0-5 Boundary
+
+I0-5 adds bounded unpreconditioned CGLS only as a direct-module prototype in
+`pymadagascar.generic.linear_operator`:
+
+- `run_cgls(A, b, ...)` constructs an unregularized `LeastSquaresProblem`.
+- `run_cgls_problem(problem, ...)` consumes an existing problem and reuses
+  `[A; lambda L]` / `[b; 0]` through `StackedOperator` when regularization is
+  active.
+- The iterative data residual is `b - A x`; a regularized recurrence uses the
+  augmented residual `[b - A x; -lambda L x]`. Objective and displayed
+  residual terms remain owned by `LeastSquaresProblem`.
+- Convergence uses `||A_aug^H r_aug|| <= tol * max(||g0||, 1)`. Stopping
+  reasons are `gradient_tolerance`, `max_iterations`, and `invalid_state`.
+- Real and complex operators share the same implementation; complex adjoints
+  remain Hermitian and norms use `vdot`.
+- Results reuse `SolverResult` and optional/default-on `SolverHistory`.
+
+These functions are not imported by `pymadagascar.__init__` or
+`pymadagascar.api`. I0-5 adds no CLI, console script, coverage entry, LSQR,
+preconditioner, constraints, production scaling, or domain inversion.
+
 ## Stable and Stable-Subset APIs
 
 - RSF I/O: `read_rsf`, `write_rsf`, `read_header`, `write_header`.
@@ -1210,6 +1232,8 @@ Stage B-4 adds a minimal pure-Python, small-data linear-operator subset:
 - `run_cg_with_history` and `run_cgnr_with_history`: I0-4 optional
   direct-module diagnostics adapters over the existing CG iteration core. They
   do not change default solver or CLI behavior and are not stable root exports.
+- `run_cgls` and `run_cgls_problem`: I0-5 bounded unpreconditioned CGLS
+  direct-module prototypes returning existing solver diagnostics contracts.
 - `SolverIterationRecord`, `SolverHistory`, and `SolverResult`: I0-1
   internal/prototype diagnostics containers. They are not a stable public
   solver-result schema and are not wired into the existing CG helpers yet.
@@ -1229,11 +1253,11 @@ This is not Madagascar's full external operator framework. The module-only CLIs
 operators and a toy identity dot-test operator. They do not execute arbitrary
 shell commands, do not reproduce the upstream pipe/tempfile operator protocol,
 do not support preconditioners, and do not stream large out-of-core datasets.
-After I0-4 they provide small composition algebra, a regularization subset, a
+After I0-5 they provide small composition algebra, a regularization subset, a
 small objective/residual/diagnostics problem layer, standalone diagnostics
-containers, and optional CG/CGNR history adapters. They still do not provide
-CGLS/LSQR implementations, a preconditioner contract, or domain inversion;
-those remain later Inversion / Operator Foundation topics.
+containers, optional CG/CGNR history adapters, and bounded unpreconditioned
+CGLS. They still do not provide LSQR, a preconditioner contract, or domain
+inversion; those remain later Inversion / Operator Foundation topics.
 
 ## Optional Compatibility Tests
 

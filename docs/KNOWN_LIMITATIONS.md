@@ -28,13 +28,14 @@ testing details live in the other current docs.
 - Localization has no reusable package API. Travel-time, picking, uncertainty,
   coordinate-frame, and least-squares contracts must be designed before
   implementation.
-- Inversion / Operator Foundation I0-1 through I0-4 have added small
+- Inversion / Operator Foundation I0-1 through I0-5 have added small
   in-memory operator composition, internal/prototype history/result containers,
   a minimal regularization-operator subset, and a direct-module
   least-squares problem/objective/diagnostics layer. I0-4 optionally records
-  existing CG/CGNR histories without changing default solver behavior, but
-  inversion still lacks reusable CGLS/LSQR implementations, preconditioning,
-  and domain inversion workflows.
+  existing CG/CGNR histories without changing default solver behavior. I0-5
+  adds bounded unpreconditioned CGLS for small real/complex in-memory problems,
+  but inversion still lacks LSQR, preconditioning, constraints, production
+  scaling, and domain inversion workflows.
 - Forward modeling lacks a reusable model/acquisition geometry contract,
   physical-coordinate interpolation, multi-shot behavior, and convergence or
   dispersion evidence.
@@ -320,15 +321,16 @@ testing details live in the other current docs.
   adds only a small in-memory problem/objective/diagnostics layer for evaluating
   residuals, objective terms, normal-equation gradients, stopping summaries,
   and SolverHistory/SolverResult-compatible records. I0-4 adds only optional
-  direct-module CG/CGNR history adapters and CGLS/LSQR design. CG history uses
+  direct-module CG/CGNR history adapters and CGLS/LSQR design. I0-5 adds only
+  bounded unpreconditioned direct-module CGLS. CG history uses
   linear-system residual energy; CGNR history reports augmented least-squares
   residual/objective values while convergence still uses the normal-equation
   residual. The current B-4/I0 tools
   still do not clone Madagascar's external pipe/tempfile operator protocol, do
   not stream out-of-core, and do not support axis-aware multidimensional
   derivatives, smoothing regularization, total variation, model masks,
-  constraints, preconditioners, broad block-operator families, CGLS/LSQR
-  implementations, or domain inversion workflows.
+  constraints, preconditioners, broad block-operator families, LSQR, or domain
+  inversion workflows. CGLS is not a production or out-of-core solver.
 - D-1 least-squares recovery remains workflow-only; Radon `least_squares=True`
   remains a reserved rejection path; acoustic2d and Kirchhoff remain forward or
   direct prototypes without reusable adjoint-operator inversion workflows.

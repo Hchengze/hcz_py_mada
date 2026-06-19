@@ -161,7 +161,7 @@ Do not add or require C++ without a Python fallback, benchmark, and tests.
   inventory agreement. It does not scan `archive_docs/`.
 - `tools/check_mindmap.py`: validates the XMind ZIP/JSON/XML structure and
   exact CLI inventories. Because S1, S2, S3, S4-0, S4-1, S4-2, S4-3, S5,
-  S6-0, S6-1, S6-2, S7-0, I0-0, I0-1, I0-2, I0-3, and I0-4 intentionally leave XMind at the
+  S6-0, S6-1, S6-2, S7-0, I0-0, I0-1, I0-2, I0-3, I0-4, and I0-5 intentionally leave XMind at the
   Stage C-10/M1 snapshot,
   it validates frozen test/example/workflow baselines while separately checking
   current repository counts against `PROJECT_STATUS.md`; coverage remains
@@ -293,6 +293,16 @@ absence of original-Madagascar/C++ dependencies. Current validation results are
 Windows `758 passed, 94 skipped`, WSL `824 passed, 28 skipped`, and WSL original
 marker `66 passed, 27 skipped`. XMind is unchanged and the frozen-snapshot/live
 inventory check passes.
+
+Inversion / Operator Foundation I0-5 adds `tests/test_cgls_contract.py` with
+18 deterministic tests covering real/complex overdetermined systems, NumPy
+least-squares agreement, zero/nonzero initial models, objective history,
+`LeastSquaresProblem`, first-difference regularization through the augmented
+system, JSON-safe summaries, tolerance/max-iteration stopping, invalid inputs,
+optional history, no CLI/stable export, and continued LSQR/preconditioner
+non-implementation. Current validation results are Windows
+`983 passed, 94 skipped`, WSL `1049 passed, 28 skipped`, and WSL original
+marker `66 passed, 27 skipped`. XMind and command coverage are unchanged.
 
 Seismic Topic S3 adds `tests/test_seismic_nmo_contract.py` with 28 tests
 covering the existing NMO prototype on the S1 hyperbolic signed-offset fixture,

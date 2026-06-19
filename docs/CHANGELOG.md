@@ -8,6 +8,12 @@ optional compatibility checks.
 
 ### Added
 
+- Inversion / Operator Foundation I0-5 bounded unpreconditioned CGLS:
+  direct-module `run_cgls` and `run_cgls_problem` for small real/complex
+  in-memory least-squares problems, reusing `LeastSquaresProblem`,
+  `StackedOperator`, existing regularization operators, `SolverHistory`, and
+  `SolverResult`.
+- `tests/test_cgls_contract.py` with 18 deterministic solver contract tests.
 - Mindmap Documentation Pass M1:
   `docs/PYMADAGASCAR_MINDMAP.xmind`, an XMind feature map covering
   interfaces, functional topics, maturity boundaries, examples, testing, and
@@ -522,6 +528,10 @@ optional compatibility checks.
 
 ### Testing
 
+- I0-5 adds 18 deterministic CGLS contract tests. Windows suite:
+  `983 passed, 94 skipped`; WSL suite: `1049 passed, 28 skipped`; WSL original
+  marker remains `66 passed, 27 skipped`. Release, CLI inventory,
+  docs-command, examples inventory, mindmap, and strict WSL checks pass.
 - I0-4 adds 13 deterministic solver-history integration and CGLS/LSQR design
   contract tests. Windows suite: `965 passed, 94 skipped`; WSL suite:
   `1031 passed, 28 skipped`; WSL original marker: `66 passed, 27 skipped`.
