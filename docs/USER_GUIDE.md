@@ -9,6 +9,10 @@ cd E:\HczDocument\BaiduDisk\BaiduSyncdisk\HCZ_work\CodexProject\HCZ_madagascar\h
 D:\HczApp\Anaconda\envs\mywork\python.exe -m pip install -e ".[test]" --no-build-isolation
 ```
 
+The absolute paths above record the validated local baseline. Replace them
+with your repository path and project-environment Python on another machine;
+they are examples, not installation requirements.
+
 This default editable install builds a pure-Python `py3-none-any` wheel. It
 does not run CMake and does not require Ninja or a C++ compiler.
 
@@ -61,6 +65,8 @@ The default probe is non-blocking. `--strict` returns failure when the selected
 distribution, shell environment, Conda Python, pymadagascar import, or required
 Madagascar commands are unavailable. It also accepts `--distro`, `--user`,
 `--shell auto|bash|zsh`, and `--conda-env`.
+For persistent machine-local defaults, set `PYMADAGASCAR_WSL_USER` and/or
+`PYMADAGASCAR_WSL_CONDA_ENV` instead of editing the tracked script.
 
 The validated environment is:
 

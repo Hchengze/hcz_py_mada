@@ -1,6 +1,10 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 build/
 dist/
@@ -12,3 +16,22 @@ _tmp_*/
 examples/_output/
 examples/*_output/
 examples/my_workflows/_outputs/
+
+# Local environment and transient files.
+.env
+.env.*
+*.tmp
+
+# Generated geophysical and array outputs. Curated small test fixtures may be
+# force-added under tests/fixtures/ only after an explicit size/content review.
+*.rsf@
+*.vpl
+*.segy
+*.sgy
+*.su
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.bin
+*.dat

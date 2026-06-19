@@ -1,0 +1,28 @@
+* text=auto
+
+.gitignore text eol=lf
+.gitattributes text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+
+*.xmind binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.rsf binary
+*.rsf@ binary
+*.vpl binary
+*.segy binary
+*.sgy binary
+*.su binary
+*.npy binary
+*.npz binary
+*.h5 binary
+*.hdf5 binary

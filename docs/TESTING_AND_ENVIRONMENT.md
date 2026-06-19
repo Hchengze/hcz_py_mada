@@ -8,6 +8,10 @@ Use:
 D:\HczApp\Anaconda\envs\mywork\python.exe
 ```
 
+This is the validated local baseline path, not a portable requirement. On
+another machine, substitute the Python interpreter from that machine's project
+environment.
+
 Plain `python` is not available on the current PowerShell PATH in this Codex
 session.
 
@@ -102,6 +106,9 @@ The probe supports `--distro`, `--user`, `--shell auto|bash|zsh`,
 because RSFROOT is currently loaded by zsh. The probe transports its script as
 base64 so Windows-to-WSL quoting cannot corrupt shell variables. The recurring
 localhost proxy warning is informational and does not invalidate the probe.
+`PYMADAGASCAR_WSL_USER` and `PYMADAGASCAR_WSL_CONDA_ENV` can provide local
+defaults without editing the tracked script; command-line options take
+precedence.
 
 Current WSL results:
 

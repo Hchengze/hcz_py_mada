@@ -14,8 +14,8 @@ from typing import Sequence
 
 
 DEFAULT_DISTRO = "ubuntu2204"
-DEFAULT_USER = "hcz"
-DEFAULT_CONDA_ENV = "/home/hcz/Software/Anaconda/envs/pymadagascar-dev"
+DEFAULT_USER = os.environ.get("PYMADAGASCAR_WSL_USER", "hcz")
+DEFAULT_CONDA_ENV = os.environ.get("PYMADAGASCAR_WSL_CONDA_ENV")
 COMMANDS = ("sfspike", "sfmath", "sfwindow", "sfdisfil", "sfattr", "sfdd")
 
 
@@ -117,7 +117,10 @@ def _parse_args(argv: Sequence[str]) -> argparse.Namespace:
         default=DEFAULT_CONDA_ENV,
         help="Conda environment prefix containing the project Python",
     )
-    return parser.parse_args(list(argv))
+    options = parser.parse_args(list(argv))
+    if options.conda_env is None:
+        options.conda_env = f"/home/{options.user}/Software/Anaconda/envs/pymadagascar-dev"
+    return options
 
 
 def _inside_wsl() -> bool:
