@@ -573,6 +573,35 @@ These functions are not imported by `pymadagascar.__init__` or
 `pymadagascar.api`. I0-5 adds no CLI, console script, coverage entry, LSQR,
 preconditioner, constraints, production scaling, or domain inversion.
 
+## Inversion / Operator Foundation I0-6 Boundary
+
+I0-6 defines a preconditioner contract without connecting it to a solver:
+
+- `Preconditioner` is a semantic `LinearOperator` subclass. Its required
+  `forward` and Hermitian `adjoint` make the transform composable with future
+  CGLS/LSQR operator recurrences.
+- `IdentityPreconditioner` preserves the latent model. `DiagonalPreconditioner`
+  applies real or complex model-space scaling; zero weights are rejected
+  because this contract is invertible scaling, not a mask or constraint.
+- `as_preconditioner` accepts only explicit preconditioner instances, diagonal
+  arrays, or `None` plus a model shape. It deliberately rejects ordinary
+  `LinearOperator` objects so a regularization operator cannot silently change
+  semantic role.
+- `PreconditionerDiagnostics` reports kind, domain/range shapes, identity/
+  diagonal flags, scale range, a diagonal condition hint, complex support, and
+  JSON-safe metadata.
+
+The selected direction is right/model-space preconditioning: `x = M z`, solve
+with `A @ M`, and reconstruct with `M.forward(z)`. For a regularized problem,
+the future latent system is `[A; lambda L] @ M z ~= [b; 0]`. Regularization
+changes the objective; preconditioning changes variables/scaling and intended
+convergence behavior. Left/data-space weighting `W(Ax-b)` is documented as a
+different future contract and is not implemented here.
+
+I0-6 does not alter `run_cgls` or any CG/CGNR function and does not implement
+preconditioned CGLS, LSQR, constraints, masks, or domain inversion. These
+types remain direct-module prototypes with no root/API export or CLI.
+
 ## Stable and Stable-Subset APIs
 
 - RSF I/O: `read_rsf`, `write_rsf`, `read_header`, `write_header`.
@@ -1234,6 +1263,9 @@ Stage B-4 adds a minimal pure-Python, small-data linear-operator subset:
   do not change default solver or CLI behavior and are not stable root exports.
 - `run_cgls` and `run_cgls_problem`: I0-5 bounded unpreconditioned CGLS
   direct-module prototypes returning existing solver diagnostics contracts.
+- `Preconditioner`, `IdentityPreconditioner`, `DiagonalPreconditioner`,
+  `PreconditionerDiagnostics`, and `as_preconditioner`: I0-6 direct-module
+  right/model-space preconditioner contract only; no solver integration.
 - `SolverIterationRecord`, `SolverHistory`, and `SolverResult`: I0-1
   internal/prototype diagnostics containers. They are not a stable public
   solver-result schema and are not wired into the existing CG helpers yet.
@@ -1253,11 +1285,11 @@ This is not Madagascar's full external operator framework. The module-only CLIs
 operators and a toy identity dot-test operator. They do not execute arbitrary
 shell commands, do not reproduce the upstream pipe/tempfile operator protocol,
 do not support preconditioners, and do not stream large out-of-core datasets.
-After I0-5 they provide small composition algebra, a regularization subset, a
+After I0-6 they provide small composition algebra, a regularization subset, a
 small objective/residual/diagnostics problem layer, standalone diagnostics
 containers, optional CG/CGNR history adapters, and bounded unpreconditioned
-CGLS. They still do not provide LSQR, a preconditioner contract, or domain
-inversion; those remain later Inversion / Operator Foundation topics.
+CGLS plus an unused preconditioner contract. They still do not provide a
+preconditioned solver, LSQR, constraints/masks, or domain inversion.
 
 ## Optional Compatibility Tests
 

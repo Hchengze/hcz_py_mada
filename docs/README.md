@@ -47,14 +47,14 @@ checks scan current `docs/` plus `examples/`; they do not scan `archive_docs/`.
 - Full command-surface coverage: `86 / 2114 = 4.07%`.
 - Core `system/` + `plot/main` coverage: `73 / 301 = 24.25%`.
 - Direct `system/main` source-backed count: `32 / 39 = 82.05%`.
-- Pytest files: 78.
+- Pytest files: 79.
 - Top-level examples: 34, plus 14 workflow scripts and 1 workflow helper.
 - Mindmap artifact: `PYMADAGASCAR_MINDMAP.xmind`, synchronized through Stage
   C-10.
-- Windows pytest: `983 passed, 94 skipped`.
+- Windows pytest: `996 passed, 94 skipped`.
 - Skips: 93 optional original Madagascar comparisons and 1 optional C++
   extension test.
-- WSL `ubuntu2204` pytest: `1049 passed, 28 skipped`.
+- WSL `ubuntu2204` pytest: `1062 passed, 28 skipped`.
 - WSL original marker: `66 passed, 27 skipped`; no comparison bridge failures.
 - Quality Pass Q1: completed with RSFData contract tests, full top-level
   example smoke coverage, naming/compatibility notes, and examples inventory
@@ -176,6 +176,11 @@ checks scan current `docs/` plus `examples/`; they do not scan `archive_docs/`.
   `StackedOperator`, existing regularization operators, `SolverHistory`, and
   `SolverResult`. No CLI, stable root/API export, LSQR, preconditioner, domain
   inversion, XMind content, or command-surface coverage was added.
+- Inversion / Operator Foundation I0-6: added only a direct-module
+  right/model-space preconditioner contract: semantic base and diagnostics,
+  identity and invertible diagonal transforms, and explicit normalization.
+  It does not change `run_cgls`, implement a preconditioned solver or LSQR,
+  export a stable API, add a CLI, update XMind, or change coverage.
 
 The D-1 workflow remains a prototype, and D-2 is not the current route. The
 continuous Stage C small-batch sequence ends at C-10; C-11 is not recommended.
@@ -185,7 +190,7 @@ than new commands. SEG-Y trace-header work, DAS adapters, forward algorithms,
 general inversion, and imaging remain separate later topics.
 
 S1, S2, S3, S4-0, S4-1, S4-2, S4-3, S5, S6-0, S6-1, S6-2, S7-0, I0-0, I0-1,
-I0-2, I0-3, I0-4, and I0-5 are complete. The XMind workbook remains the Stage C-10/M1 snapshot;
+I0-2, I0-3, I0-4, I0-5, and I0-6 are complete. The XMind workbook remains the Stage C-10/M1 snapshot;
 current topic inventory and contracts are maintained in the Markdown
 authorities.
 

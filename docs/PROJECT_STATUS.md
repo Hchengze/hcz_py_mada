@@ -21,7 +21,7 @@ and must never be a hard dependency.
 | --- | ---: |
 | User-facing CLI modules | 134 |
 | Registered `pymada-*` console scripts | 25 |
-| Pytest files | 78 |
+| Pytest files | 79 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -50,7 +50,7 @@ D:\HczApp\Anaconda\envs\mywork\python.exe
 Latest Windows full-suite result:
 
 ```text
-983 passed, 94 skipped
+996 passed, 94 skipped
 ```
 
 Skip summary:
@@ -68,7 +68,7 @@ The validated WSL `ubuntu2204` environment uses
 Madagascar 4.2-git. Its current full-suite result is:
 
 ```text
-1049 passed, 28 skipped
+1062 passed, 28 skipped
 ```
 
 The WSL `original_madagascar` marker result is `66 passed, 27 skipped`.
@@ -348,6 +348,16 @@ cases; there are no remaining comparison bridge failures.
   CLI, console script, stable root/API export, LSQR, preconditioner, workflow,
   domain inversion, coverage entry, XMind update, original Madagascar
   dependency, or C++ dependency.
+- Inversion / Operator Foundation I0-6: Preconditioner Contract Design
+  completed. Direct-module prototypes `Preconditioner`,
+  `IdentityPreconditioner`, `DiagonalPreconditioner`,
+  `PreconditionerDiagnostics`, and `as_preconditioner` define an explicit
+  right/model-space transform `x = M z` with required forward/Hermitian-
+  adjoint actions, shape/finite checks, nonzero diagonal scaling, and JSON-safe
+  diagnostics. Preconditioning changes variables/scaling, while
+  regularization changes the objective. No solver consumes this contract yet;
+  `run_cgls` is unchanged. I0-6 adds no solver, LSQR, CLI, stable export,
+  coverage entry, XMind update, constraint/mask, or domain inversion.
 
 The route is now topic-oriented. D-1 stays as a bounded workflow prototype and
 D-2 remains paused. S1 establishes canonical trace/panel/gather data and
@@ -378,7 +388,8 @@ internal/prototype solver-history/result schema. I0-2 adds the first reusable
 small in-memory regularization subset. I0-3 adds the small objective/residual/
 diagnostics problem layer. I0-4 optionally connects that layer to the existing
 CG core and completes CGLS/LSQR design. I0-5 implements only bounded
-unpreconditioned CGLS, while leaving LSQR, preconditioning, and domain
+unpreconditioned CGLS. I0-6 defines right/model-space preconditioning without
+wiring it into a solver, while leaving LSQR, preconditioned solvers, and domain
 inversions for later passes. Broad
 velocity picking, high-resolution or solved Radon inversion, FK algorithm
 expansion, localization, modeling, and imaging expansion remain outside the
@@ -394,7 +405,7 @@ separate.
 | Seismic data signal analysis and processing | stable subset, with prototype NMO/Semblance/FK/Radon | S1 contracts, S2 metrics/QC, S3 NMO hardening, S4-0 source alignment, S4-1 Semblance hardening, S4-2 small-gather geometry design, S4-3 FK validation, S5 integrated workflow, S6-0/S6-1 route decisions, S6-2 small slant-stack hardening, and S7-0 closeout complete; pause by default | field-scale/non-regular geometry, multi-gather validation, velocity picking, high-resolution Radon, and production processing |
 | DAS / engineering workflows | workflow-only | retain workflow-first; no D-2 or adapter | domain geometry, gauge response, field fixtures |
 | Localization | workflow-only foundation | design only | reusable picks, travel-time, uncertainty, and coordinate contracts |
-| Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 optional CG/CGNR diagnostics integration/design, and I0-5 bounded unpreconditioned CGLS complete; next bounded task is preconditioner contract design or separate LSQR before domain inversion | LSQR, preconditioners, and domain inversion workflows |
+| Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, and I0-6 right/model-space preconditioner contract complete; next split the oversized module before solver integration or separate LSQR | preconditioned solvers, LSQR, and domain inversion workflows |
 | Forward modeling | simplified prototype | design only | reusable model/acquisition geometry and accuracy evidence |
 | Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
 | SEG-Y / headers | stable RSF / partial headers / prototype SEG-Y | independent defer | trace ownership, scalars/units, synchronized reorder |
@@ -470,6 +481,9 @@ diagnostics adapters and focused tests, with no CLI, workflow, example,
 coverage, or stable API change.
 I0-5 also leaves XMind unchanged because bounded CGLS is a direct-module
 prototype/testing surface with no CLI, workflow, example, coverage, or stable
+API change.
+I0-6 also leaves XMind unchanged because it adds only a direct-module contract
+and focused tests, with no solver, CLI, workflow, example, coverage, or stable
 API change.
 
 ## Hybrid Status

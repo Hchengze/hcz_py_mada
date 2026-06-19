@@ -8,6 +8,12 @@ optional compatibility checks.
 
 ### Added
 
+- Inversion / Operator Foundation I0-6 direct-module right/model-space
+  preconditioner contract: `Preconditioner`, `IdentityPreconditioner`,
+  `DiagonalPreconditioner`, `PreconditionerDiagnostics`, and
+  `as_preconditioner`. This is contract/design infrastructure only and is not
+  connected to CGLS, CGNR, or LSQR.
+- `tests/test_preconditioner_contract.py` with 13 deterministic contract tests.
 - Inversion / Operator Foundation I0-5 bounded unpreconditioned CGLS:
   direct-module `run_cgls` and `run_cgls_problem` for small real/complex
   in-memory least-squares problems, reusing `LeastSquaresProblem`,
@@ -528,6 +534,10 @@ optional compatibility checks.
 
 ### Testing
 
+- I0-6 adds 13 deterministic preconditioner contract tests. Windows suite:
+  `996 passed, 94 skipped`; WSL suite: `1062 passed, 28 skipped`; WSL original
+  marker remains `66 passed, 27 skipped`. Release, CLI inventory,
+  docs-command, examples inventory, mindmap, and strict WSL checks pass.
 - I0-5 adds 18 deterministic CGLS contract tests. Windows suite:
   `983 passed, 94 skipped`; WSL suite: `1049 passed, 28 skipped`; WSL original
   marker remains `66 passed, 27 skipped`. Release, CLI inventory,

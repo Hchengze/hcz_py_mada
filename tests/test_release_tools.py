@@ -44,7 +44,7 @@ def test_check_mindmap_tool_runs() -> None:
     assert "Mindmap check passed" in result.stdout
     assert "134 CLI modules" in result.stdout
     assert "25 console_scripts" in result.stdout
-    assert "78 pytest files" in result.stdout
+    assert "79 pytest files" in result.stdout
     assert "14 workflows" in result.stdout
 
 

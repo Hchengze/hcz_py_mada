@@ -18,7 +18,7 @@ compatibility.
 interfaces, maturity boundaries, completed stages, and deferred topics. It is
 a navigation aid rather than a second coverage source: the table above and the
 source mappings below remain authoritative. Topic Architecture Pass T1,
-Seismic Topic S1-S7-0, and Inversion / Operator Foundation I0-0/I0-1/I0-2/I0-3/I0-4/I0-5 do not
+Seismic Topic S1-S7-0, and Inversion / Operator Foundation I0-0/I0-1/I0-2/I0-3/I0-4/I0-5/I0-6 do not
 regenerate the workbook and leave all coverage values unchanged.
 
 ## Completed Stage B and C Batches
@@ -1637,6 +1637,36 @@ LSQR, a preconditioner contract, constraints, Radon LS, DAS/imaging/velocity
 inversion, streaming, or production inversion workflows. The next bounded
 route is preconditioner contract design or a separate LSQR implementation.
 
+## Inversion / Operator Foundation I0-6: Preconditioner Contract Design
+
+I0-6 defines, but does not consume, an explicit preconditioner contract. The
+selected next-solver direction is right/model-space preconditioning:
+
+```text
+x = M z
+minimize ||A M z - b||
+regularized: [A; lambda L] M z ~= [b; 0]
+```
+
+`Preconditioner` requires forward and Hermitian-adjoint actions because it is
+a semantic `LinearOperator` transform. Identity and invertible diagonal
+variants support real/complex small in-memory arrays. Diagnostics record kind,
+domain/range shapes, identity/diagonal flags, scale range, diagonal condition
+hint, and complex support. Zero diagonal weights are rejected: masks and
+constraints are distinct future contracts.
+
+Preconditioning changes variables/scaling and intended convergence behavior;
+regularization changes the least-squares objective. `as_preconditioner`
+therefore rejects ordinary operators, including regularization operators,
+unless they are wrapped in an explicit future preconditioner type. Left/data-
+space weighting `W(Ax-b)` is separate and deferred.
+
+I0-6 does not modify `run_cgls`, implement preconditioned CGLS/CGNR/LSQR, add
+a CLI/stable export, change coverage, update XMind, or enter domain inversion.
+Before solver integration, the now-large `linear_operator.py` should be split
+into operator, least-squares, solver, and preconditioner modules while
+preserving direct-module compatibility.
+
 ## R1 Topic Capability Matrix
 
 This earlier grouping remains as implementation inventory. The T1 topic
@@ -1649,7 +1679,7 @@ decisions and entry contracts above supersede its route recommendations.
 | Signal processing | FFT family, filters, smoothing, taper, spectra, envelope, correlation/convolution, shifts, calculus, Ricker, demean/detrend, decimation, band-stop/notch, local RMS, standard windows, PSD/CSD/coherence, spectrogram/SNR, Welch averaging, transfer estimates, whitening, attributes, windowed-sinc FIR, response QC, and band decomposition | preprocessing, correlation, calculus, smooth/noise/Ricker, signal-QC, spectral-QC, spectral-averaging, and FIR-design demos; FFT-bandpass workflow | stable subset | No IIR design, advanced windows, multi-taper/AR estimation, arbitrary-axis STFT, full system identification, multirate/polyphase processing, or streaming | Enter the seismic signal topic through contracts, fixtures, and one existing-API pipeline regression | Yes, as the first topic | Yes, shared data and validation fixtures |
 | Seismic processing | gain, AGC, mute/mutter, stack/stacks; NMO, semblance, FK, Radon; bin/linear/slice/max1 helpers | gather-QC demo and AGC/mute/stack workflow plus S1/S2/S3/S4-1/S4-2/S4-3/S6-2 contract workflows and the S5 integrated small-gather workflow | stable subset for basic QC; prototype for NMO/Semblance/FK/Radon | Field-scale/non-regular geometry, velocity picking, high-resolution Radon/inversion foundations, multi-gather tests, and trace-header integration | Pause after S7-0 by default; resume only through an explicit bounded design or source-aligned task | No, unless a narrow follow-up is explicitly selected | Yes, geometry and deterministic validation fixtures |
 | Forward modeling | `modeling.acoustic2d`, Ricker, RSF model grids | no dedicated forward workflow; only component tests and Ricker demo | simplified prototype | No reusable model/geometry API, multi-shot support, accuracy study, mature boundaries, or production scale | Defer new solver algorithms; first add design, geometry helpers, and a tiny validated workflow | Not yet | Yes |
-| Inversion and operators | `LinearOperator`, matrix/callable operators, composition helpers, regularization operators, least-squares problem diagnostics, optional CG/CGNR history adapters, bounded unpreconditioned CGLS, dot tests, CG/CGNR; Radon operator pair | linear-operator demo | partial / prototype | No LSQR, preconditioner contract, or domain inversion workflow | I0-1 through I0-5 foundations are complete; next design preconditioning or implement separate bounded LSQR before domain inversion | Yes, current topic | Yes |
+| Inversion and operators | `LinearOperator`, matrix/callable operators, composition helpers, regularization operators, least-squares problem diagnostics, optional CG/CGNR history adapters, bounded unpreconditioned CGLS, right/model-space preconditioner contract, dot tests, CG/CGNR; Radon operator pair | linear-operator demo | partial / prototype | No preconditioned solver, LSQR, constraints/masks, or domain inversion workflow | I0-1 through I0-6 foundations are complete; split the oversized module before solver integration or separate bounded LSQR | Yes, current topic | Yes |
 | Imaging | simplified Kirchhoff, plus FK/Radon/acoustic2d building blocks | Kirchhoff diffraction demo | simplified prototype | No acquisition model, amplitude/anti-alias treatment, migration adjoint test, velocity workflow, or reference suite | Postpone algorithm expansion; improve synthetic validation before adding methods | No | Yes |
 | DAS and engineering workflows | Existing RSF, signal, QC, picking, FK, and plotting tools can process small regular arrays | D-1 kinematic road-void diffraction workflow | workflow-only | No HDF5/TDMS/DAT adapters, gauge-length/strain response, automatic picks, channel geometry contract, chunking, or field fixtures | Retain D-1 as workflow-first; pause D-2 and all adapter work | Later, by explicit decision | Geometry and validation design |
 | Data formats, SEG-Y, and headers | stable RSF I/O; 2D SEG-Y read/write and trace-word extraction; minimal header table tools | header-table demos; no SEG-Y workflow | stable RSF / prototype SEG-Y / partial header table | No unified trace-header data model, synchronized data/header reorder, scalar/unit policy, or broad SEG-Y round trip | Keep `sfsegyheader` as a separate B-3-3 design task | Not immediately | Yes, explicit data model |
@@ -1785,18 +1815,20 @@ Stage C-4 audit-only decisions:
 ## Next Recommended Work
 
 S1, S2, S3, S4-0, S4-1, S4-2, S4-3, S5, S6-0, S6-1, S6-2, S7-0, I0-0, I0-1,
-I0-2, I0-3, I0-4, and I0-5 are complete. The next pass should not start by
-adding a feature command, broad domain inversion, or workflow. The recommended
-next task is a separate preconditioner contract design or bounded LSQR pass.
+I0-2, I0-3, I0-4, I0-5, and I0-6 are complete. The next pass should not start
+by adding a feature command, broad domain inversion, or workflow. The
+recommended next task is module decomposition before any preconditioned solver
+integration, or a separate bounded LSQR design/implementation pass.
 
 Do not jump directly to high-resolution `sfradon`, solved Radon inversion, or
 velocity picking. The seismic v0 harness is useful local infrastructure, and
 I0-1 now supplies the first operator algebra/history spine, I0-2 supplies a
 small regularization subset, and I0-3 supplies a small problem diagnostics
 layer. I0-4 supplies optional diagnostics integration and a source-backed
-CGLS/LSQR design; I0-5 supplies bounded unpreconditioned CGLS. Later Radon,
-inversion, imaging, and more complex geophysical workflows still need
-preconditioner and domain contracts first; LSQR remains separate.
+CGLS/LSQR design; I0-5 supplies bounded unpreconditioned CGLS; I0-6 supplies
+only the preconditioner contract. Later Radon, inversion, imaging, and more
+complex geophysical workflows still need solver integration and domain
+contracts first; LSQR remains separate.
 
 Do not add a feature merely because it is absent. Production non-regular
 acquisition geometry, trace-header integration, field-scale data, streaming,
