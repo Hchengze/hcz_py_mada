@@ -49,7 +49,14 @@ PUBLIC_NAMES = {
 }
 
 
+def _require_source_root() -> None:
+    if not SOURCE_ROOT.is_dir():
+        pytest.skip("Original Madagascar source tree is not available")
+
+
 def test_madagascar_geometry_source_paths_are_audited() -> None:
+    _require_source_root()
+
     expected = [
         SOURCE_ROOT / "system" / "seismic" / "Mnmo.c",
         SOURCE_ROOT / "system" / "seismic" / "Mvscan.c",

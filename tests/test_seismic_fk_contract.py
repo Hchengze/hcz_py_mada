@@ -46,7 +46,14 @@ TARGET_VELOCITY = FREQUENCY / TARGET_K
 REJECT_VELOCITY = FREQUENCY / REJECT_K
 
 
+def _require_source_root() -> None:
+    if not SOURCE_ROOT.is_dir():
+        pytest.skip("Original Madagascar source tree is not available")
+
+
 def test_madagascar_fk_and_dipfilter_source_paths_are_audited() -> None:
+    _require_source_root()
+
     direct_fk = list(SOURCE_ROOT.rglob("Mfk.c"))
     assert direct_fk == []
 

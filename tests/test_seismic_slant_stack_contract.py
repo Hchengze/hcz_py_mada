@@ -45,7 +45,14 @@ DP = 0.0002
 FPEAK = 24.0
 
 
+def _require_source_root() -> None:
+    if not SOURCE_ROOT.is_dir():
+        pytest.skip("Original Madagascar source tree is not available")
+
+
 def test_madagascar_slant_source_paths_are_audited() -> None:
+    _require_source_root()
+
     mslant = SOURCE_ROOT / "system" / "seismic" / "Mslant.c"
     slant = SOURCE_ROOT / "system" / "seismic" / "slant.c"
     user_slant = SOURCE_ROOT / "user" / "yliu" / "slant.c"

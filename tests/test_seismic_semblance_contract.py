@@ -34,7 +34,14 @@ VMAX = 2700.0
 DV = 100.0
 
 
+def _require_source_root() -> None:
+    if not SOURCE_ROOT.is_dir():
+        pytest.skip("Original Madagascar source tree is not available")
+
+
 def test_mvscan_source_path_audit_record_is_present() -> None:
+    _require_source_root()
+
     assert MVSCAN_SOURCE.is_file()
     text = MVSCAN_SOURCE.read_text(encoding="utf-8", errors="replace")
     for pattern in (

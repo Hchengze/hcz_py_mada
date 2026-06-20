@@ -3,6 +3,8 @@ from __future__ import annotations
 import pkgutil
 from pathlib import Path
 
+import pytest
+
 import pymadagascar.cli as cli_package
 import pymadagascar.generic.linear_operator as linear_operator
 
@@ -11,7 +13,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOT = PROJECT_ROOT.parent / "src-master"
 
 
+def _require_source_root() -> None:
+    if not SOURCE_ROOT.is_dir():
+        pytest.skip("Original Madagascar source tree is not available")
+
+
 def test_solver_source_audit_paths_are_recorded_by_existing_tree() -> None:
+    _require_source_root()
+
     required = [
         SOURCE_ROOT / "system" / "main" / "conjgrad.c",
         SOURCE_ROOT / "system" / "main" / "cconjgrad.c",
