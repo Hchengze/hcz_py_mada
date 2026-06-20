@@ -46,6 +46,63 @@ class InversionResult:
     rmse: float
 
 
+def build_das_geometry_metadata(
+    geometry: SyntheticGeometry,
+    receiver_x: np.ndarray,
+) -> dict[str, object]:
+    """Return JSON-safe workflow-only DAS geometry metadata.
+
+    The contract is deliberately small and local to this workflow. It records
+    the synthetic regular-linear fiber geometry used by D-1/D-2A without
+    promoting a stable DAS API or modeling gauge-length strain response.
+    """
+
+    receivers = np.asarray(receiver_x, dtype=np.float64).reshape(-1)
+    if receivers.size != geometry.channel_count:
+        raise ValueError("receiver_x size must match channel_count")
+    if receivers.size == 0 or not np.all(np.isfinite(receivers)):
+        raise ValueError("receiver_x must contain finite channel coordinates")
+
+    channel_start = float(receivers[0])
+    channel_stop = float(receivers[-1])
+    expected_stop = channel_start + geometry.channel_spacing * (geometry.channel_count - 1)
+    if not np.isclose(channel_stop, expected_stop):
+        raise ValueError("receiver_x must describe a regular channel axis")
+
+    return {
+        "schema": "pymadagascar_workflow_das_geometry_v1",
+        "geometry_kind": "regular_linear_das",
+        "coordinate_frame": "local_2d",
+        "distance_unit": "m",
+        "time_unit": "s",
+        "channel_count": int(geometry.channel_count),
+        "channel_spacing": float(geometry.channel_spacing),
+        "channel_start": channel_start,
+        "channel_stop": channel_stop,
+        "channel_axis_role": "fiber_channel",
+        "fiber_origin_x": channel_start,
+        "fiber_origin_y": 0.0,
+        "fiber_orientation_degrees": 0.0,
+        "fiber_x_start": channel_start,
+        "fiber_x_stop": channel_stop,
+        "source_x": float(geometry.source_x),
+        "source_y": 0.0,
+        "source_kind": "synthetic_impact",
+        "gauge_length": None,
+        "gauge_length_status": "not_modeled",
+        "void_x": float(geometry.void_x),
+        "void_depth": float(geometry.void_depth),
+        "void_depth_positive": "down",
+        "receiver_coordinate_convention": (
+            "channel coordinate increases along fiber orientation"
+        ),
+        "sample_count": int(geometry.sample_count),
+        "sample_interval": float(geometry.dt),
+        "time_start": 0.0,
+        "time_stop": float((geometry.sample_count - 1) * geometry.dt),
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     output_dir = parse_output_dir("das_void_diffraction", argv)
     geometry = SyntheticGeometry()
@@ -106,7 +163,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         pick_x,
         pick_times,
     )
-    _write_result(result_path, geometry, inversion, pick_indices.size)
+    geometry_metadata = build_das_geometry_metadata(geometry, receiver_x)
+    _write_result(result_path, geometry, inversion, pick_indices.size, geometry_metadata)
 
     print(f"output_dir={output_dir}")
     print(
@@ -358,6 +416,7 @@ def _write_result(
     geometry: SyntheticGeometry,
     inversion: InversionResult,
     pick_count: int,
+    geometry_metadata: dict[str, object],
 ) -> None:
     true_values = {
         "source_x": geometry.source_x,
@@ -369,6 +428,7 @@ def _write_result(
     payload = {
         "workflow": "das_void_diffraction_kinematic_prototype",
         "data_layout": "NumPy synthesis uses data[time, channel]; RSF stores (channel, time).",
+        "das_geometry": dict(geometry_metadata),
         "true": true_values,
         "inverted": inverted_values,
         "relative_error": {

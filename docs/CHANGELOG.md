@@ -146,9 +146,17 @@ optional compatibility checks.
 - The D-1 workflow generates direct Rayleigh and road-void diffraction events,
   applies the existing FK prototype, writes RSF/PNG/pick/JSON outputs, and
   performs a workflow-only variable-projection least-squares inversion.
+- Stage D-2A adds a workflow-only DAS geometry metadata contract to the D-1
+  JSON output. The new `das_geometry` object records regular-linear local-2D
+  channel geometry, units, fiber orientation, synthetic source/void positions,
+  sample timing, receiver-coordinate convention, and explicit
+  `gauge_length_status: not_modeled`.
 - `tests/test_das_void_diffraction_workflow.py` for travel-time/inversion
-  recovery, subprocess execution, output/header checks, and repository output
-  isolation.
+  recovery, subprocess execution, output/header checks, geometry metadata
+  fields, JSON safety, local-path absence, and repository output isolation.
+- D-2A adds no DAS HDF5/TDMS/DAT adapter, field fixture, automatic picking,
+  gauge response, stable API, CLI, command coverage, or field-performance
+  claim.
 - Stage C-7 signal/small-gather QC foundation: shared `demean`, `detrend`,
   `decimate`, `bandstop`, `notch`, and `local_rms` NumPy APIs with file-backed
   RSF wrappers.

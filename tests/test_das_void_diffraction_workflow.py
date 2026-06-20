@@ -6,6 +6,7 @@ from pathlib import Path
 import runpy
 import subprocess
 import sys
+from typing import Any
 
 import numpy as np
 import pytest
@@ -100,6 +101,48 @@ def test_workflow_subprocess_outputs_and_inversion(tmp_path: Path) -> None:
     assert payload["relative_error"]["vr"] < 0.03
     assert payload["inverted"]["rmse"] < 0.001
 
+    geometry = payload["das_geometry"]
+    assert geometry["schema"] == "pymadagascar_workflow_das_geometry_v1"
+    assert geometry["geometry_kind"] == "regular_linear_das"
+    assert geometry["coordinate_frame"] == "local_2d"
+    assert geometry["distance_unit"] == "m"
+    assert geometry["time_unit"] == "s"
+    assert geometry["channel_axis_role"] == "fiber_channel"
+    assert geometry["channel_count"] == raw.data.shape[0]
+    assert geometry["sample_count"] == raw.data.shape[1]
+    assert geometry["channel_spacing"] == pytest.approx(float(raw.header["d2"]))
+    assert geometry["channel_start"] == pytest.approx(float(raw.header["o2"]))
+    assert geometry["channel_stop"] == pytest.approx(
+        geometry["channel_start"]
+        + geometry["channel_spacing"] * (geometry["channel_count"] - 1)
+    )
+    assert geometry["fiber_origin_x"] == pytest.approx(geometry["channel_start"])
+    assert geometry["fiber_origin_y"] == pytest.approx(0.0)
+    assert geometry["fiber_orientation_degrees"] == pytest.approx(0.0)
+    assert geometry["fiber_x_start"] == pytest.approx(geometry["channel_start"])
+    assert geometry["fiber_x_stop"] == pytest.approx(geometry["channel_stop"])
+    assert geometry["source_x"] == pytest.approx(payload["true"]["source_x"])
+    assert geometry["source_y"] == pytest.approx(0.0)
+    assert geometry["source_kind"] == "synthetic_impact"
+    assert geometry["void_x"] == pytest.approx(payload["true"]["void_x"])
+    assert geometry["void_depth"] == pytest.approx(payload["true"]["void_depth"])
+    assert geometry["void_depth_positive"] == "down"
+    assert geometry["gauge_length"] is None
+    assert geometry["gauge_length_status"] == "not_modeled"
+    assert (
+        geometry["receiver_coordinate_convention"]
+        == "channel coordinate increases along fiber orientation"
+    )
+    assert geometry["sample_interval"] == pytest.approx(float(raw.header["d1"]))
+    assert geometry["time_start"] == pytest.approx(float(raw.header["o1"]))
+    assert geometry["time_stop"] == pytest.approx(
+        geometry["time_start"]
+        + geometry["sample_interval"] * (geometry["sample_count"] - 1)
+    )
+
+    json.dumps(geometry)
+    assert not _contains_local_absolute_path(payload)
+
 
 def _example_files() -> set[Path]:
     return {
@@ -107,3 +150,17 @@ def _example_files() -> set[Path]:
         for path in EXAMPLES.rglob("*")
         if path.is_file() and "__pycache__" not in path.parts
     }
+
+
+def _contains_local_absolute_path(value: Any) -> bool:
+    if isinstance(value, dict):
+        return any(_contains_local_absolute_path(item) for item in value.values())
+    if isinstance(value, list | tuple):
+        return any(_contains_local_absolute_path(item) for item in value)
+    if isinstance(value, str):
+        normalized = value.replace("\\\\", "/")
+        return any(
+            marker in normalized
+            for marker in ("E:/", "D:/", "/home/hcz", "/mnt/")
+        )
+    return False
