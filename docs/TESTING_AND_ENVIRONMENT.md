@@ -24,13 +24,13 @@ D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_release.py
 D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_cli_inventory.py
 D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_docs_commands.py
 D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_examples_inventory.py
-D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_mindmap.py
+D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_learning_notebook.py
 ```
 
 Latest result:
 
 ```text
-965 passed, 94 skipped
+1006 passed, 94 skipped
 ```
 
 ## Skip Reasons
@@ -90,7 +90,7 @@ python tools/check_release.py
 python tools/check_cli_inventory.py
 python tools/check_docs_commands.py
 python tools/check_examples_inventory.py
-python tools/check_mindmap.py
+python tools/check_learning_notebook.py
 python tools/check_wsl_madagascar.py --strict
 ```
 
@@ -113,14 +113,14 @@ precedence.
 Current WSL results:
 
 ```text
-full suite:                1031 passed, 28 skipped
-original_madagascar only:   66 passed, 27 skipped
+full suite:                 1006 passed, 94 skipped, 1 warning
+original_madagascar only:   66 passed, 27 skipped (last dedicated marker baseline)
 ```
 
-The 27 marker skips are explicit unavailable-command or intentionally
-non-comparable subset cases. The additional full-suite skip is the optional C++
-extension. There are no remaining bridge failures or real comparison
-mismatches.
+The full-suite warning is the known mounted-drive `.pytest_cache` permission
+warning when running from `/mnt/e`; pytest exits successfully. Marker skips are
+explicit unavailable-command or intentionally non-comparable subset cases.
+There are no remaining bridge failures or real comparison mismatches.
 
 ## Hybrid C++
 
@@ -159,17 +159,69 @@ Do not add or require C++ without a Python fallback, benchmark, and tests.
   fourteen workflows for syntax, main guards, pymadagascar import targets,
   output-directory/tempfile behavior, absolute path literals, and live-doc
   inventory agreement. It does not scan `archive_docs/`.
-- `tools/check_mindmap.py`: validates the XMind ZIP/JSON/XML structure and
-  exact CLI inventories. Because S1, S2, S3, S4-0, S4-1, S4-2, S4-3, S5,
-  S6-0, S6-1, S6-2, S7-0, I0-0, I0-1, I0-2, I0-3, I0-4, I0-5, and I0-6 intentionally leave XMind at the
-  Stage C-10/M1 snapshot,
-  it validates frozen test/example/workflow baselines while separately checking
-  current repository counts against `PROJECT_STATUS.md`; coverage remains
-  exact.
+- `tools/check_learning_notebook.py`: validates
+  `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` with lightweight static JSON
+  checks. It verifies notebook presence, nbformat metadata, Markdown-heavy
+  structure, required learning topics, absence of local absolute paths, no
+  saved outputs, and current `PROJECT_STATUS.md` learning-notebook inventory.
+  It does not execute notebook cells.
 - `tools/check_wsl_madagascar.py`: optional Windows-side WSL Madagascar probe.
   Unavailable WSL or missing upstream commands return success by default;
   `--strict` makes the probe fail for environment diagnostics. Distro, user,
   shell, and Conda prefix are configurable.
+
+## Risk-Based Testing Policy
+
+Default testing level should match the risk of the change.
+
+Small focused changes:
+
+- run targeted pytest files for changed modules;
+- run directly affected neighboring tests;
+- run relevant release-light checks;
+- run `git diff --check`.
+
+Cross-cutting changes must still run full tests:
+
+- operator foundation;
+- RSF I/O;
+- CLI registry;
+- packaging / `pyproject.toml`;
+- release tools;
+- docs inventory;
+- test infrastructure;
+- CI workflow;
+- module split / refactor;
+- changes touching shared base classes or common utilities.
+
+Topic completion / phase closure:
+
+- run full Windows pytest;
+- run full WSL pytest;
+- run release-light tools;
+- run `git diff --check`;
+- optionally check GitHub Actions status.
+
+Before commit/push:
+
+- for low-risk narrow tasks, targeted tests may be accepted if explicitly justified;
+- for medium/high-risk tasks, full local pytest is required;
+- for release/tooling/doc-inventory changes, full local pytest and release-light
+  checks are required.
+
+Never silently skip failing tests. If a test is truly optional/external, skip
+logic must be explicit and justified. Do not hide real failures by broad marker
+exclusion.
+
+Future Codex reports should include:
+
+```text
+Testing level used:
+- targeted / affected / full
+
+Reason:
+- ...
+```
 
 Quality Pass Q1 adds:
 
@@ -270,10 +322,10 @@ Windows `725 passed, 94 skipped`; WSL `791 passed, 28 skipped`; WSL original
 marker `66 passed, 27 skipped`.
 
 Topic Architecture Pass T1 is documentation-only. It adds no test or skip,
-does not change coverage, and intentionally does not regenerate
-`docs/PYMADAGASCAR_MINDMAP.xmind`. The full Windows and WSL suites, original
-marker, release/inventory checks, mindmap check, and strict WSL probe remain
-the required validation set.
+does not change coverage, and did not update the then-current visual index.
+At that time, the full Windows and WSL suites, original marker,
+release/inventory checks, visual-index check, and strict WSL probe remained the
+required validation set.
 
 Seismic Topic S1 adds `tests/test_seismic_signal_contracts.py` with 17 tests
 covering trace/panel/gather headers, deterministic seeds, known hyperbolic and

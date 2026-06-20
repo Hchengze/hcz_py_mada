@@ -25,7 +25,7 @@ and must never be a hard dependency.
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
-| Mindmap artifacts | 1 |
+| Learning notebooks | 1 |
 
 ## Current Coverage
 
@@ -68,12 +68,14 @@ The validated WSL `ubuntu2204` environment uses
 Madagascar 4.2-git. Its current full-suite result is:
 
 ```text
-1062 passed, 28 skipped
+1006 passed, 94 skipped, 1 warning
 ```
 
-The WSL `original_madagascar` marker result is `66 passed, 27 skipped`.
-The remaining marker skips are explicit unavailable-command or designed-subset
-cases; there are no remaining comparison bridge failures.
+The warning is the known mounted-drive `.pytest_cache` permission warning when
+running from `/mnt/e`; pytest exits successfully. The last dedicated WSL
+`original_madagascar` marker baseline is `66 passed, 27 skipped`. The remaining
+marker skips are explicit unavailable-command or designed-subset cases; there
+are no remaining comparison bridge failures.
 
 ## Stage Progress
 
@@ -156,18 +158,17 @@ cases; there are no remaining comparison bridge failures.
   readable failure diagnostics. The WSL probe now supports distro/user/shell/
   Conda selection plus strict and non-strict modes. No command, stable API, or
   coverage count changed.
-- Mindmap Documentation Pass M1: `docs/PYMADAGASCAR_MINDMAP.xmind` now provides
-  an XMind visual index of the current interfaces, technical
-  topics, maturity boundaries, tests, workflows, and roadmap through Stage
-  C-10. `tools/check_mindmap.py` keeps its counts, CLI inventories, baseline
-  fields, and roadmap boundaries synchronized. M1 adds no command, stable API,
-  or coverage entry.
+- Mindmap Documentation Pass M1 previously added a visual index through Stage
+  C-10. D0-1 supersedes that artifact with
+  `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` and
+  `tools/check_learning_notebook.py`; neither M1 nor D0-1 adds a command,
+  stable API, or coverage entry.
 - Topic Architecture Pass T1: repository-only reassessment of ten technical
   topics completed. The continuous Stage C feature-batch sequence ends at
   C-10, C-11 is not recommended, and seismic data signal analysis and
   processing is selected as the first topic. T1 changes documentation only:
   no feature, CLI, console script, stable API, coverage value, test, example,
-  or mindmap artifact changes.
+  or learning-notebook artifact changes.
 - Seismic Topic S1: Contract and Fixture Foundation completed. It adds
   `pymadagascar.testing.seismic_fixtures` as an internal/testing module,
   `tests/test_seismic_signal_contracts.py`, and
@@ -447,44 +448,20 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   internal small-gather geometry helpers, RSF comparisons, and the optional
   binary-safe original Madagascar command runner.
 - `tools`: package/release, CLI runtime/docs command, live examples inventory,
-  mindmap inventory, and optional WSL checks; live checks intentionally exclude
-  `archive_docs`.
+  learning-notebook inventory, and optional WSL checks; live checks
+  intentionally exclude `archive_docs`.
 
-## Mindmap Artifact
+## Learning Notebook
 
-`docs/PYMADAGASCAR_MINDMAP.xmind` is a visual feature index, not a replacement
-for the eight authoritative Markdown documents. XMind remains frozen at the
-Stage C-10 / M1 snapshot. T1, S1, and S2 intentionally do not regenerate it.
-`tools/check_mindmap.py` validates the frozen snapshot, unchanged CLI/coverage
-boundaries, and the current Markdown inventory separately. S3 intentionally
-does not regenerate the workbook. S4-0, S4-1, S4-2, and S4-3 also leave
-XMind unchanged. S5 also leaves XMind unchanged.
-S6-0 also leaves XMind unchanged because it is a documentation-only route
-decision with no new command, API, test, example, workflow, or coverage
-surface. S6-1 also leaves XMind unchanged because it is a documentation-only
-source audit and route decision with the same unchanged command/API/test/
-example/workflow/coverage surface. S6-2 also leaves XMind unchanged because it
-hardens an existing prototype and adds only testing/workflow documentation
-around the frozen command/API/coverage surface. S7-0 also leaves XMind
-unchanged because it is a closeout/handoff decision with no inventory,
-coverage, API, or command-surface change. I0-0 also leaves XMind unchanged
-because it is an audit/design pass with no inventory, coverage, API, CLI,
-workflow, test, or command-surface change. I0-1 also leaves XMind unchanged
-because it adds no CLI, console script, workflow, example, coverage entry, or
-root/API stable export. I0-2 also leaves XMind unchanged because it adds only
-direct-module prototype regularization operators and focused tests. I0-3 also
-leaves XMind unchanged because it adds only direct-module prototype
-problem/diagnostics structures and focused tests; any roadmap map refresh
-should be a separate dedicated pass.
-I0-4 also leaves XMind unchanged because it adds only optional direct-module
-diagnostics adapters and focused tests, with no CLI, workflow, example,
-coverage, or stable API change.
-I0-5 also leaves XMind unchanged because bounded CGLS is a direct-module
-prototype/testing surface with no CLI, workflow, example, coverage, or stable
-API change.
-I0-6 also leaves XMind unchanged because it adds only a direct-module contract
-and focused tests, with no solver, CLI, workflow, example, coverage, or stable
-API change.
+`docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` is the study-oriented learning entry
+point, not a replacement for the eight authoritative Markdown documents and
+not a coverage authority. It replaces the former XMind visual index so the
+project has a text-reviewable, gradually extensible guide. Codex should
+consider updating it when a future change adds a user-visible capability,
+algorithm topic, important workflow, usage pattern, or formula explanation.
+Small internal refactors do not need notebook churn.
+`tools/check_learning_notebook.py` validates the notebook with lightweight
+static JSON checks and does not execute notebook cells.
 
 ## Hybrid Status
 

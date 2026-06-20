@@ -10,9 +10,9 @@ testing details live in the other current docs.
 - Core `system/` + `plot/main` coverage is `73 / 301 = 24.25%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
-- `PYMADAGASCAR_MINDMAP.xmind` is a concise visual index. It intentionally
-  compresses parameter, dtype, geometry, and compatibility details; the eight
-  Markdown documents remain authoritative.
+- `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
+  intentionally compresses parameter, dtype, geometry, and compatibility
+  details; the eight Markdown documents remain authoritative.
 
 ## Topic Entry Gates
 

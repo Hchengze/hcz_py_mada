@@ -21,7 +21,7 @@ def main() -> int:
         ("required docs and examples exist", _check_required_paths),
         ("CLI inventory and runtime targets are consistent", _check_cli_inventory),
         ("example inventory is consistent", _check_examples_inventory),
-        ("mindmap inventory is consistent", _check_mindmap_inventory),
+        ("learning notebook is consistent", _check_learning_notebook),
         ("temporary output policy is documented", _check_output_policy),
     ]
 
@@ -41,7 +41,7 @@ def main() -> int:
     print("Release check passed.")
     print(
         "Summary: metadata, public imports, CLI targets, fallback hybrid backend, "
-        "docs, mindmap, examples, and temporary-output policy are consistent."
+        "docs, learning notebook, examples, and temporary-output policy are consistent."
     )
     return 0
 
@@ -220,7 +220,7 @@ def _check_required_paths() -> None:
         "docs/TESTING_AND_ENVIRONMENT.md",
         "docs/KNOWN_LIMITATIONS.md",
         "docs/CHANGELOG.md",
-        "docs/PYMADAGASCAR_MINDMAP.xmind",
+        "docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb",
         "README.md",
         ".gitignore",
         "pyproject.toml",
@@ -271,10 +271,10 @@ def _check_examples_inventory() -> None:
         raise RuntimeError("; ".join(failures))
 
 
-def _check_mindmap_inventory() -> None:
-    from tools.check_mindmap import validate_mindmap
+def _check_learning_notebook() -> None:
+    from tools.check_learning_notebook import validate_learning_notebook
 
-    failures = validate_mindmap()
+    failures = validate_learning_notebook()
     if failures:
         raise RuntimeError("; ".join(failures))
 

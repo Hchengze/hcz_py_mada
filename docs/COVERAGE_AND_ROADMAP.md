@@ -12,14 +12,15 @@
 Coverage is a command-surface audit, not a promise of full upstream parameter
 compatibility.
 
-## Visual Roadmap Index
+## Learning Roadmap Index
 
-`docs/PYMADAGASCAR_MINDMAP.xmind` presents the R1 topic capability matrix,
-interfaces, maturity boundaries, completed stages, and deferred topics. It is
-a navigation aid rather than a second coverage source: the table above and the
-source mappings below remain authoritative. Topic Architecture Pass T1,
-Seismic Topic S1-S7-0, and Inversion / Operator Foundation I0-0/I0-1/I0-2/I0-3/I0-4/I0-5/I0-6 do not
-regenerate the workbook and leave all coverage values unchanged.
+`docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` presents a study-oriented index for
+interfaces, maturity boundaries, completed stages, deferred topics, and selected
+operator/inversion formulas. It is a navigation aid rather than a second
+coverage source: the table above and the source mappings below remain
+authoritative. Future user-visible capabilities, algorithm topics, important
+workflows, or formula explanations may update the notebook when that adds
+learning value.
 
 ## Completed Stage B and C Batches
 

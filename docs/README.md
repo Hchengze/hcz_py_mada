@@ -23,8 +23,8 @@ Read these files first:
 - `KNOWN_LIMITATIONS.md`: concise list of important current limitations.
 - `CHANGELOG.md`: local baseline change history.
 
-The visual feature index is `PYMADAGASCAR_MINDMAP.xmind`. It is an XMind
-workbook and remains a concise index rather than an authority for API or
+The learning entry point is `PYMADAGASCAR_LEARNING_GUIDE.ipynb`. It is a
+Jupyter Notebook for study and usage orientation, not an authority for API or
 coverage. The eight Markdown files above remain the authoritative written
 documentation.
 
@@ -47,15 +47,16 @@ checks scan current `docs/` plus `examples/`; they do not scan `archive_docs/`.
 - Full command-surface coverage: `86 / 2114 = 4.07%`.
 - Core `system/` + `plot/main` coverage: `73 / 301 = 24.25%`.
 - Direct `system/main` source-backed count: `32 / 39 = 82.05%`.
-- Pytest files: 79.
+- Pytest files: 80.
 - Top-level examples: 34, plus 14 workflow scripts and 1 workflow helper.
-- Mindmap artifact: `PYMADAGASCAR_MINDMAP.xmind`, synchronized through Stage
-  C-10.
-- Windows pytest: `996 passed, 94 skipped`.
+- Learning notebook: `PYMADAGASCAR_LEARNING_GUIDE.ipynb`, maintained as a
+  study-oriented guide rather than an API or coverage authority.
+- Windows pytest: `1006 passed, 94 skipped`.
 - Skips: 93 optional original Madagascar comparisons and 1 optional C++
   extension test.
-- WSL `ubuntu2204` pytest: `1062 passed, 28 skipped`.
-- WSL original marker: `66 passed, 27 skipped`; no comparison bridge failures.
+- WSL `ubuntu2204` pytest: `1006 passed, 94 skipped, 1 warning`.
+- Last dedicated WSL original marker baseline: `66 passed, 27 skipped`; no
+  comparison bridge failures.
 - Quality Pass Q1: completed with RSFData contract tests, full top-level
   example smoke coverage, naming/compatibility notes, and examples inventory
   release checks.
@@ -190,9 +191,9 @@ than new commands. SEG-Y trace-header work, DAS adapters, forward algorithms,
 general inversion, and imaging remain separate later topics.
 
 S1, S2, S3, S4-0, S4-1, S4-2, S4-3, S5, S6-0, S6-1, S6-2, S7-0, I0-0, I0-1,
-I0-2, I0-3, I0-4, I0-5, and I0-6 are complete. The XMind workbook remains the Stage C-10/M1 snapshot;
-current topic inventory and contracts are maintained in the Markdown
-authorities.
+I0-2, I0-3, I0-4, I0-5, I0-6, and I0-8A are complete. Current topic inventory
+and contracts are maintained in the Markdown authorities; the learning notebook
+is a guided study layer.
 
 WSL-1 validated `ubuntu2204`, the `pymadagascar-dev` Conda environment, and
 Madagascar 4.2-git. Original comparisons remain optional compatibility checks:

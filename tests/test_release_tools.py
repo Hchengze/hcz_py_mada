@@ -38,10 +38,10 @@ def test_check_examples_inventory_tool_runs() -> None:
     assert "14 workflows" in result.stdout
 
 
-def test_check_mindmap_tool_runs() -> None:
-    result = _run_tool("check_mindmap.py")
+def test_check_learning_notebook_tool_runs() -> None:
+    result = _run_tool("check_learning_notebook.py")
     assert result.returncode == 0, result.stderr + result.stdout
-    assert "Mindmap check passed" in result.stdout
+    assert "Learning notebook check passed" in result.stdout
     assert "134 CLI modules" in result.stdout
     assert "25 console_scripts" in result.stdout
     assert "80 pytest files" in result.stdout

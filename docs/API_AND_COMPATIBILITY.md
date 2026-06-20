@@ -15,13 +15,13 @@
 - `internal`: helpers used by APIs/CLIs, not public contract.
 - `optional`: hybrid or original-comparison behavior that may be unavailable.
 
-## Feature Map Status
+## Learning Notebook Status
 
-`docs/PYMADAGASCAR_MINDMAP.xmind` is a visual index of the current feature
-families and their maturity labels. It is intentionally concise and is not an
-API stability source. This document remains authoritative for stable,
-stable-subset, partial, prototype, simplified-prototype, optional, and
-Pythonic-convenience boundaries.
+`docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a learning and usage notebook for
+the current feature families and their maturity labels. It is intentionally
+concise and is not an API stability source or coverage source. This document
+remains authoritative for stable, stable-subset, partial, prototype,
+simplified-prototype, optional, and Pythonic-convenience boundaries.
 
 ## Topic Architecture T1 Boundary
 

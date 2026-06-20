@@ -8,6 +8,12 @@ optional compatibility checks.
 
 ### Added
 
+- Documentation Baseline D0-1: `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` as
+  the study-oriented notebook replacing the former XMind visual index, plus
+  `tools/check_learning_notebook.py` for lightweight static validation.
+- Risk-based testing policy in `docs/TESTING_AND_ENVIRONMENT.md`, requiring
+  targeted/affected tests for small low-risk changes and full testing for
+  cross-cutting, tooling, release, or phase-closeout changes.
 - Inversion / Operator Foundation I0-8A prototype integration: optional
   right/model-space preconditioner support for `run_cgls` and
   `run_cgls_problem`, preserving default unpreconditioned behavior while
@@ -24,12 +30,9 @@ optional compatibility checks.
   `StackedOperator`, existing regularization operators, `SolverHistory`, and
   `SolverResult`.
 - `tests/test_cgls_contract.py` with 18 deterministic solver contract tests.
-- Mindmap Documentation Pass M1:
-  `docs/PYMADAGASCAR_MINDMAP.xmind`, an XMind feature map covering
-  interfaces, functional topics, maturity boundaries, examples, testing, and
-  roadmap status through Stage C-10.
-- `tools/check_mindmap.py` and `tests/test_mindmap_inventory.py` for XML,
-  branch, live inventory, baseline, and roadmap-boundary validation.
+- Mindmap Documentation Pass M1 previously introduced a visual feature map
+  through Stage C-10; D0-1 supersedes that artifact with the learning notebook
+  and static notebook validation while preserving the historical record.
 - RSF header + sidecar I/O with native binary support.
 - `ascii_float` text sidecar subset for 1D/2D/3D float RSF data.
 - `key=value` CLI parameter handling and stable `par=file` subset.
@@ -306,6 +309,10 @@ optional compatibility checks.
 
 ### Changed
 
+- Release-light checks now validate the learning notebook with
+  `tools/check_learning_notebook.py` instead of validating a frozen XMind
+  workbook. The notebook is not executed by release tooling and is not a
+  coverage authority.
 - The automatic Stage C small-batch sequence now ends at C-10; C-11 is not
   recommended. Seismic data signal analysis and processing is the first topic,
   beginning with contracts and fixtures rather than new commands.
@@ -520,9 +527,10 @@ optional compatibility checks.
 
 ### Documentation
 
-- The eight authoritative Markdown files now link the FreeMind map, explain
-  how to import it, and state that it is a visual index rather than an API or
-  coverage authority.
+- The former XMind visual index is replaced by
+  `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb`, a study-oriented notebook. The
+  eight Markdown files remain the authoritative API, compatibility, testing,
+  status, and coverage sources.
 - `docs/PROJECT_STATUS.md` records the current state, counts, test baseline,
   and stage progress.
 - `docs/USER_GUIDE.md` records install, CLI inventory, Python API entry points,

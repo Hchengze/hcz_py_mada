@@ -51,7 +51,7 @@ D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_release.py
 D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_cli_inventory.py
 D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_docs_commands.py
 D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_examples_inventory.py
-D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_mindmap.py
+D:\HczApp\Anaconda\envs\mywork\python.exe tools/check_learning_notebook.py
 ```
 
 WSL environment probe:
@@ -76,7 +76,7 @@ conda activate pymadagascar-dev
 cd /mnt/e/HczDocument/BaiduDisk/BaiduSyncdisk/HCZ_work/CodexProject/HCZ_madagascar/hcz_mada
 python -m pytest -q
 python -m pytest -q -rs -m original_madagascar
-python tools/check_mindmap.py
+python tools/check_learning_notebook.py
 python tools/check_wsl_madagascar.py --strict
 ```
 
@@ -85,19 +85,16 @@ paths to Linux `sf*` programs. An unavailable upstream command is an optional
 skip. A failure after the command is found is a real comparison result and
 must be investigated rather than converted to a skip.
 
-## Feature Mindmap
+## Learning Notebook
 
-Open `docs/PYMADAGASCAR_MINDMAP.xmind` with XMind or another application that
-supports XMind workbooks.
+Open `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` with Jupyter, VS Code, or any
+notebook viewer.
 
-The map is a compact visual index of interfaces, functional topics, maturity
-levels, examples, tests, and roadmap boundaries through Stage C-10. It is not
-the API stability authority; use `API_AND_COMPATIBILITY.md` for API contracts
-and `KNOWN_LIMITATIONS.md` for detailed boundaries. Topic Architecture Pass T1
-and Seismic Topic S1/S2/S3/S4-0/S4-1/S4-2/S4-3/S5/S6-0/S6-1/S6-2 are documented in the Markdown
-authorities, as are S7-0 and Inversion / Operator Foundation
-I0-0/I0-1/I0-2/I0-3/I0-4/I0-5/I0-6; the mindmap is intentionally not regenerated during
-these topic passes.
+The notebook is a compact learning guide for project positioning, package
+structure, quick usage, geophysical topic navigation, and the operator/
+inversion foundation. It is not the API stability authority; use
+`API_AND_COMPATIBILITY.md` for API contracts and `KNOWN_LIMITATIONS.md` for
+detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 

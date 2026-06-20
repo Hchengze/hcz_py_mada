@@ -43,4 +43,4 @@ jobs:
           python tools/check_cli_inventory.py
           python tools/check_docs_commands.py
           python tools/check_examples_inventory.py
-          python tools/check_mindmap.py
+          python tools/check_learning_notebook.py
