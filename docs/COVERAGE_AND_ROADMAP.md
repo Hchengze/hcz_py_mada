@@ -292,11 +292,14 @@ Every topic must define three contracts before broad implementation:
 ### 3. Localization
 
 - **Existing:** `max1` picking, synthetic arrival tests, receiver metadata in
-  acoustic2d, and D-1 workflow-only travel-time/least-squares helpers.
-- **Maturity / entry:** workflow-only foundation; design may start, reusable
-  implementation may not.
-- **Missing:** pick records, uncertainty/quality weights, coordinate frames,
-  travel-time provider interface, identifiability rules, and solver reporting.
+  acoustic2d, D-1 workflow-only travel-time/least-squares helpers, and L0-1
+  pure-Python direct-module 2D travel-time/grid-search primitives in
+  `pymadagascar.localization.traveltime`.
+- **Maturity / entry:** prototype. L0-1 starts reusable localization-topic
+  primitives without promoting a stable/root API, CLI, or production workflow.
+- **Missing:** pick records, uncertainty/quality metadata, richer coordinate
+  frames, travel-time provider interfaces, identifiability rules, solver
+  reporting, automatic picking, and field-scale validation.
 - **Data contract:** event/pick ID, receiver ID and coordinates, observed time,
   uncertainty or weight, quality flag, units, and reference-time convention.
 - **Geometry contract:** source unknown vector, receiver coordinates,
@@ -305,11 +308,17 @@ Every topic must define three contracts before broad implementation:
 - **Validation contract:** analytic homogeneous travel times, noise and
   outliers, rank/identifiability failures, residual/Jacobian checks, and an
   independently computed least-squares reference.
-- **First batch:** a small travel-time, picking, and weighted least-squares
-  design with test vectors; no public API in the design pass.
+- **First batch:** L0-1 implements finite homogeneous 2D direct and
+  source-diffractor-receiver kinematic travel times, observed-minus-predicted
+  residuals with optional positive weights, and deterministic x-z grid-search
+  point localization. It is a pure-Python prototype for small local fixtures,
+  not a full Madagascar command clone.
 - **Do not:** build event catalogs, tomography, automatic production picking,
-  or couple localization to SEG-Y headers.
-- **Docs:** existing roadmap/API/limitations docs are sufficient during design.
+  real-data readers, waveform modeling, imaging, uncertainty/covariance, field
+  claims, or coupling to SEG-Y headers.
+- **Docs:** record prototype boundaries in roadmap/API/limitations docs; do not
+  change command coverage denominators unless a true command-surface mapping is
+  added later.
 
 ### 4. Inversion / Operators
 
@@ -1726,21 +1735,26 @@ they have tests and CLI surfaces.
 3. **Right-preconditioned LSQR design.** Keep Golub-Kahan state, latent/model
    diagnostics, and stopping behavior separate from CGNR/CGLS; do not infer
    preconditioner support from the unpreconditioned LSQR prototype.
-4. **Minimal velocity-picking design.** Keep this design-only; do not add
+4. **Localization follow-up design.** L0-1 supplies only homogeneous 2D
+   travel-time and grid-search point-location primitives. A later pass should
+   design pick records, uncertainty/weights, identifiability reporting, and
+   interfaces to DAS/seismic geometry before adding automatic picking or
+   production location workflows.
+5. **Minimal velocity-picking design.** Keep this design-only; do not add
    automatic picking or production velocity analysis until uncertainty,
    acceptance metrics, and Semblance/Radon semantics are mature.
-5. **High-resolution `sfradon` design.** Defer implementation until the
+6. **High-resolution `sfradon` design.** Defer implementation until the
    inversion/operator foundation can carry Toeplitz/CG, objective,
    regularization, and diagnostics contracts.
-6. **SEG-Y / header topic.** Defer until trace ownership, scalar/coordinate
+7. **SEG-Y / header topic.** Defer until trace ownership, scalar/coordinate
    semantics, row-to-trace synchronization, and round-trip fixtures are
    designed. `sfsegyheader` remains a separate task.
-7. **DAS / engineering workflow.** Retain D-1 as a synthetic workflow and
+8. **DAS / engineering workflow.** Retain D-1 as a synthetic workflow and
    consume shared contracts later. D-2, adapters, gauge response, automatic
    picking, and uncertainty implementation remain paused.
-8. **Forward modeling design.** Define model/acquisition geometry and an
+9. **Forward modeling design.** Define model/acquisition geometry and an
    accuracy-validation matrix without adding a solver or kernel.
-9. **Imaging topic.** Defer until geometry, forward, operator, and reference
+10. **Imaging topic.** Defer until geometry, forward, operator, and reference
    validation foundations exist.
 
 Stage D-1 remains intact, but the route stops before D-2. Stages C-7 through
@@ -1777,6 +1791,7 @@ C-11.
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
 | `sfslice` | `../src-master/system/generic/Mslice.c` | fixed-index slice subset; upstream uses a picked surface and interpolation |
 | `sfmax1` | `../src-master/system/generic/Mmax1.c` | maximum value/index/coordinate subset; upstream emits complex local-maxima picks |
+| Localization L0-1 primitives | related sources include `../src-master/system/seismic/araytrace.c`, `raytrace.c`, `celltrace3.c`, `Mlineiko.c`, `Mdiffraction.c`, `Mdiffoc.c`, and book traveltime examples under `../src-master/book/geo384w/hw2/cmp/` | pure-Python prototype travel-time/grid-search helpers; not a command clone and not counted as command coverage |
 | `sfautocorr` | `../src-master/user/gee/Mautocorr.c` | trace autocorrelation subset; upstream is a helix-filter autocorrelation tool |
 | `sfconvolve` | `../src-master/user/luke/Mconvolve.c` | one-axis two-input convolution subset; upstream is a 2D image kernel tool with adjoint/wrap modes |
 | `sfcconv` | `../src-master/user/gee/Mcconv.c` | circular convolution subset; upstream uses complex internal filter/operator parameters |
@@ -1841,10 +1856,12 @@ Stage C-4 audit-only decisions:
 ## Next Recommended Work
 
 S1, S2, S3, S4-0, S4-1, S4-2, S4-3, S5, S6-0, S6-1, S6-2, S7-0, I0-0, I0-1,
-I0-2, I0-3, I0-4, I0-5, I0-6, I0-8A/I0-8B, and I0-9B1 are complete. The next pass should not start
-by adding a feature command, broad domain inversion, or workflow. The
-recommended next task is either a small LSQR learning/example closeout or a
-separate design pass for right-preconditioned LSQR.
+I0-2, I0-3, I0-4, I0-5, I0-6, I0-8A/I0-8B, I0-9B1/I0-9C, D-2A, and L0-1 are
+complete. The next pass should not start by adding a feature command, broad
+domain inversion, or production workflow. Recommended follow-ups are either a
+bounded localization design pass for pick records/uncertainty/identifiability,
+a right-preconditioned LSQR design/implementation pass, or a separate
+topic-driven workflow pass with explicit fixtures.
 
 Do not jump directly to high-resolution `sfradon`, solved Radon inversion, or
 velocity picking. The seismic v0 harness is useful local infrastructure, and
@@ -1860,8 +1877,8 @@ while preconditioned LSQR remains separate.
 Do not add a feature merely because it is absent. Production non-regular
 acquisition geometry, trace-header integration, field-scale data, streaming,
 SEG-Y, DAS adapters, new velocity-picking or production velocity-scan workflow,
-broad Radon/FK algorithm expansion, localization, modeling, production
-inversion, and imaging remain outside the next pass.
+broad Radon/FK algorithm expansion, production localization, modeling,
+production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without API, CLI, console-script, or coverage
 changes. WSL-1 remains validation infrastructure, not a reason to count

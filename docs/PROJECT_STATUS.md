@@ -21,7 +21,7 @@ and must never be a hard dependency.
 | --- | ---: |
 | User-facing CLI modules | 134 |
 | Registered `pymada-*` console scripts | 25 |
-| Pytest files | 80 |
+| Pytest files | 82 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -396,6 +396,17 @@ are no remaining comparison bridge failures.
   stable root/API export, right-preconditioned LSQR, command coverage, coverage
   denominator change, original Madagascar dependency, or production inversion
   claim.
+- Localization Topic L0-1: Travel-time primitives and grid-search prototype
+  completed. It starts the localization topic with
+  `pymadagascar.localization.traveltime`, a pure-Python prototype module for
+  finite small 2D local-coordinate problems. It provides direct and
+  source-diffractor-receiver kinematic travel times, observed-minus-predicted
+  residuals, and a deterministic x-z grid-search point-location result
+  contract. The source audit found related Madagascar raytrace/eikonal/
+  diffraction/traveltime sources, but L0-1 is not a complete Madagascar command
+  clone. It adds no CLI, root/stable API export, automatic picking, real-data
+  reader, uncertainty, imaging, field-performance claim, command coverage, or
+  coverage denominator change.
 
 The route is now topic-oriented. D-1 stays as a bounded workflow prototype and
 D-2A adds a workflow-only geometry metadata contract without starting DAS file
@@ -434,8 +445,9 @@ regularized LSQR. I0-9C adds the minimal LSQR learning example and notebook
 section while leaving right-preconditioned LSQR, stable solver APIs, and domain
 inversions for later passes. Broad
 velocity picking, high-resolution or solved Radon inversion, FK algorithm
-expansion, localization, modeling, and imaging expansion remain outside the
-current pass. Localization and forward modeling remain design-only; imaging and
+expansion, production localization, modeling, and imaging expansion remain
+outside the current pass. Localization now has L0-1 small travel-time/grid-search
+primitives only; forward modeling remains design-only, and imaging and
 SEG-Y/header expansion remain deferred. Hybrid
 benchmarking, B-3-3 `sfsegyheader`, release, licensing, and tagging remain
 separate.
@@ -446,7 +458,7 @@ separate.
 | --- | --- | --- | --- |
 | Seismic data signal analysis and processing | stable subset, with prototype NMO/Semblance/FK/Radon | S1 contracts, S2 metrics/QC, S3 NMO hardening, S4-0 source alignment, S4-1 Semblance hardening, S4-2 small-gather geometry design, S4-3 FK validation, S5 integrated workflow, S6-0/S6-1 route decisions, S6-2 small slant-stack hardening, and S7-0 closeout complete; pause by default | field-scale/non-regular geometry, multi-gather validation, velocity picking, high-resolution Radon, and production processing |
 | DAS / engineering workflows | workflow-only | D-1 kinematic road-void workflow and D-2A workflow-only geometry metadata contract complete; no adapter | DAS file adapters, field fixtures, gauge response, automatic picking, uncertainty, and field-performance validation |
-| Localization | workflow-only foundation | design only | reusable picks, travel-time, uncertainty, and coordinate contracts |
+| Localization | prototype | L0-1 pure-Python 2D travel-time and grid-search point-location primitives complete; no CLI/root API | pick records, uncertainty, identifiability, velocity-model interfaces, and production workflows |
 | Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, I0-8A/I0-8B right-preconditioned CGLS diagnostics, I0-9B1 bounded unpreconditioned/regularized LSQR, and I0-9C LSQR learning example/notebook closure complete | Right-preconditioned LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
 | Forward modeling | simplified prototype | design only | reusable model/acquisition geometry and accuracy evidence |
 | Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
@@ -481,6 +493,9 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   banks.
 - `pymadagascar/seismic`: gain, AGC, mute/mutter, stack, NMO, semblance, FK,
   Radon.
+- `pymadagascar/localization`: L0-1 pure-Python prototype travel-time
+  primitives and deterministic 2D x-z grid-search point localization for small
+  local-coordinate fixtures; not a root/stable API or CLI surface.
 - `pymadagascar/imaging`: simplified Kirchhoff prototype.
 - `pymadagascar/modeling`: simplified acoustic2d prototype.
 - `pymadagascar/plot`: Matplotlib quicklook replacements.

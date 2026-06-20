@@ -8,6 +8,19 @@ optional compatibility checks.
 
 ### Added
 
+- Localization Topic L0-1 travel-time/grid-search prototype:
+  `pymadagascar.localization.traveltime` adds finite small 2D local-coordinate
+  helpers for Euclidean distance, direct homogeneous travel time,
+  source-diffractor-receiver kinematic diffraction travel time,
+  observed-minus-predicted residuals with optional positive weights, and
+  deterministic x-z grid-search point localization.
+- `tests/test_localization_traveltime_contract.py` covers hand-calculated
+  direct/diffraction travel times, multi-receiver shapes, finite/positive input
+  validation, residual convention, weighted objectives, known-diffractor grid
+  recovery, JSON-safe metadata, and root/API export boundaries. L0-1 adds no
+  CLI, root/stable API, automatic picking, real-data reader, uncertainty,
+  imaging, field-performance claim, command coverage, or coverage denominator
+  change.
 - Inversion / Operator Foundation I0-9C LSQR learning/example closure:
   `examples/my_workflows/lsqr_minimal_example.py` demonstrates the bounded
   direct-module LSQR prototype against dense least squares, `LeastSquaresProblem`

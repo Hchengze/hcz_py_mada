@@ -38,8 +38,10 @@ must not silently reinterpret an existing stable API.
 The first topic, seismic data signal analysis and processing, starts with
 documented trace/panel/gather fixtures, pipeline validation, internal QC
 metrics, bounded prototype hardening, and an integrated small-gather workflow
-using existing APIs. Localization has
-no reusable API yet. Forward modeling and imaging remain simplified prototypes.
+using existing APIs. Localization now has L0-1 direct-module prototype
+travel-time and grid-search primitives in `pymadagascar.localization`, but no
+root/stable API, CLI, automatic picking, uncertainty, or production location
+workflow. Forward modeling and imaging remain simplified prototypes.
 Inversion may first design operator composition, regularization, objective,
 residual, and history contracts without promoting a domain inversion API. DAS
 travel-time and least-squares helpers remain workflow-only, and SEG-Y trace
@@ -634,6 +636,39 @@ stable root/API export, right-preconditioned LSQR, left/data-space weighting,
 constraints, masks, domain inversion, production scaling, or coverage denominator
 change. Passing `preconditioner=` to LSQR raises an explicit prototype-boundary
 error instead of silently ignoring it.
+
+## Localization Topic L0-1 Boundary
+
+L0-1 starts the localization topic with a small pure-Python prototype module,
+`pymadagascar.localization.traveltime`. The module is importable directly from
+the localization package but is not imported by `pymadagascar.__init__` or
+`pymadagascar.api`, and it does not add a CLI, console script, or
+command-surface coverage entry.
+
+The supported contract is deliberately narrow:
+
+- `euclidean_distance_2d(points, origin)`: finite local 2D distances for
+  arrays shaped `(..., 2)`.
+- `direct_travel_time_2d(source_xy, receiver_xy, velocity)`:
+  `||receiver - source|| / velocity` for positive finite homogeneous velocity.
+- `diffraction_travel_time_2d(source_xy, receiver_xy, diffractor_xy, velocity)`:
+  `(||diffractor - source|| + ||receiver - diffractor||) / velocity`.
+- `travel_time_residuals(predicted, observed, weights=None)`: residuals use the
+  `observed_minus_predicted` convention; positive finite weights return
+  square-root-weighted residuals for least-squares use.
+- `grid_search_point_location_2d(...)`: deterministic exhaustive x-z search for
+  a point diffractor/target. Coordinates use `local_2d_x_z`: x is horizontal,
+  z is depth positive downward. The objective grid shape is
+  `(len(z_grid), len(x_grid))`.
+
+The `LocalizationGridSearchResult` metadata records method, travel-time model,
+residual convention, coordinate frame, units, grid shape/order, receiver count,
+weighting, and prototype/non-field flags. L0-1 does not implement automatic
+picking, pick records, uncertainty/covariance, tomography, waveform modeling,
+imaging, DAS/SEG-Y readers, field-scale validation, or field-performance
+claims. A small source audit found related Madagascar raytrace, eikonal,
+diffraction, and book traveltime sources, but this module is not a full
+Madagascar command clone.
 
 ## Stable and Stable-Subset APIs
 
