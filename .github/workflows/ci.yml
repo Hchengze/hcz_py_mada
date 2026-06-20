@@ -35,7 +35,7 @@ jobs:
           python -m pip install -e ".[test]"
 
       - name: Run pytest
-        run: python -m pytest -q
+        run: python -m pytest -q -ra --tb=short --basetemp "${{ runner.temp }}/pytest"
 
       - name: Run release-light checks
         run: |
