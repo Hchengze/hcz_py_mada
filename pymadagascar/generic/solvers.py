@@ -23,6 +23,12 @@ from pymadagascar.generic.operators import (
     _norm2,
     as_linear_operator,
 )
+from pymadagascar.generic.preconditioners import (
+    DiagonalPreconditioner,
+    IdentityPreconditioner,
+    Preconditioner,
+    as_preconditioner,
+)
 
 
 @dataclass(frozen=True)
@@ -471,6 +477,7 @@ def run_cgls(
     tol: float = 1e-6,
     track_history: bool = True,
     metadata: dict[str, Any] | None = None,
+    preconditioner: Preconditioner | np.ndarray | None = None,
 ) -> SolverResult:
     """Solve a bounded unregularized least-squares problem with CGLS.
 
@@ -489,6 +496,7 @@ def run_cgls(
         tol=tol,
         track_history=track_history,
         metadata=metadata,
+        preconditioner=preconditioner,
     )
 
 
@@ -500,6 +508,7 @@ def run_cgls_problem(
     tol: float = 1e-6,
     track_history: bool = True,
     metadata: dict[str, Any] | None = None,
+    preconditioner: Preconditioner | np.ndarray | None = None,
 ) -> SolverResult:
     """Solve a small existing :class:`LeastSquaresProblem` with CGLS.
 
@@ -516,13 +525,28 @@ def run_cgls_problem(
     maxiter_value = int(maxiter)
     tol_value = _finite_nonnegative_float(tol, "tol")
 
-    operator, rhs = _augmented_least_squares_system(problem)
-    rhs_vec = _flatten_finite_to_size(rhs, operator.data_size, "augmented data")
-    if x0 is None:
-        start = np.zeros(problem.model_shape, dtype=np.result_type(operator.dtype, rhs_vec.dtype))
+    normalized_preconditioner = _normalize_cgls_preconditioner(problem, preconditioner)
+    if normalized_preconditioner is None:
+        operator, rhs = _augmented_least_squares_system(problem)
     else:
-        start = _flatten_finite_to_size(x0, problem.model_size, "x0").reshape(
-            problem.model_shape
+        operator, rhs = _preconditioned_augmented_least_squares_system(
+            problem,
+            normalized_preconditioner,
+        )
+    rhs_vec = _flatten_finite_to_size(rhs, operator.data_size, "augmented data")
+    if normalized_preconditioner is None:
+        if x0 is None:
+            start = np.zeros(operator.model_shape, dtype=np.result_type(operator.dtype, rhs_vec.dtype))
+        else:
+            start = _flatten_finite_to_size(x0, problem.model_size, "x0").reshape(
+                problem.model_shape
+            )
+    else:
+        start = _latent_initial_from_model_initial(
+            x0,
+            problem,
+            normalized_preconditioner,
+            dtype=np.result_type(operator.dtype, rhs_vec.dtype, normalized_preconditioner.dtype),
         )
     dtype = np.result_type(operator.dtype, rhs_vec.dtype, start.dtype)
     x = np.asarray(start, dtype=dtype).copy()
@@ -539,11 +563,26 @@ def run_cgls_problem(
 
     records: list[SolverIterationRecord] = []
 
+    def model_from_variable(variable: np.ndarray) -> np.ndarray:
+        if normalized_preconditioner is None:
+            return variable.reshape(problem.model_shape)
+        model = normalized_preconditioner.forward(
+            variable.reshape(normalized_preconditioner.model_shape)
+        )
+        return _flatten_finite_to_size(
+            model,
+            problem.model_size,
+            "preconditioned model",
+        ).reshape(problem.model_shape)
+
+    preconditioner_metadata = _cgls_preconditioner_metadata(normalized_preconditioner)
+
     def append_record(iteration: int, step_length: float | None) -> None:
         if not track_history:
             return
+        model = model_from_variable(x)
         diagnostics = problem.diagnostics(
-            x,
+            model,
             iteration=iteration,
             include_gradient=True,
         )
@@ -567,6 +606,7 @@ def run_cgls_problem(
                     "normal_residual_norm": float(np.sqrt(_norm2(normal_residual))),
                     "convergence_residual_space": "normal_equation",
                     "objective_kind": "least_squares",
+                    **preconditioner_metadata,
                 },
             )
         )
@@ -581,7 +621,7 @@ def run_cgls_problem(
         if converged:
             break
         projected = np.asarray(
-            operator.forward(search_direction.reshape(problem.model_shape)), dtype=dtype
+            operator.forward(search_direction.reshape(operator.model_shape)), dtype=dtype
         ).reshape(-1)
         curvature = _norm2(projected)
         if curvature <= np.finfo(float).eps:
@@ -589,7 +629,7 @@ def run_cgls_problem(
             stopping_reason = "invalid_state"
             break
         alpha = gamma / curvature
-        x = x + alpha * search_direction.reshape(problem.model_shape)
+        x = x + alpha * search_direction.reshape(operator.model_shape)
         residual = residual - alpha * projected
         next_normal_residual = np.asarray(
             operator.adjoint(residual.reshape(operator.data_shape)), dtype=dtype
@@ -613,14 +653,20 @@ def run_cgls_problem(
         search_direction = next_normal_residual + beta * search_direction
         gamma = next_gamma
 
-    final_diagnostics = problem.diagnostics(x, include_gradient=True)
+    final_model = model_from_variable(x)
+    final_diagnostics = problem.diagnostics(final_model, include_gradient=True)
+    final_normal_residual_norm = float(np.sqrt(_norm2(normal_residual)))
     run_metadata = {
         "solver": "cgls",
         "max_iterations": maxiter_value,
         "tolerance": tol_value,
         "tolerance_kind": "relative_initial_normal_residual_with_unit_floor",
         "initial_normal_residual_norm": initial_gradient_norm,
-        "normal_residual_norm": final_diagnostics.gradient_norm,
+        "normal_residual_norm": (
+            final_diagnostics.gradient_norm
+            if normalized_preconditioner is None
+            else final_normal_residual_norm
+        ),
         "residual_space": (
             "augmented_least_squares" if problem.has_regularization else "data"
         ),
@@ -628,13 +674,17 @@ def run_cgls_problem(
         "convergence_residual_space": "normal_equation",
         "data_residual_norm": final_diagnostics.data_residual_norm,
         "regularization_residual_norm": final_diagnostics.regularization_residual_norm,
-        "regularization_via": (
-            "StackedOperator[A, lambda*L]" if problem.has_regularization else None
+        "regularization_via": _cgls_regularization_metadata(
+            problem,
+            normalized_preconditioner,
         ),
         "objective_kind": "least_squares",
         "track_history": bool(track_history),
+        **preconditioner_metadata,
         **dict(metadata or {}),
     }
+    if normalized_preconditioner is not None:
+        run_metadata["model_gradient_norm"] = final_diagnostics.gradient_norm
     if invalid_state is not None:
         run_metadata["invalid_state"] = invalid_state
     history = (
@@ -648,7 +698,7 @@ def run_cgls_problem(
         else None
     )
     return problem.solver_result(
-        x,
+        final_model,
         iterations=completed_iterations,
         converged=converged,
         stopping_reason=stopping_reason,
@@ -848,3 +898,99 @@ def _augmented_least_squares_system(
     )
     rhs = np.concatenate([problem.data.reshape(-1), zeros])
     return operator, rhs.reshape(operator.data_shape)
+
+
+def _normalize_cgls_preconditioner(
+    problem: LeastSquaresProblem,
+    preconditioner: Preconditioner | np.ndarray | None,
+) -> Preconditioner | None:
+    if preconditioner is None:
+        return None
+    normalized = as_preconditioner(
+        preconditioner,
+        model_shape=problem.model_shape,
+        dtype=problem.operator.dtype,
+    )
+    if normalized.data_shape != problem.model_shape:
+        raise LinearOperatorError(
+            "preconditioner range_shape must match problem model_shape, "
+            f"got {normalized.data_shape} and {problem.model_shape}"
+        )
+    return normalized
+
+
+def _preconditioned_augmented_least_squares_system(
+    problem: LeastSquaresProblem,
+    preconditioner: Preconditioner,
+) -> tuple[LinearOperator, np.ndarray]:
+    data_operator = problem.operator @ preconditioner
+    if not problem.has_regularization or problem.regularization is None:
+        return data_operator, problem.data.copy()
+    regularization = problem.reg_weight * (problem.regularization @ preconditioner)
+    operator = StackedOperator((data_operator, regularization))
+    zeros = np.zeros(
+        problem.regularization.data_size,
+        dtype=np.result_type(problem.data.dtype, regularization.dtype),
+    )
+    rhs = np.concatenate([problem.data.reshape(-1), zeros])
+    return operator, rhs.reshape(operator.data_shape)
+
+
+def _latent_initial_from_model_initial(
+    x0: np.ndarray | None,
+    problem: LeastSquaresProblem,
+    preconditioner: Preconditioner,
+    *,
+    dtype: Any,
+) -> np.ndarray:
+    if x0 is None:
+        return np.zeros(preconditioner.model_shape, dtype=dtype)
+
+    model_start = _flatten_finite_to_size(x0, problem.model_size, "x0").reshape(
+        problem.model_shape
+    )
+    if isinstance(preconditioner, IdentityPreconditioner):
+        return _flatten_finite_to_size(
+            model_start,
+            preconditioner.model_size,
+            "latent x0",
+        ).reshape(preconditioner.model_shape)
+    if isinstance(preconditioner, DiagonalPreconditioner):
+        latent = model_start / preconditioner.weights
+        return _flatten_finite_to_size(
+            latent,
+            preconditioner.model_size,
+            "latent x0",
+        ).reshape(preconditioner.model_shape)
+    raise LinearOperatorError(
+        "x0 is a model-space initial model; this prototype can only map it to "
+        "a latent initial state for identity or diagonal preconditioners"
+    )
+
+
+def _cgls_preconditioner_metadata(
+    preconditioner: Preconditioner | None,
+) -> dict[str, Any]:
+    if preconditioner is None:
+        return {}
+    diagnostics = preconditioner.diagnostics()
+    return {
+        "preconditioned": True,
+        "right_preconditioning": True,
+        "preconditioner_kind": diagnostics.kind,
+        "variable_space": "latent",
+        "solution_space": "model",
+        "preconditioner_domain_shape": diagnostics.domain_shape,
+        "preconditioner_range_shape": diagnostics.range_shape,
+    }
+
+
+def _cgls_regularization_metadata(
+    problem: LeastSquaresProblem,
+    preconditioner: Preconditioner | None,
+) -> str | None:
+    if not problem.has_regularization:
+        return None
+    if preconditioner is None:
+        return "StackedOperator[A, lambda*L]"
+    return "StackedOperator[A @ M, lambda*L @ M]"

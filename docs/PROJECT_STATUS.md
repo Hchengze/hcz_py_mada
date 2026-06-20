@@ -21,7 +21,7 @@ and must never be a hard dependency.
 | --- | ---: |
 | User-facing CLI modules | 134 |
 | Registered `pymada-*` console scripts | 25 |
-| Pytest files | 79 |
+| Pytest files | 80 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -50,7 +50,7 @@ D:\HczApp\Anaconda\envs\mywork\python.exe
 Latest Windows full-suite result:
 
 ```text
-996 passed, 94 skipped
+1006 passed, 94 skipped
 ```
 
 Skip summary:

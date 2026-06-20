@@ -8,6 +8,10 @@ optional compatibility checks.
 
 ### Added
 
+- Inversion / Operator Foundation I0-8A prototype integration: optional
+  right/model-space preconditioner support for `run_cgls` and
+  `run_cgls_problem`, preserving default unpreconditioned behavior while
+  returning model-space solutions and diagnostics.
 - Inversion / Operator Foundation I0-6 direct-module right/model-space
   preconditioner contract: `Preconditioner`, `IdentityPreconditioner`,
   `DiagonalPreconditioner`, `PreconditionerDiagnostics`, and

@@ -141,8 +141,11 @@ def test_preconditioner_contract_adds_no_cli_or_stable_export() -> None:
     assert "precondition" not in module_names
 
 
-def test_run_cgls_default_contract_is_unchanged_and_has_no_preconditioner_parameter() -> None:
-    assert "preconditioner" not in inspect.signature(run_cgls).parameters
+def test_run_cgls_default_contract_is_unchanged_with_keyword_preconditioner() -> None:
+    signature = inspect.signature(run_cgls)
+    assert "preconditioner" in signature.parameters
+    assert signature.parameters["preconditioner"].kind is inspect.Parameter.KEYWORD_ONLY
+    assert signature.parameters["preconditioner"].default is None
     matrix = np.array([[1.0, 0.0], [1.0, 1.0], [0.0, 1.0]])
     data = np.array([1.0, 2.0, 2.0])
     result = run_cgls(matrix, data, maxiter=10, tol=1e-12)
