@@ -163,6 +163,8 @@ def test_cgls_adds_no_cli_or_stable_export() -> None:
     assert "cgls" not in module_names
 
 
-def test_lsqr_and_separate_stable_preconditioned_solver_remain_unimplemented() -> None:
-    for name in ["lsqr", "run_lsqr", "run_preconditioned_cgls"]:
+def test_lsqr_symbol_and_separate_stable_preconditioned_solver_remain_unimplemented() -> None:
+    assert hasattr(linear_operator, "run_lsqr")
+    assert hasattr(linear_operator, "run_lsqr_problem")
+    for name in ["lsqr", "run_preconditioned_cgls"]:
         assert not hasattr(linear_operator, name)

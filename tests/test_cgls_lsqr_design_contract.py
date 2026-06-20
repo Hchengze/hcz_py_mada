@@ -47,9 +47,11 @@ def test_i0_4_cgls_lsqr_design_is_documented() -> None:
     assert "not implemented" in compatibility
 
 
-def test_cgls_is_direct_module_only_and_lsqr_remains_unimplemented() -> None:
+def test_cgls_and_lsqr_are_direct_module_only_without_cli() -> None:
     assert hasattr(linear_operator, "run_cgls")
     assert hasattr(linear_operator, "run_cgls_problem")
+    assert hasattr(linear_operator, "run_lsqr")
+    assert hasattr(linear_operator, "run_lsqr_problem")
     for name in ["lsqr", "LSQR"]:
         assert not hasattr(linear_operator, name)
 

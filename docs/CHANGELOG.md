@@ -8,6 +8,16 @@ optional compatibility checks.
 
 ### Added
 
+- Inversion / Operator Foundation I0-9B1 bounded LSQR prototype:
+  direct-module `run_lsqr` and `run_lsqr_problem` for small deterministic
+  unpreconditioned least-squares problems, including regularized
+  `LeastSquaresProblem` objects through the existing augmented-system path and
+  nonzero model-space `x0` through a shifted residual correction solve.
+- `tests/test_lsqr_contract.py` covers dense references, regularization,
+  nonzero `x0`, complex smoke behavior, metadata/history fields, invalid
+  inputs, explicit preconditioner rejection, and direct-module export
+  boundaries. I0-9B1 adds no CLI, root/stable API, preconditioned LSQR, left
+  weighting, command coverage, or coverage denominator change.
 - Documentation Baseline D0-1: `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` as
   the study-oriented notebook replacing the former XMind visual index, plus
   `tools/check_learning_notebook.py` for lightweight static validation.

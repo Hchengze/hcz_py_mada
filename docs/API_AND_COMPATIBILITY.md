@@ -609,6 +609,32 @@ as kind, identity/diagonal flags, condition hint, and scale range. This remains
 a direct-module prototype with no root/API export, CLI, LSQR, constraints,
 masks, or domain inversion.
 
+## Inversion / Operator Foundation I0-9B1 Boundary
+
+I0-9B1 adds bounded unpreconditioned LSQR only as a direct-module prototype in
+`pymadagascar.generic.solvers` and the compatibility re-export layer
+`pymadagascar.generic.linear_operator`:
+
+- `run_lsqr(A, b, ...)` constructs an unregularized `LeastSquaresProblem`.
+- `run_lsqr_problem(problem, ...)` consumes an existing problem and reuses the
+  same `[A; lambda L]` / `[b; 0]` augmented regularization path as CGLS.
+- The recurrence is a small pure-Python Golub-Kahan bidiagonalization loop for
+  deterministic in-memory problems. It is not a full Madagascar command port.
+- Nonzero `x0` remains a model-space initial model. The implementation solves a
+  shifted correction problem with `r0 = b_aug - A_aug x0` and returns
+  `x0 + dx`.
+- Residual diagnostics use the `b - A x` convention. Objective, data residual,
+  regularization residual, and model-gradient diagnostics remain owned by
+  `LeastSquaresProblem`; convergence residual metadata names the data or
+  augmented least-squares space explicitly.
+
+These functions are not imported by `pymadagascar.__init__` or
+`pymadagascar.api`. I0-9B1 adds no CLI, console script, command-surface coverage,
+stable root/API export, right-preconditioned LSQR, left/data-space weighting,
+constraints, masks, domain inversion, production scaling, or coverage denominator
+change. Passing `preconditioner=` to LSQR raises an explicit prototype-boundary
+error instead of silently ignoring it.
+
 ## Stable and Stable-Subset APIs
 
 - RSF I/O: `read_rsf`, `write_rsf`, `read_header`, `write_header`.
@@ -1272,6 +1298,10 @@ Stage B-4 adds a minimal pure-Python, small-data linear-operator subset:
   prototypes returning existing solver diagnostics contracts; I0-8A/I0-8B add
   optional right/model-space preconditioner support and clearer latent/model
   diagnostics.
+- `run_lsqr` and `run_lsqr_problem`: I0-9B1 bounded unpreconditioned LSQR
+  direct-module prototypes for small deterministic least-squares problems,
+  including regularized `LeastSquaresProblem` objects through the existing
+  augmented system. They reject preconditioners in this first LSQR pass.
 - `Preconditioner`, `IdentityPreconditioner`, `DiagonalPreconditioner`,
   `PreconditionerDiagnostics`, and `as_preconditioner`: I0-6 direct-module
   right/model-space preconditioner contract used by the CGLS prototype.
@@ -1294,11 +1324,12 @@ This is not Madagascar's full external operator framework. The module-only CLIs
 operators and a toy identity dot-test operator. They do not execute arbitrary
 shell commands, do not reproduce the upstream pipe/tempfile operator protocol,
 do not support preconditioners, and do not stream large out-of-core datasets.
-After I0-8B they provide small composition algebra, a regularization subset, a
+After I0-9B1 they provide small composition algebra, a regularization subset, a
 small objective/residual/diagnostics problem layer, standalone diagnostics
-containers, optional CG/CGNR history adapters, and bounded CGLS with optional
-right/model-space preconditioning. They still do not provide LSQR, a stable
-solver API, constraints/masks, or domain inversion.
+containers, optional CG/CGNR history adapters, bounded CGLS with optional
+right/model-space preconditioning, and bounded unpreconditioned/regularized
+LSQR. They still do not provide preconditioned LSQR, a stable solver API,
+constraints/masks, or domain inversion.
 
 ## Optional Compatibility Tests
 

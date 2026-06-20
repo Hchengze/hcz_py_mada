@@ -36,8 +36,9 @@ testing details live in the other current docs.
   adds bounded CGLS for small real/complex in-memory problems. I0-6 defines
   identity/diagonal right-preconditioner semantics and diagnostics, and
   I0-8A/I0-8B connect them to the CGLS prototype with explicit latent/model
-  metadata. Inversion still lacks LSQR, stable solver APIs, constraints,
-  production scaling, and domain inversion workflows.
+  metadata. I0-9B1 adds bounded unpreconditioned/regularized LSQR as a
+  direct-module prototype. Inversion still lacks preconditioned LSQR, stable
+  solver APIs, constraints, production scaling, and domain inversion workflows.
 - Forward modeling lacks a reusable model/acquisition geometry contract,
   physical-coordinate interpolation, multi-shot behavior, and convergence or
   dispersion evidence.

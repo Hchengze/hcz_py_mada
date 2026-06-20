@@ -1,4 +1,4 @@
-"""Small in-memory CG, CGNR, and bounded CGLS solver helpers."""
+"""Small in-memory CG, CGNR, CGLS, and LSQR solver helpers."""
 
 from __future__ import annotations
 
@@ -520,7 +520,11 @@ def run_cgls_problem(
 
     if not isinstance(problem, LeastSquaresProblem):
         raise LinearOperatorError("problem must be a LeastSquaresProblem")
-    if isinstance(maxiter, (bool, np.bool_)) or int(maxiter) != maxiter or int(maxiter) <= 0:
+    if (
+        isinstance(maxiter, (bool, np.bool_))
+        or int(maxiter) != maxiter
+        or int(maxiter) <= 0
+    ):
         raise LinearOperatorError("maxiter must be a positive integer")
     maxiter_value = int(maxiter)
     tol_value = _finite_nonnegative_float(tol, "tol")
@@ -700,6 +704,275 @@ def run_cgls_problem(
     }
     if normalized_preconditioner is not None:
         run_metadata["latent_normal_residual_norm"] = final_normal_residual_norm
+    if invalid_state is not None:
+        run_metadata["invalid_state"] = invalid_state
+    history = (
+        SolverHistory(
+            tuple(records),
+            converged=converged,
+            stopping_reason=stopping_reason,
+            metadata=run_metadata,
+        )
+        if track_history
+        else None
+    )
+    return problem.solver_result(
+        final_model,
+        iterations=completed_iterations,
+        converged=converged,
+        stopping_reason=stopping_reason,
+        history=history,
+        include_gradient=True,
+        metadata=run_metadata,
+    )
+
+
+def run_lsqr(
+    A: LinearOperator | np.ndarray,
+    b: np.ndarray,
+    *,
+    x0: np.ndarray | None = None,
+    maxiter: int = 10,
+    tol: float = 1e-6,
+    track_history: bool = True,
+    metadata: dict[str, Any] | None = None,
+    preconditioner: Preconditioner | np.ndarray | None = None,
+) -> SolverResult:
+    """Solve a bounded unregularized least-squares problem with LSQR.
+
+    This pure-Python direct-module prototype uses a Golub-Kahan
+    bidiagonalization recurrence for small deterministic problems. It returns a
+    SolverResult diagnostics container and is not a stable/root API or CLI
+    command.
+    """
+
+    problem = LeastSquaresProblem(A, b)
+    return run_lsqr_problem(
+        problem,
+        x0=x0,
+        maxiter=maxiter,
+        tol=tol,
+        track_history=track_history,
+        metadata=metadata,
+        preconditioner=preconditioner,
+    )
+
+
+def run_lsqr_problem(
+    problem: LeastSquaresProblem,
+    *,
+    x0: np.ndarray | None = None,
+    maxiter: int = 10,
+    tol: float = 1e-6,
+    track_history: bool = True,
+    metadata: dict[str, Any] | None = None,
+    preconditioner: Preconditioner | np.ndarray | None = None,
+) -> SolverResult:
+    """Solve a small existing LeastSquaresProblem with LSQR.
+
+    Active regularization reuses the same augmented system as CGLS. Nonzero
+    x0 values are model-space initial models; the prototype solves a shifted
+    correction problem and returns x0 + dx. Right-preconditioned LSQR is
+    intentionally deferred.
+    """
+
+    if not isinstance(problem, LeastSquaresProblem):
+        raise LinearOperatorError("problem must be a LeastSquaresProblem")
+    if preconditioner is not None:
+        raise LinearOperatorError(
+            "preconditioned LSQR is not implemented in this bounded prototype"
+        )
+    if isinstance(maxiter, (bool, np.bool_)) or int(maxiter) != maxiter or int(maxiter) <= 0:
+        raise LinearOperatorError("maxiter must be a positive integer")
+    maxiter_value = int(maxiter)
+    tol_value = _finite_nonnegative_float(tol, "tol")
+
+    operator, rhs = _augmented_least_squares_system(problem)
+    rhs_vec = _flatten_finite_to_size(rhs, operator.data_size, "augmented data")
+    if x0 is None:
+        start = np.zeros(operator.model_shape, dtype=np.result_type(operator.dtype, rhs_vec.dtype))
+    else:
+        start = _flatten_finite_to_size(x0, problem.model_size, "x0").reshape(
+            problem.model_shape
+        )
+    dtype = np.result_type(operator.dtype, rhs_vec.dtype, start.dtype)
+    start = np.asarray(start, dtype=dtype).copy()
+    correction = np.zeros(operator.model_shape, dtype=dtype)
+    residual = rhs_vec.astype(dtype, copy=False) - np.asarray(
+        operator.forward(start), dtype=dtype
+    ).reshape(-1)
+    beta = _vector_norm(residual)
+    initial_residual_norm = beta
+    threshold = tol_value * max(initial_residual_norm, 1.0)
+    residual_space = "augmented_least_squares" if problem.has_regularization else "data"
+    records: list[SolverIterationRecord] = []
+
+    def model_from_correction() -> np.ndarray:
+        return (start + correction).reshape(problem.model_shape)
+
+    def augmented_residual(model: np.ndarray) -> np.ndarray:
+        return rhs_vec.astype(dtype, copy=False) - np.asarray(
+            operator.forward(model.reshape(operator.model_shape)), dtype=dtype
+        ).reshape(-1)
+
+    def append_record(iteration: int, step_length: float | None) -> None:
+        if not track_history:
+            return
+        model = model_from_correction()
+        diagnostics = problem.diagnostics(
+            model,
+            iteration=iteration,
+            include_gradient=True,
+        )
+        convergence_residual = augmented_residual(model)
+        convergence_residual_norm = _vector_norm(convergence_residual)
+        normal_residual = np.asarray(
+            operator.adjoint(convergence_residual.reshape(operator.data_shape)),
+            dtype=dtype,
+        ).reshape(-1)
+        records.append(
+            SolverIterationRecord(
+                iteration=iteration,
+                residual_norm=diagnostics.total_residual_norm,
+                objective=diagnostics.objective,
+                gradient_norm=diagnostics.gradient_norm,
+                step_length=step_length,
+                metadata={
+                    "solver": "lsqr",
+                    "algorithm": "golub_kahan_bidiagonalization",
+                    "method_family": "golub_kahan_bidiagonalization",
+                    "residual_space": residual_space,
+                    "data_residual_convention": "b_minus_Ax",
+                    "data_residual_norm": diagnostics.data_residual_norm,
+                    "regularization_residual_norm": diagnostics.regularization_residual_norm,
+                    "convergence_residual_norm": convergence_residual_norm,
+                    "convergence_residual_space": residual_space,
+                    "normal_residual_norm": _vector_norm(normal_residual),
+                    "normal_residual_space": "model",
+                    "model_gradient_norm": diagnostics.gradient_norm,
+                    "objective_kind": "least_squares",
+                    "regularized": problem.has_regularization,
+                    "preconditioned": False,
+                    "right_preconditioning": False,
+                    "variable_space": "model",
+                    "solution_space": "model",
+                },
+            )
+        )
+
+    append_record(0, None)
+    completed_iterations = 0
+    converged = beta <= threshold
+    if beta <= np.finfo(float).eps:
+        stopping_reason = "zero_rhs"
+    elif converged:
+        stopping_reason = "converged_tol"
+    else:
+        stopping_reason = "maxiter_reached"
+    invalid_state: str | None = None
+
+    if not converged:
+        u = residual / beta
+        v = np.asarray(operator.adjoint(u.reshape(operator.data_shape)), dtype=dtype).reshape(-1)
+        alpha = _vector_norm(v)
+        if alpha <= np.finfo(float).eps:
+            stopping_reason = "breakdown_alpha"
+            invalid_state = "LSQR breakdown: initial bidiagonal alpha is zero"
+        else:
+            v = v / alpha
+            w = v.copy()
+            phi_bar = beta
+            rho_bar = alpha
+            for iteration in range(1, maxiter_value + 1):
+                projected = np.asarray(
+                    operator.forward(v.reshape(operator.model_shape)), dtype=dtype
+                ).reshape(-1)
+                u_next = projected - alpha * u
+                beta_next = _vector_norm(u_next)
+                if beta_next > np.finfo(float).eps:
+                    u = u_next / beta_next
+                    v_next = np.asarray(
+                        operator.adjoint(u.reshape(operator.data_shape)), dtype=dtype
+                    ).reshape(-1) - beta_next * v
+                    alpha_next = _vector_norm(v_next)
+                    if alpha_next > np.finfo(float).eps:
+                        v_next = v_next / alpha_next
+                    else:
+                        v_next = np.zeros_like(v)
+                else:
+                    u = np.zeros_like(u)
+                    alpha_next = 0.0
+                    v_next = np.zeros_like(v)
+
+                rho = float(np.hypot(rho_bar, beta_next))
+                if rho <= np.finfo(float).eps:
+                    stopping_reason = "breakdown_alpha"
+                    invalid_state = "LSQR breakdown: plane rotation denominator is zero"
+                    break
+                c = rho_bar / rho
+                s = beta_next / rho
+                theta = s * alpha_next
+                rho_bar = -c * alpha_next
+                phi = c * phi_bar
+                phi_bar = s * phi_bar
+                step_scale = phi / rho
+                correction = correction + step_scale * w.reshape(operator.model_shape)
+                completed_iterations = iteration
+                append_record(iteration, float(abs(step_scale)))
+
+                current_residual_norm = _vector_norm(augmented_residual(model_from_correction()))
+                if current_residual_norm <= threshold:
+                    converged = True
+                    stopping_reason = "converged_tol"
+                    break
+                if beta_next <= np.finfo(float).eps:
+                    stopping_reason = "breakdown_beta"
+                    invalid_state = "LSQR breakdown: bidiagonal beta is zero"
+                    break
+                if alpha_next <= np.finfo(float).eps:
+                    stopping_reason = "breakdown_alpha"
+                    invalid_state = "LSQR breakdown: bidiagonal alpha is zero"
+                    break
+
+                w = v_next - (theta / rho) * w
+                v = v_next
+                alpha = alpha_next
+
+    final_model = model_from_correction()
+    final_diagnostics = problem.diagnostics(final_model, include_gradient=True)
+    final_augmented_residual = augmented_residual(final_model)
+    final_convergence_residual_norm = _vector_norm(final_augmented_residual)
+    final_normal_residual = np.asarray(
+        operator.adjoint(final_augmented_residual.reshape(operator.data_shape)),
+        dtype=dtype,
+    ).reshape(-1)
+    run_metadata = {
+        "solver": "lsqr",
+        "algorithm": "golub_kahan_bidiagonalization",
+        "method_family": "golub_kahan_bidiagonalization",
+        "max_iterations": maxiter_value,
+        "tolerance": tol_value,
+        "tolerance_kind": "relative_initial_residual_with_unit_floor",
+        "initial_residual_norm": initial_residual_norm,
+        "residual_space": residual_space,
+        "data_residual_convention": "b_minus_Ax",
+        "convergence_residual_norm": final_convergence_residual_norm,
+        "convergence_residual_space": residual_space,
+        "normal_residual_norm": _vector_norm(final_normal_residual),
+        "normal_residual_space": "model",
+        "model_gradient_norm": final_diagnostics.gradient_norm,
+        "data_residual_norm": final_diagnostics.data_residual_norm,
+        "regularization_residual_norm": final_diagnostics.regularization_residual_norm,
+        "regularization_via": _lsqr_regularization_metadata(problem),
+        "objective_kind": "least_squares",
+        "regularized": problem.has_regularization,
+        "preconditioned": False,
+        "right_preconditioning": False,
+        "variable_space": "model",
+        "solution_space": "model",
+        "track_history": bool(track_history),
+        **dict(metadata or {}),
+    }
     if invalid_state is not None:
         run_metadata["invalid_state"] = invalid_state
     history = (
@@ -915,6 +1188,10 @@ def _augmented_least_squares_system(
     return operator, rhs.reshape(operator.data_shape)
 
 
+def _vector_norm(vector: np.ndarray) -> float:
+    return float(np.sqrt(_norm2(np.asarray(vector).reshape(-1))))
+
+
 def _normalize_cgls_preconditioner(
     problem: LeastSquaresProblem,
     preconditioner: Preconditioner | np.ndarray | None,
@@ -1014,3 +1291,9 @@ def _cgls_regularization_metadata(
     if preconditioner is None:
         return "StackedOperator[A, lambda*L]"
     return "StackedOperator[A @ M, lambda*L @ M]"
+
+
+def _lsqr_regularization_metadata(problem: LeastSquaresProblem) -> str | None:
+    if not problem.has_regularization:
+        return None
+    return "StackedOperator[A, lambda*L]"

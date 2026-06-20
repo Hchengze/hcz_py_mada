@@ -55,6 +55,8 @@ from pymadagascar.generic.solvers import (
     run_cgls,
     run_cgls_problem,
     run_cgnr_with_history,
+    run_lsqr,
+    run_lsqr_problem,
 )
 
 
@@ -98,4 +100,6 @@ __all__ = [
     "run_cgls",
     "run_cgls_problem",
     "run_cgnr_with_history",
+    "run_lsqr",
+    "run_lsqr_problem",
 ]

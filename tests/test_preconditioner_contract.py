@@ -152,6 +152,8 @@ def test_run_cgls_default_contract_is_unchanged_with_keyword_preconditioner() ->
     np.testing.assert_allclose(result.final_model, np.linalg.lstsq(matrix, data, rcond=None)[0])
 
 
-def test_lsqr_and_preconditioned_solvers_remain_unimplemented() -> None:
-    for name in ["lsqr", "run_lsqr", "run_preconditioned_cgls", "run_pcgls"]:
+def test_lsqr_symbol_and_preconditioned_solvers_remain_unimplemented() -> None:
+    assert hasattr(linear_operator, "run_lsqr")
+    assert hasattr(linear_operator, "run_lsqr_problem")
+    for name in ["lsqr", "run_preconditioned_cgls", "run_pcgls"]:
         assert not hasattr(linear_operator, name)

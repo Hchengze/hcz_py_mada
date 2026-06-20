@@ -495,10 +495,14 @@ dataset.
   through `LeastSquaresProblem`; optional right/model-space preconditioners use
   `IdentityPreconditioner` or `DiagonalPreconditioner` with `x=M z`. Results
   remain model-space, while convergence residual metadata is explicit about
-  latent versus model space. LSQR and domain inversion remain unimplemented.
-  Preconditioning changes variables/scaling, while regularization changes
-  the objective. Start with `linear_operator_tools_demo.py` for the stable
-  small operator subset.
+  latent versus model space. Bounded `run_lsqr` and `run_lsqr_problem` provide
+  an unpreconditioned direct-module LSQR prototype for small deterministic
+  least-squares problems, including regularized `LeastSquaresProblem` objects
+  through the same augmented system and nonzero `x0` through a shifted residual
+  correction solve. Preconditioned LSQR and domain inversion remain
+  unimplemented. Preconditioning changes variables/scaling, while
+  regularization changes the objective. Start with
+  `linear_operator_tools_demo.py` for the stable small operator subset.
 - **Prototype geophysics:** NMO, semblance, FK, Radon, SEG-Y, acoustic2d, and
   Kirchhoff require their documented dimensionality and geometry assumptions.
   Treat them as controlled prototypes, not drop-in Madagascar replacements.

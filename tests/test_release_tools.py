@@ -44,7 +44,7 @@ def test_check_learning_notebook_tool_runs() -> None:
     assert "Learning notebook check passed" in result.stdout
     assert "134 CLI modules" in result.stdout
     assert "25 console_scripts" in result.stdout
-    assert "80 pytest files" in result.stdout
+    assert "81 pytest files" in result.stdout
     assert "14 workflows" in result.stdout
 
 
