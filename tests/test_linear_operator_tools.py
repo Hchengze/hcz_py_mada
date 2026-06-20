@@ -52,6 +52,19 @@ def test_matrix_operator_forward_and_adjoint() -> None:
     assert operator.data_shape == (3,)
 
 
+def test_linear_operator_split_modules_keep_compatibility_imports() -> None:
+    from pymadagascar.generic.least_squares import LeastSquaresProblem as NewLeastSquaresProblem
+    from pymadagascar.generic.linear_operator import DiagonalPreconditioner as CompatDiagonalPreconditioner
+    from pymadagascar.generic.linear_operator import LeastSquaresProblem as CompatLeastSquaresProblem
+    from pymadagascar.generic.linear_operator import run_cgls as compat_run_cgls
+    from pymadagascar.generic.preconditioners import DiagonalPreconditioner as NewDiagonalPreconditioner
+    from pymadagascar.generic.solvers import run_cgls as new_run_cgls
+
+    assert compat_run_cgls is new_run_cgls
+    assert CompatDiagonalPreconditioner is NewDiagonalPreconditioner
+    assert CompatLeastSquaresProblem is NewLeastSquaresProblem
+
+
 def test_real_dot_test_identity_and_matrix_pass() -> None:
     assert dot_test(IdentityOperator(5), seed=7).passed
     assert dot_test(MatrixOperator(np.array([[1.0, 2.0], [3.0, -1.0]])), seed=4).passed
