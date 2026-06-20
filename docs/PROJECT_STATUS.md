@@ -379,6 +379,16 @@ are no remaining comparison bridge failures.
   correction solve. This adds no CLI, console script, stable root/API export,
   right-preconditioned LSQR, left weighting, constraints/masks, production
   scaling, coverage denominator change, or domain inversion.
+- Inversion / Operator Foundation I0-9C: LSQR learning guide and minimal example
+  closure completed. `examples/my_workflows/lsqr_minimal_example.py` now gives a
+  tiny in-memory comparison between bounded LSQR and dense least squares,
+  including `LeastSquaresProblem` and regularized shifted-`x0` usage. The
+  learning notebook now explains the small-problem CGLS/LSQR relationship,
+  augmented regularization, shifted residual semantics, and the current
+  preconditioned-LSQR boundary. This adds no solver implementation change, CLI,
+  stable root/API export, right-preconditioned LSQR, command coverage, coverage
+  denominator change, original Madagascar dependency, or production inversion
+  claim.
 
 The route is now topic-oriented. D-1 stays as a bounded workflow prototype and
 D-2 remains paused. S1 establishes canonical trace/panel/gather data and
@@ -412,8 +422,9 @@ CG core and completes CGLS/LSQR design. I0-5 implements bounded
 unpreconditioned CGLS. I0-6 defines right/model-space preconditioning,
 I0-8A/I0-8B connect that contract to the CGLS prototype with explicit
 latent/model-space diagnostics, and I0-9B1 adds bounded unpreconditioned /
-regularized LSQR while leaving right-preconditioned LSQR, stable solver APIs,
-and domain inversions for later passes. Broad
+regularized LSQR. I0-9C adds the minimal LSQR learning example and notebook
+section while leaving right-preconditioned LSQR, stable solver APIs, and domain
+inversions for later passes. Broad
 velocity picking, high-resolution or solved Radon inversion, FK algorithm
 expansion, localization, modeling, and imaging expansion remain outside the
 current pass. Localization and forward modeling remain design-only; imaging and
@@ -428,7 +439,7 @@ separate.
 | Seismic data signal analysis and processing | stable subset, with prototype NMO/Semblance/FK/Radon | S1 contracts, S2 metrics/QC, S3 NMO hardening, S4-0 source alignment, S4-1 Semblance hardening, S4-2 small-gather geometry design, S4-3 FK validation, S5 integrated workflow, S6-0/S6-1 route decisions, S6-2 small slant-stack hardening, and S7-0 closeout complete; pause by default | field-scale/non-regular geometry, multi-gather validation, velocity picking, high-resolution Radon, and production processing |
 | DAS / engineering workflows | workflow-only | retain workflow-first; no D-2 or adapter | domain geometry, gauge response, field fixtures |
 | Localization | workflow-only foundation | design only | reusable picks, travel-time, uncertainty, and coordinate contracts |
-| Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, I0-8A/I0-8B right-preconditioned CGLS diagnostics, and I0-9B1 bounded unpreconditioned/regularized LSQR complete | Right-preconditioned LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
+| Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, I0-8A/I0-8B right-preconditioned CGLS diagnostics, I0-9B1 bounded unpreconditioned/regularized LSQR, and I0-9C LSQR learning example/notebook closure complete | Right-preconditioned LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
 | Forward modeling | simplified prototype | design only | reusable model/acquisition geometry and accuracy evidence |
 | Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
 | SEG-Y / headers | stable RSF / partial headers / prototype SEG-Y | independent defer | trace ownership, scalars/units, synchronized reorder |

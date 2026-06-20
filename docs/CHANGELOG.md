@@ -8,6 +8,17 @@ optional compatibility checks.
 
 ### Added
 
+- Inversion / Operator Foundation I0-9C LSQR learning/example closure:
+  `examples/my_workflows/lsqr_minimal_example.py` demonstrates the bounded
+  direct-module LSQR prototype against dense least squares, `LeastSquaresProblem`
+  usage, regularization, and model-space `x0` shifted-residual semantics without
+  writing files or calling a CLI.
+- `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` now includes a small CGLS/LSQR
+  learning section covering least squares, augmented regularization, current
+  CGLS preconditioning support, current unpreconditioned LSQR boundaries, and
+  why preconditioned LSQR remains deferred. I0-9C adds no solver implementation
+  change, CLI, root/stable API export, command coverage, or coverage denominator
+  change.
 - Inversion / Operator Foundation I0-9B1 bounded LSQR prototype:
   direct-module `run_lsqr` and `run_lsqr_problem` for small deterministic
   unpreconditioned least-squares problems, including regularized

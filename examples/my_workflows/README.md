@@ -10,13 +10,13 @@ Run from the project root after editable install:
 D:\HczApp\Anaconda\envs\mywork\python.exe examples\my_workflows\basic_rsf_io_workflow.py
 ```
 
-Each script accepts an optional output directory:
+File-writing workflow scripts accept an optional output directory:
 
 ```powershell
 D:\HczApp\Anaconda\envs\mywork\python.exe examples\my_workflows\fft_bandpass_workflow.py examples\my_workflows\_outputs\fft_test
 ```
 
-Without an argument, outputs go to a newly created system temporary directory.
+Without an argument, file-writing workflow outputs go to a newly created system temporary directory.
 For persistent outputs, pass a directory explicitly:
 
 ```text
@@ -30,6 +30,7 @@ examples/my_workflows/_outputs/<workflow-name>/
 | `basic_rsf_io_workflow.py` | Write, read, and copy a small RSF file with axis metadata. | `pymadagascar.io.rsf` | `basic_input.rsf`, `basic_copy.rsf` | stable subset |
 | `spike_math_window_workflow.py` | Generate a spike panel, create a coordinate expression, and window it. | `generic.spike`, `generic.math`, `generic.window`, `core.Axis` | `spike_panel.rsf`, `math_panel.rsf`, `math_window.rsf` | stable subset |
 | `fft_bandpass_workflow.py` | Build a mixed-frequency trace, compute an RFFT, and apply a bandpass. | `signal.fft`, `signal.filter`, `io.rsf` | `mixed_trace.rsf`, `mixed_trace_rfft.rsf`, `mixed_trace_bandpass.rsf` | stable subset |
+| `lsqr_minimal_example.py` | Compare bounded LSQR with dense least squares and demonstrate `LeastSquaresProblem` regularization. | `generic.operators`, `generic.least_squares`, `generic.regularization`, `generic.solvers` | printed model/residual/objective summary only | learning prototype |
 | `plot_grey_graph_workflow.py` | Save quicklook graph and grey PNGs from synthetic data. | `plot.graph`, `plot.grey`, `io.rsf` | `plot_trace.rsf`, `plot_panel.rsf`, `plot_trace_graph.png`, `plot_panel_grey.png` | partial plotting substitute |
 | `seismic_basic_agc_mute_stack_workflow.py` | Process a tiny synthetic gather with AGC, mute, stack, and graph. | `seismic.agc`, `seismic.mute`, `seismic.stack`, `plot.graph`, `io.rsf` | `synthetic_gather.rsf`, `synthetic_gather_agc.rsf`, `synthetic_gather_mute.rsf`, `synthetic_stack.rsf`, `synthetic_stack_graph.png` | stable subset |
 | `das_void_diffraction_workflow.py` | Generate a kinematic DAS shot gather, apply the existing FK prototype, overlay void diffraction curves, and invert simulated picks. | `signal.wavelet`, `seismic.fk`, `plot.grey`, `io.rsf`, workflow-only NumPy helpers | raw/filtered RSF gathers, two PNGs, picks CSV, inversion JSON | workflow prototype |
@@ -47,6 +48,8 @@ examples/my_workflows/_outputs/<workflow-name>/
 - All inputs are generated synthetically inside the script.
 - No script reads `src-master` or calls original `sf*` programs.
 - Plot workflows require Matplotlib, which is included in the project test extra.
+- The LSQR minimal example is in-memory only. It writes no files, calls no CLI,
+  and does not enable preconditioned LSQR.
 - These examples are meant to be copied and edited for local work. They prefer
   small, explicit arrays and simple metadata over clever abstractions.
 - The DAS void workflow is deliberately kinematic. It is not elastic forward

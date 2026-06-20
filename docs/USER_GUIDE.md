@@ -502,7 +502,9 @@ dataset.
   correction solve. Preconditioned LSQR and domain inversion remain
   unimplemented. Preconditioning changes variables/scaling, while
   regularization changes the objective. Start with
-  `linear_operator_tools_demo.py` for the stable small operator subset.
+  `linear_operator_tools_demo.py` for the stable small operator subset, and
+  `examples/my_workflows/lsqr_minimal_example.py` for the bounded LSQR learning
+  prototype.
 - **Prototype geophysics:** NMO, semblance, FK, Radon, SEG-Y, acoustic2d, and
   Kirchhoff require their documented dimensionality and geometry assumptions.
   Treat them as controlled prototypes, not drop-in Madagascar replacements.
@@ -760,7 +762,7 @@ Signal, seismic, operator, and prototype demos:
 
 All 34 top-level examples accept an optional output-directory argument or use a
 system temporary directory. The inventory/smoke tests execute them with pytest
-temporary directories. The fourteen scripts under `examples/my_workflows/` are
+temporary directories. The fifteen scripts under `examples/my_workflows/` are
 longer compositional workflows; top-level examples remain focused feature
 demos, so the apparent overlap is intentional rather than duplicate ownership.
 
