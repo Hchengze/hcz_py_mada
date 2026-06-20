@@ -73,8 +73,19 @@ def test_identity_preconditioner_is_equivalent_to_unpreconditioned_cgls() -> Non
     assert result.metadata["preconditioned"] is True
     assert result.metadata["right_preconditioning"] is True
     assert result.metadata["preconditioner_kind"] == "identity"
+    assert result.metadata["preconditioner_is_identity"] is True
+    assert result.metadata["preconditioner_condition_hint"] == pytest.approx(1.0)
+    assert result.metadata["preconditioner_scale_range"] == (1.0, 1.0)
     assert result.metadata["variable_space"] == "latent"
     assert result.metadata["solution_space"] == "model"
+    assert result.metadata["normal_residual_space"] == "latent"
+    assert result.metadata["convergence_normal_residual_space"] == "latent"
+    assert result.metadata["convergence_normal_residual_norm"] == pytest.approx(
+        result.metadata["latent_normal_residual_norm"]
+    )
+    assert result.metadata["model_gradient_norm"] == pytest.approx(
+        baseline.metadata["model_gradient_norm"]
+    )
 
 
 def test_diagonal_preconditioner_returns_model_space_solution_and_diagnostics() -> None:
@@ -98,14 +109,28 @@ def test_diagonal_preconditioner_returns_model_space_solution_and_diagnostics() 
     np.testing.assert_allclose(result.final_model, true_model, atol=1e-10)
     assert not np.allclose(result.final_model, true_model / weights)
     assert result.metadata["preconditioner_kind"] == "diagonal"
+    assert result.metadata["preconditioner_is_diagonal"] is True
+    assert result.metadata["preconditioner_condition_hint"] == pytest.approx(100.0)
+    assert result.metadata["preconditioner_scale_range"] == (0.1, 10.0)
     assert result.metadata["preconditioner_domain_shape"] == (2,)
+    assert result.metadata["normal_residual_space"] == "latent"
+    assert result.metadata["convergence_normal_residual_space"] == "latent"
+    assert result.metadata["latent_normal_residual_norm"] == pytest.approx(
+        result.metadata["convergence_normal_residual_norm"]
+    )
     problem = LeastSquaresProblem(matrix, data)
+    problem_gradient_norm = problem.diagnostics(result.final_model).gradient_norm
+    assert result.metadata["model_gradient_norm"] == pytest.approx(problem_gradient_norm)
     assert result.objective == pytest.approx(problem.objective(result.final_model))
     assert result.residual_norm == pytest.approx(
         np.linalg.norm(matrix @ result.final_model - data)
     )
     assert result.history is not None
     assert result.history.records[-1].objective == pytest.approx(result.objective)
+    assert result.history.records[-1].metadata["normal_residual_space"] == "latent"
+    assert result.history.records[-1].metadata["model_gradient_norm"] == pytest.approx(
+        problem_gradient_norm
+    )
 
 
 def test_cgls_problem_uses_preconditioned_augmented_regularized_system() -> None:

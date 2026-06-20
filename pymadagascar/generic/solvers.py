@@ -586,6 +586,10 @@ def run_cgls_problem(
             iteration=iteration,
             include_gradient=True,
         )
+        convergence_normal_residual_norm = float(np.sqrt(_norm2(normal_residual)))
+        convergence_normal_residual_space = (
+            "latent" if normalized_preconditioner is not None else "model"
+        )
         records.append(
             SolverIterationRecord(
                 iteration=iteration,
@@ -603,7 +607,11 @@ def run_cgls_problem(
                     "data_residual_convention": "b_minus_Ax",
                     "data_residual_norm": diagnostics.data_residual_norm,
                     "regularization_residual_norm": diagnostics.regularization_residual_norm,
-                    "normal_residual_norm": float(np.sqrt(_norm2(normal_residual))),
+                    "normal_residual_norm": convergence_normal_residual_norm,
+                    "normal_residual_space": convergence_normal_residual_space,
+                    "convergence_normal_residual_norm": convergence_normal_residual_norm,
+                    "convergence_normal_residual_space": convergence_normal_residual_space,
+                    "model_gradient_norm": diagnostics.gradient_norm,
                     "convergence_residual_space": "normal_equation",
                     "objective_kind": "least_squares",
                     **preconditioner_metadata,
@@ -656,6 +664,9 @@ def run_cgls_problem(
     final_model = model_from_variable(x)
     final_diagnostics = problem.diagnostics(final_model, include_gradient=True)
     final_normal_residual_norm = float(np.sqrt(_norm2(normal_residual)))
+    convergence_normal_residual_space = (
+        "latent" if normalized_preconditioner is not None else "model"
+    )
     run_metadata = {
         "solver": "cgls",
         "max_iterations": maxiter_value,
@@ -667,6 +678,10 @@ def run_cgls_problem(
             if normalized_preconditioner is None
             else final_normal_residual_norm
         ),
+        "normal_residual_space": convergence_normal_residual_space,
+        "convergence_normal_residual_norm": final_normal_residual_norm,
+        "convergence_normal_residual_space": convergence_normal_residual_space,
+        "model_gradient_norm": final_diagnostics.gradient_norm,
         "residual_space": (
             "augmented_least_squares" if problem.has_regularization else "data"
         ),
@@ -684,7 +699,7 @@ def run_cgls_problem(
         **dict(metadata or {}),
     }
     if normalized_preconditioner is not None:
-        run_metadata["model_gradient_norm"] = final_diagnostics.gradient_norm
+        run_metadata["latent_normal_residual_norm"] = final_normal_residual_norm
     if invalid_state is not None:
         run_metadata["invalid_state"] = invalid_state
     history = (
@@ -978,6 +993,11 @@ def _cgls_preconditioner_metadata(
         "preconditioned": True,
         "right_preconditioning": True,
         "preconditioner_kind": diagnostics.kind,
+        "preconditioner_is_identity": diagnostics.is_identity,
+        "preconditioner_is_diagonal": diagnostics.is_diagonal,
+        "preconditioner_condition_hint": diagnostics.condition_hint,
+        "preconditioner_scale_range": diagnostics.scale_range,
+        "preconditioner_complex_supported": diagnostics.complex_supported,
         "variable_space": "latent",
         "solution_space": "model",
         "preconditioner_domain_shape": diagnostics.domain_shape,

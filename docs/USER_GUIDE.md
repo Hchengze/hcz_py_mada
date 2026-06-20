@@ -489,14 +489,14 @@ dataset.
   CG/CGNR default functions retain their original result contract. The
   direct-module prototype helpers `run_cg_with_history` and
   `run_cgnr_with_history` optionally produce `SolverResult`/`SolverHistory`;
-  they are not root/API exports or CLI features. Bounded unpreconditioned
-  `run_cgls` and `run_cgls_problem` now solve small real/complex in-memory
-  problems and return the same diagnostics containers. Regularization must be
-  supplied through `LeastSquaresProblem`; LSQR, preconditioning, and domain
-  inversion remain unimplemented. I0-6 defines only direct-module
-  `IdentityPreconditioner`/`DiagonalPreconditioner` transforms and diagnostics.
-  They describe future right preconditioning `x=M z`; no current solver accepts
-  them. Preconditioning changes variables/scaling, while regularization changes
+  they are not root/API exports or CLI features. Bounded `run_cgls` and
+  `run_cgls_problem` now solve small real/complex in-memory problems and
+  return the same diagnostics containers. Regularization must be supplied
+  through `LeastSquaresProblem`; optional right/model-space preconditioners use
+  `IdentityPreconditioner` or `DiagonalPreconditioner` with `x=M z`. Results
+  remain model-space, while convergence residual metadata is explicit about
+  latent versus model space. LSQR and domain inversion remain unimplemented.
+  Preconditioning changes variables/scaling, while regularization changes
   the objective. Start with `linear_operator_tools_demo.py` for the stable
   small operator subset.
 - **Prototype geophysics:** NMO, semblance, FK, Radon, SEG-Y, acoustic2d, and

@@ -33,11 +33,11 @@ testing details live in the other current docs.
   a minimal regularization-operator subset, and a direct-module
   least-squares problem/objective/diagnostics layer. I0-4 optionally records
   existing CG/CGNR histories without changing default solver behavior. I0-5
-  adds bounded unpreconditioned CGLS for small real/complex in-memory problems.
-  I0-6 defines identity/diagonal right-preconditioner semantics and diagnostics
-  but does not connect them to a solver. Inversion still lacks LSQR,
-  preconditioned solvers, constraints, production scaling, and domain
-  inversion workflows.
+  adds bounded CGLS for small real/complex in-memory problems. I0-6 defines
+  identity/diagonal right-preconditioner semantics and diagnostics, and
+  I0-8A/I0-8B connect them to the CGLS prototype with explicit latent/model
+  metadata. Inversion still lacks LSQR, stable solver APIs, constraints,
+  production scaling, and domain inversion workflows.
 - Forward modeling lacks a reusable model/acquisition geometry contract,
   physical-coordinate interpolation, multi-shot behavior, and convergence or
   dispersion evidence.

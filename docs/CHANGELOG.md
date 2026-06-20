@@ -14,15 +14,17 @@ optional compatibility checks.
 - Risk-based testing policy in `docs/TESTING_AND_ENVIRONMENT.md`, requiring
   targeted/affected tests for small low-risk changes and full testing for
   cross-cutting, tooling, release, or phase-closeout changes.
-- Inversion / Operator Foundation I0-8A prototype integration: optional
+- Inversion / Operator Foundation I0-8A/I0-8B prototype integration: optional
   right/model-space preconditioner support for `run_cgls` and
   `run_cgls_problem`, preserving default unpreconditioned behavior while
-  returning model-space solutions and diagnostics.
+  returning model-space solutions and diagnostics; I0-8B makes latent
+  convergence residuals, model-space gradients, and preconditioner diagnostics
+  explicit in solver metadata/history.
 - Inversion / Operator Foundation I0-6 direct-module right/model-space
   preconditioner contract: `Preconditioner`, `IdentityPreconditioner`,
   `DiagonalPreconditioner`, `PreconditionerDiagnostics`, and
-  `as_preconditioner`. This is contract/design infrastructure only and is not
-  connected to CGLS, CGNR, or LSQR.
+  `as_preconditioner`. This was introduced as contract/design infrastructure;
+  I0-8A later connects it to the CGLS prototype only, not CGNR or LSQR.
 - `tests/test_preconditioner_contract.py` with 13 deterministic contract tests.
 - Inversion / Operator Foundation I0-5 bounded unpreconditioned CGLS:
   direct-module `run_cgls` and `run_cgls_problem` for small real/complex

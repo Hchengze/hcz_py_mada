@@ -356,9 +356,20 @@ are no remaining comparison bridge failures.
   right/model-space transform `x = M z` with required forward/Hermitian-
   adjoint actions, shape/finite checks, nonzero diagonal scaling, and JSON-safe
   diagnostics. Preconditioning changes variables/scaling, while
-  regularization changes the objective. No solver consumes this contract yet;
-  `run_cgls` is unchanged. I0-6 adds no solver, LSQR, CLI, stable export,
-  coverage entry, XMind update, constraint/mask, or domain inversion.
+  regularization changes the objective. At introduction, no solver consumed
+  this contract and `run_cgls` was unchanged. I0-6 adds no solver, LSQR, CLI,
+  stable export, coverage entry, learning-notebook update, constraint/mask, or
+  domain inversion.
+- Inversion / Operator Foundation I0-8A/I0-8B: Right-preconditioned CGLS
+  prototype integration completed. `run_cgls` and `run_cgls_problem` now accept
+  optional right/model-space preconditioners and solve `min_z 0.5 ||A M z -
+  b||^2`, with active regularization using `[A M; lambda L M] z ~= [b; 0]`.
+  Results remain model-space `final_model = M z_final`; diagnostics/objective
+  remain owned by `LeastSquaresProblem`. I0-8B clarifies metadata by separating
+  latent-space convergence normal residuals from model-space gradients and by
+  carrying preconditioner diagnostics into solver metadata/history. This remains
+  a direct-module prototype with no LSQR, CLI, stable root/API export,
+  constraint/mask, production scaling, or domain inversion.
 
 The route is now topic-oriented. D-1 stays as a bounded workflow prototype and
 D-2 remains paused. S1 establishes canonical trace/panel/gather data and
@@ -388,10 +399,11 @@ shape-checked in-memory scale/sum/composition/vertical-stack operators and an
 internal/prototype solver-history/result schema. I0-2 adds the first reusable
 small in-memory regularization subset. I0-3 adds the small objective/residual/
 diagnostics problem layer. I0-4 optionally connects that layer to the existing
-CG core and completes CGLS/LSQR design. I0-5 implements only bounded
-unpreconditioned CGLS. I0-6 defines right/model-space preconditioning without
-wiring it into a solver, while leaving LSQR, preconditioned solvers, and domain
-inversions for later passes. Broad
+CG core and completes CGLS/LSQR design. I0-5 implements bounded
+unpreconditioned CGLS. I0-6 defines right/model-space preconditioning, and
+I0-8A/I0-8B connect that contract to the CGLS prototype with explicit
+latent/model-space diagnostics while leaving LSQR, stable solver APIs, and
+domain inversions for later passes. Broad
 velocity picking, high-resolution or solved Radon inversion, FK algorithm
 expansion, localization, modeling, and imaging expansion remain outside the
 current pass. Localization and forward modeling remain design-only; imaging and
@@ -406,7 +418,7 @@ separate.
 | Seismic data signal analysis and processing | stable subset, with prototype NMO/Semblance/FK/Radon | S1 contracts, S2 metrics/QC, S3 NMO hardening, S4-0 source alignment, S4-1 Semblance hardening, S4-2 small-gather geometry design, S4-3 FK validation, S5 integrated workflow, S6-0/S6-1 route decisions, S6-2 small slant-stack hardening, and S7-0 closeout complete; pause by default | field-scale/non-regular geometry, multi-gather validation, velocity picking, high-resolution Radon, and production processing |
 | DAS / engineering workflows | workflow-only | retain workflow-first; no D-2 or adapter | domain geometry, gauge response, field fixtures |
 | Localization | workflow-only foundation | design only | reusable picks, travel-time, uncertainty, and coordinate contracts |
-| Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, and I0-6 right/model-space preconditioner contract complete; next split the oversized module before solver integration or separate LSQR | preconditioned solvers, LSQR, and domain inversion workflows |
+| Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, and I0-8A/I0-8B right-preconditioned CGLS diagnostics complete | LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
 | Forward modeling | simplified prototype | design only | reusable model/acquisition geometry and accuracy evidence |
 | Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
 | SEG-Y / headers | stable RSF / partial headers / prototype SEG-Y | independent defer | trace ownership, scalars/units, synchronized reorder |
