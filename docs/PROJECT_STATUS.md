@@ -173,6 +173,16 @@ are no remaining comparison bridge failures.
   survey tensor layout. F0-3 changes no finite-difference numerical core and
   adds no new wave-equation solver, interpolation, CLI, root/stable API,
   command coverage, or coverage denominator change.
+- Forward Modeling Topic F0-4: acoustic survey tensor conversion and summary
+  helpers completed. The pymadagascar.modeling.shot topic module now adds
+  AcousticSurveyTensor2D, acoustic_survey_to_tensor, and
+  summarize_acoustic_survey. The default AcousticSurveyRecord2D contract remains
+  list-backed; tensor stacking is available only through the explicit helper,
+  uses the documented shot_receiver_time layout, and requires consistent
+  receiver counts plus matching time axes. The helper does not pad, interpolate,
+  or drop receivers, and F0-4 changes no acoustic2d numerical core, default
+  survey return type, CLI, root/stable API, command coverage, or coverage
+  denominator.
 - Stage C-7: signal and small-gather QC foundation completed with module-only
   `demean`, `detrend`, `decimate`, `bandstop`, `notch`, and `localrms` CLIs,
   shared NumPy APIs, RSF wrappers, RSFData methods, and a focused demo.

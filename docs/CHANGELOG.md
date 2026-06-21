@@ -8,6 +8,20 @@ optional compatibility checks.
 
 ### Added
 
+- Forward Modeling Topic F0-4 acoustic survey tensor helpers:
+  pymadagascar.modeling.shot adds AcousticSurveyTensor2D,
+  acoustic_survey_to_tensor, and summarize_acoustic_survey. The default
+  AcousticSurveyRecord2D contract remains a list of AcousticShotRecord2D
+  objects; tensor stacking is explicit only, uses shot_receiver_time layout
+  with shape (shot, receiver, time), and requires consistent receiver counts
+  plus matching time axes.
+- tests/test_acoustic2d_survey_contract.py now covers explicit tensor
+  conversion, tensor coordinate/time metadata, copy behavior, variable
+  receiver-count rejection, stackability summaries, JSON-safe/path-free
+  metadata, modeling-topic exports, and unchanged root/stable API boundaries.
+  F0-4 adds no new wave-equation solver, padding, interpolation, parallelism,
+  cache, CLI, root/stable API, command coverage, or coverage denominator
+  change.
 - Forward Modeling Topic F0-3 multi-shot acoustic survey wrapper:
   pymadagascar.modeling.shot adds AcousticSurveyRecord2D and
   run_acoustic2d_survey, a pure-Python topic-level wrapper that accepts a

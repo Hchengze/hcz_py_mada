@@ -94,6 +94,53 @@ class AcousticSurveyRecord2D:
         object.__setattr__(self, "metadata", _json_safe_dict(self.metadata, "metadata"))
 
 
+@dataclass(frozen=True)
+class AcousticSurveyTensor2D:
+    """Explicit tensor view of a compatible multi-shot acoustic survey.
+
+    The tensor layout is (shot, receiver, time). It is produced only by the
+    explicit acoustic_survey_to_tensor helper and is not the default
+    AcousticSurveyRecord2D representation.
+    """
+
+    data: np.ndarray
+    time: np.ndarray
+    source_coordinates: np.ndarray
+    receiver_coordinates: np.ndarray
+    metadata: dict[str, Any]
+
+    def __post_init__(self) -> None:
+        data = np.asarray(self.data)
+        time = np.asarray(self.time, dtype=float)
+        sources = np.asarray(self.source_coordinates, dtype=float)
+        receivers = np.asarray(self.receiver_coordinates, dtype=float)
+
+        if data.ndim != 3:
+            raise Acoustic2DError("survey tensor data must have shape (shot, receiver, time)")
+        if time.ndim != 1:
+            raise Acoustic2DError("survey tensor time axis must be one-dimensional")
+        if data.shape[2] != time.size:
+            raise Acoustic2DError("survey tensor data/time dimensions are inconsistent")
+        if sources.shape != (data.shape[0], 2):
+            raise Acoustic2DError("source_coordinates must have shape (nshot, 2)")
+        if receivers.shape != (data.shape[0], data.shape[1], 2):
+            raise Acoustic2DError("receiver_coordinates must have shape (nshot, nreceiver, 2)")
+        if np.any(~np.isfinite(data)) or np.any(~np.isfinite(time)):
+            raise Acoustic2DError("survey tensor data and time values must be finite")
+        if np.any(~np.isfinite(sources)) or np.any(~np.isfinite(receivers)):
+            raise Acoustic2DError("survey tensor coordinates must be finite")
+
+        object.__setattr__(self, "data", np.array(data, copy=True))
+        object.__setattr__(self, "time", np.array(time, dtype=float, copy=True))
+        object.__setattr__(self, "source_coordinates", np.array(sources, dtype=float, copy=True))
+        object.__setattr__(
+            self,
+            "receiver_coordinates",
+            np.array(receivers, dtype=float, copy=True),
+        )
+        object.__setattr__(self, "metadata", _json_safe_dict(self.metadata, "metadata"))
+
+
 def run_acoustic2d_shot(
     velocity: np.ndarray,
     grid: AcousticModelGrid2D,
@@ -276,6 +323,126 @@ def run_acoustic2d_survey(
     return AcousticSurveyRecord2D(shots=shots, metadata=metadata)
 
 
+def acoustic_survey_to_tensor(
+    survey: AcousticSurveyRecord2D,
+    *,
+    require_consistent_receiver_count: bool = True,
+) -> AcousticSurveyTensor2D:
+    """Convert a compatible survey record to a (shot, receiver, time) tensor.
+
+    The conversion is explicit and conservative. It requires all shots to have
+    matching receiver counts, matching time counts, and identical time axes.
+    It returns a copy-backed AcousticSurveyTensor2D. It does not pad,
+    interpolate, or drop receivers; incompatible surveys should remain in the
+    default list-of-shots representation.
+    """
+
+    survey_value = _validate_survey_record(survey)
+    summary = summarize_acoustic_survey(survey_value)
+    if require_consistent_receiver_count and summary["receiver_count_consistency"] != "constant":
+        raise Acoustic2DError(
+            "cannot convert survey to tensor because receiver counts differ; "
+            "keep the list-of-shots structure or build a survey with matching receivers"
+        )
+    if summary["receiver_count_consistency"] != "constant":
+        raise Acoustic2DError(
+            "cannot convert survey to tensor without padding or interpolation when receiver counts differ"
+        )
+    if summary["time_count_consistency"] != "constant" or not summary["time_axis_consistency"]:
+        raise Acoustic2DError(
+            "cannot convert survey to tensor because time axes differ; "
+            "keep the list-of-shots structure"
+        )
+
+    data = np.stack([shot.data for shot in survey_value.shots], axis=0)
+    source_coordinates = np.stack([shot.source_coordinate for shot in survey_value.shots], axis=0)
+    receiver_coordinates = np.stack(
+        [shot.receiver_coordinates for shot in survey_value.shots],
+        axis=0,
+    )
+    time = np.array(survey_value.shots[0].time, dtype=float, copy=True)
+    receiver_count = int(data.shape[1])
+    metadata = _json_safe_dict(
+        {
+            "method": "acoustic_survey_to_tensor",
+            "source_record": "AcousticSurveyRecord2D",
+            "input_shot_count": len(survey_value.shots),
+            "tensor_layout": "shot_receiver_time",
+            "data_shape": list(data.shape),
+            "time_count": int(time.size),
+            "receiver_count": receiver_count,
+            "receiver_count_consistency": "constant",
+            "time_count_consistency": "constant",
+            "time_axis_consistency": True,
+            "coordinate_frame": summary["coordinate_frame"],
+            "distance_unit": summary["distance_unit"],
+            "time_unit": summary["time_unit"],
+            "padding": False,
+            "source_interpolation": False,
+            "receiver_interpolation": False,
+            "prototype": True,
+            "field_ready": False,
+        },
+        "metadata",
+    )
+    return AcousticSurveyTensor2D(
+        data=data,
+        time=time,
+        source_coordinates=source_coordinates,
+        receiver_coordinates=receiver_coordinates,
+        metadata=metadata,
+    )
+
+
+def summarize_acoustic_survey(survey: AcousticSurveyRecord2D) -> dict[str, Any]:
+    """Return JSON-safe summary metadata for an acoustic survey record."""
+
+    survey_value = _validate_survey_record(survey)
+    receiver_counts = [int(shot.data.shape[0]) for shot in survey_value.shots]
+    time_counts = [int(shot.data.shape[1]) for shot in survey_value.shots]
+    time_axis_consistency = all(
+        np.array_equal(survey_value.shots[0].time, shot.time)
+        for shot in survey_value.shots[1:]
+    )
+    receiver_count_consistency = "constant" if len(set(receiver_counts)) == 1 else "variable"
+    time_count_consistency = "constant" if len(set(time_counts)) == 1 else "variable"
+    can_stack_to_tensor = (
+        receiver_count_consistency == "constant"
+        and time_count_consistency == "constant"
+        and time_axis_consistency
+    )
+    source_coordinates = np.stack([shot.source_coordinate for shot in survey_value.shots], axis=0)
+    data_layouts = [
+        str(shot.metadata.get("data_layout", "receiver_time")) for shot in survey_value.shots
+    ]
+
+    return _json_safe_dict(
+        {
+            "method": "summarize_acoustic_survey",
+            "source_record": "AcousticSurveyRecord2D",
+            "shot_count": len(survey_value.shots),
+            "receiver_count_per_shot": receiver_counts,
+            "receiver_count_consistency": receiver_count_consistency,
+            "time_count_per_shot": time_counts,
+            "time_count_consistency": time_count_consistency,
+            "time_axis_consistency": time_axis_consistency,
+            "data_layout_per_shot": data_layouts,
+            "can_stack_to_tensor": can_stack_to_tensor,
+            "tensor_layout_if_stacked": "shot_receiver_time" if can_stack_to_tensor else None,
+            "source_x_min": float(np.min(source_coordinates[:, 0])),
+            "source_x_max": float(np.max(source_coordinates[:, 0])),
+            "source_z_min": float(np.min(source_coordinates[:, 1])),
+            "source_z_max": float(np.max(source_coordinates[:, 1])),
+            "coordinate_frame": survey_value.metadata.get("coordinate_frame", "local_2d_x_z"),
+            "distance_unit": survey_value.metadata.get("distance_unit", "m"),
+            "time_unit": survey_value.metadata.get("time_unit", "s"),
+            "prototype": True,
+            "field_ready": False,
+        },
+        "metadata",
+    )
+
+
 def _velocity_header(grid: AcousticModelGrid2D) -> RSFHeader:
     return RSFHeader(
         {
@@ -291,6 +458,12 @@ def _velocity_header(grid: AcousticModelGrid2D) -> RSFHeader:
             "unit2": grid.distance_unit,
         }
     )
+
+
+def _validate_survey_record(survey: AcousticSurveyRecord2D) -> AcousticSurveyRecord2D:
+    if not isinstance(survey, AcousticSurveyRecord2D):
+        raise Acoustic2DError("survey must be an AcousticSurveyRecord2D")
+    return survey
 
 
 def _survey_metadata(
@@ -454,6 +627,9 @@ def _json_safe_value(value: Any, name: str) -> Any:
 __all__ = [
     "AcousticShotRecord2D",
     "AcousticSurveyRecord2D",
+    "AcousticSurveyTensor2D",
+    "acoustic_survey_to_tensor",
     "run_acoustic2d_shot",
     "run_acoustic2d_survey",
+    "summarize_acoustic_survey",
 ]

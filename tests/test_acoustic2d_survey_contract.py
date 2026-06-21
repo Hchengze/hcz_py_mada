@@ -9,9 +9,12 @@ from pymadagascar.modeling import (
     AcousticModelGrid2D,
     AcousticShotRecord2D,
     AcousticSurveyRecord2D,
+    AcousticSurveyTensor2D,
     PointSource2D,
+    acoustic_survey_to_tensor,
     receiver_line_2d,
     run_acoustic2d_survey,
+    summarize_acoustic_survey,
 )
 
 
@@ -38,6 +41,19 @@ def _acquisitions() -> list[AcousticAcquisition2D]:
         AcousticAcquisition2D(
             source=PointSource2D(120.0, 90.0),
             receivers=receiver_line_2d(x_start=90.0, x_stop=150.0, z=50.0, spacing=20.0),
+        ),
+    ]
+
+
+def _consistent_receiver_acquisitions() -> list[AcousticAcquisition2D]:
+    return [
+        AcousticAcquisition2D(
+            source=PointSource2D(80.0, 90.0),
+            receivers=receiver_line_2d(x_start=70.0, x_stop=110.0, z=50.0, spacing=20.0),
+        ),
+        AcousticAcquisition2D(
+            source=PointSource2D(120.0, 90.0),
+            receivers=receiver_line_2d(x_start=90.0, x_stop=130.0, z=50.0, spacing=20.0),
         ),
     ]
 
@@ -76,6 +92,135 @@ def test_run_acoustic2d_survey_returns_ordered_shot_records() -> None:
         )
     np.testing.assert_allclose(survey.shots[0].source_coordinate, np.array([80.0, 90.0]))
     np.testing.assert_allclose(survey.shots[1].source_coordinate, np.array([120.0, 90.0]))
+
+
+def test_acoustic_survey_to_tensor_converts_consistent_receiver_surveys() -> None:
+    grid = _grid()
+    acquisitions = _consistent_receiver_acquisitions()
+    survey = run_acoustic2d_survey(
+        _velocity(grid),
+        grid,
+        acquisitions,
+        nt=32,
+        dt=0.001,
+        fpeak=20.0,
+        t0=0.03,
+        nb=5,
+    )
+
+    tensor = acoustic_survey_to_tensor(survey)
+
+    assert isinstance(tensor, AcousticSurveyTensor2D)
+    assert tensor.data.shape == (2, 3, 32)
+    assert tensor.metadata["tensor_layout"] == "shot_receiver_time"
+    assert tensor.metadata["data_shape"] == [2, 3, 32]
+    assert tensor.metadata["receiver_count"] == 3
+    assert tensor.metadata["receiver_count_consistency"] == "constant"
+    assert tensor.metadata["time_axis_consistency"] is True
+    assert tensor.metadata["padding"] is False
+    assert tensor.metadata["source_interpolation"] is False
+    assert tensor.metadata["receiver_interpolation"] is False
+    np.testing.assert_allclose(tensor.time, survey.shots[0].time)
+    assert tensor.source_coordinates.shape == (2, 2)
+    assert tensor.receiver_coordinates.shape == (2, 3, 2)
+    np.testing.assert_allclose(tensor.source_coordinates[0], np.array([80.0, 90.0]))
+    np.testing.assert_allclose(tensor.source_coordinates[1], np.array([120.0, 90.0]))
+    np.testing.assert_allclose(tensor.data[0], survey.shots[0].data)
+    json.dumps(tensor.metadata, sort_keys=True)
+    _assert_no_local_paths(tensor.metadata)
+
+
+def test_acoustic_survey_to_tensor_copies_data_and_coordinates() -> None:
+    grid = _grid()
+    survey = run_acoustic2d_survey(
+        _velocity(grid),
+        grid,
+        _consistent_receiver_acquisitions(),
+        nt=24,
+        dt=0.001,
+        fpeak=20.0,
+        t0=0.03,
+        nb=5,
+    )
+    tensor = acoustic_survey_to_tensor(survey)
+    original_value = float(survey.shots[0].data[0, 0])
+
+    tensor.data[0, 0, 0] = original_value + 123.0
+    tensor.source_coordinates[0, 0] = -999.0
+    tensor.receiver_coordinates[0, 0, 0] = -999.0
+
+    assert survey.shots[0].data[0, 0] == pytest.approx(original_value)
+    assert survey.shots[0].source_coordinate[0] == pytest.approx(80.0)
+    assert survey.shots[0].receiver_coordinates[0, 0] == pytest.approx(70.0)
+
+
+def test_acoustic_survey_to_tensor_rejects_variable_receiver_counts() -> None:
+    grid = _grid()
+    survey = run_acoustic2d_survey(
+        _velocity(grid),
+        grid,
+        _acquisitions(),
+        nt=20,
+        dt=0.001,
+        fpeak=20.0,
+        t0=0.03,
+        nb=5,
+    )
+
+    with pytest.raises(Acoustic2DError, match="list-of-shots"):
+        acoustic_survey_to_tensor(survey)
+
+
+def test_summarize_acoustic_survey_reports_tensor_stackability() -> None:
+    grid = _grid()
+    stackable = run_acoustic2d_survey(
+        _velocity(grid),
+        grid,
+        _consistent_receiver_acquisitions(),
+        nt=20,
+        dt=0.001,
+        fpeak=20.0,
+        t0=0.03,
+        nb=5,
+    )
+    variable = run_acoustic2d_survey(
+        _velocity(grid),
+        grid,
+        _acquisitions(),
+        nt=20,
+        dt=0.001,
+        fpeak=20.0,
+        t0=0.03,
+        nb=5,
+    )
+
+    stackable_summary = summarize_acoustic_survey(stackable)
+    variable_summary = summarize_acoustic_survey(variable)
+
+    assert stackable_summary["shot_count"] == 2
+    assert stackable_summary["receiver_count_per_shot"] == [3, 3]
+    assert stackable_summary["receiver_count_consistency"] == "constant"
+    assert stackable_summary["time_count_per_shot"] == [20, 20]
+    assert stackable_summary["time_count_consistency"] == "constant"
+    assert stackable_summary["time_axis_consistency"] is True
+    assert stackable_summary["data_layout_per_shot"] == ["receiver_time", "receiver_time"]
+    assert stackable_summary["can_stack_to_tensor"] is True
+    assert stackable_summary["tensor_layout_if_stacked"] == "shot_receiver_time"
+    assert stackable_summary["source_x_min"] == pytest.approx(80.0)
+    assert stackable_summary["source_x_max"] == pytest.approx(120.0)
+    assert stackable_summary["source_z_min"] == pytest.approx(90.0)
+    assert stackable_summary["source_z_max"] == pytest.approx(90.0)
+    assert stackable_summary["prototype"] is True
+    assert stackable_summary["field_ready"] is False
+    json.dumps(stackable_summary, sort_keys=True)
+    _assert_no_local_paths(stackable_summary)
+
+    assert variable_summary["receiver_count_per_shot"] == [3, 4]
+    assert variable_summary["receiver_count_consistency"] == "variable"
+    assert variable_summary["can_stack_to_tensor"] is False
+    assert variable_summary["tensor_layout_if_stacked"] is None
+    json.dumps(variable_summary, sort_keys=True)
+    _assert_no_local_paths(variable_summary)
 
 
 def test_survey_metadata_is_json_safe_path_free_and_documents_boundaries() -> None:
@@ -168,8 +313,17 @@ def test_modeling_topic_export_available_without_root_stable_api_promotion() -> 
     import pymadagascar.modeling as modeling
 
     assert modeling.AcousticSurveyRecord2D is AcousticSurveyRecord2D
+    assert modeling.AcousticSurveyTensor2D is AcousticSurveyTensor2D
+    assert modeling.acoustic_survey_to_tensor is acoustic_survey_to_tensor
     assert modeling.run_acoustic2d_survey is run_acoustic2d_survey
+    assert modeling.summarize_acoustic_survey is summarize_acoustic_survey
     assert not hasattr(api, "AcousticSurveyRecord2D")
+    assert not hasattr(api, "AcousticSurveyTensor2D")
+    assert not hasattr(api, "acoustic_survey_to_tensor")
     assert not hasattr(api, "run_acoustic2d_survey")
+    assert not hasattr(api, "summarize_acoustic_survey")
     assert not hasattr(pymadagascar, "AcousticSurveyRecord2D")
+    assert not hasattr(pymadagascar, "AcousticSurveyTensor2D")
+    assert not hasattr(pymadagascar, "acoustic_survey_to_tensor")
     assert not hasattr(pymadagascar, "run_acoustic2d_survey")
+    assert not hasattr(pymadagascar, "summarize_acoustic_survey")

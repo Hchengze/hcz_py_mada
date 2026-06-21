@@ -18,8 +18,11 @@ from .geometry import (
 from .shot import (
     AcousticShotRecord2D,
     AcousticSurveyRecord2D,
+    AcousticSurveyTensor2D,
+    acoustic_survey_to_tensor,
     run_acoustic2d_shot,
     run_acoustic2d_survey,
+    summarize_acoustic_survey,
 )
 
 __all__ = [
@@ -28,14 +31,17 @@ __all__ = [
     "Acoustic2DError",
     "AcousticShotRecord2D",
     "AcousticSurveyRecord2D",
+    "AcousticSurveyTensor2D",
     "GeometryError",
     "PointSource2D",
     "ReceiverArray2D",
     "absorbing_boundary_simple",
     "acoustic2d_forward",
+    "acoustic_survey_to_tensor",
     "acquisition_to_acoustic2d_indices",
     "receiver_line_2d",
     "ricker_wavelet",
     "run_acoustic2d_shot",
     "run_acoustic2d_survey",
+    "summarize_acoustic_survey",
 ]

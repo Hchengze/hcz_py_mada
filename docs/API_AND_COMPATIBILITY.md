@@ -42,9 +42,10 @@ using existing APIs. Localization now has L0-1/L0-2 direct-module prototype
 travel-time and fixed/variable-velocity grid-search primitives in
 `pymadagascar.localization`, but no root/stable API, CLI, automatic picking,
 uncertainty, or production location workflow. Forward modeling now has F0-1
-geometry helpers, an F0-2 acquisition-driven single-shot wrapper, and an F0-3
-sequential multi-shot survey wrapper, but no root/stable API, CLI,
-interpolation, committed survey tensor layout, or production modeling claim.
+geometry helpers, an F0-2 acquisition-driven single-shot wrapper, an F0-3
+sequential multi-shot survey wrapper, and F0-4 explicit tensor/summary helpers,
+but no root/stable API, CLI, interpolation, default survey tensor return,
+padding policy, or production modeling claim.
 Imaging remains a simplified prototype.
 Inversion may first design operator composition, regularization, objective,
 residual, and history contracts without promoting a domain inversion API. DAS
@@ -730,12 +731,24 @@ AcousticShotRecord2D records plus JSON-safe path-free survey metadata. It does
 not stack shots into a 3D tensor because receiver counts may vary by shot and
 shot-level metadata remains part of the contract.
 
-F0-1/F0-2/F0-3 document the current acoustic2d axis contract: velocity RSF is
-interpreted as n1=z and n2=x, while the NumPy velocity array shape is (nx, nz).
-They do not change the acoustic finite-difference numerical core, add a new
-wave-equation solver, add parallelism or caching, implement source/receiver
-interpolation, add production validation, commit to a survey tensor layout, or
-promote modeling to a stable root API.
+F0-4 adds AcousticSurveyTensor2D, acoustic_survey_to_tensor, and
+summarize_acoustic_survey. The default survey contract remains
+AcousticSurveyRecord2D.shots as list[AcousticShotRecord2D]; tensor conversion
+is opt-in only. The tensor helper returns copy-backed data with layout
+shot_receiver_time, shape (shot, receiver, time), source coordinates shaped
+(shot, 2), and receiver coordinates shaped (shot, receiver, 2). It requires
+constant receiver counts, constant time counts, and identical time axes. It
+does not pad, interpolate, silently drop receivers, or modify the source survey.
+The summary helper returns JSON-safe path-free metadata describing stackability,
+receiver/time consistency, source coordinate bounds, and the tensor layout that
+would be used if stacking is valid.
+
+F0-1/F0-2/F0-3/F0-4 document the current acoustic2d axis contract: velocity RSF
+is interpreted as n1=z and n2=x, while the NumPy velocity array shape is
+(nx, nz). They do not change the acoustic finite-difference numerical core, add
+a new wave-equation solver, add parallelism or caching, implement
+source/receiver interpolation or padding, add production validation, make tensor
+the default survey return, or promote modeling to a stable root API.
 
 ## Stable and Stable-Subset APIs
 
