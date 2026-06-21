@@ -15,6 +15,10 @@ from pathlib import Path
 import numpy as np
 
 from pymadagascar.io.rsf import RSFHeader, read_rsf, write_rsf
+from pymadagascar.localization import (
+    diffraction_travel_time_2d,
+    grid_search_point_location_velocity_2d,
+)
 from pymadagascar.plot._common import pyplot
 from pymadagascar.plot.grey import grey
 from pymadagascar.seismic.fk import fk_filter
@@ -103,6 +107,28 @@ def build_das_geometry_metadata(
     }
 
 
+def build_localization_algorithm_metadata() -> dict[str, object]:
+    """Return JSON-safe metadata for the package-level localization prototype."""
+
+    return {
+        "module": "pymadagascar.localization.traveltime",
+        "method": "grid_search_point_location_velocity_2d",
+        "travel_time_model": "source_diffractor_receiver_kinematic",
+        "velocity_mode": "closed_form_slowness",
+        "residual_convention": "observed_minus_predicted",
+        "coordinate_frame": "local_2d_x_z",
+        "depth_positive": "down",
+        "objective": "0.5_sum_weighted_squared_residuals",
+        "prototype": True,
+        "field_ready": False,
+        "automatic_picking": False,
+        "das_adapter": False,
+        "gauge_response": False,
+        "stable_root_api": False,
+        "cli": False,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     output_dir = parse_output_dir("das_void_diffraction", argv)
     geometry = SyntheticGeometry()
@@ -164,7 +190,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         pick_times,
     )
     geometry_metadata = build_das_geometry_metadata(geometry, receiver_x)
-    _write_result(result_path, geometry, inversion, pick_indices.size, geometry_metadata)
+    localization_metadata = build_localization_algorithm_metadata()
+    _write_result(
+        result_path,
+        geometry,
+        inversion,
+        pick_indices.size,
+        geometry_metadata,
+        localization_metadata,
+    )
 
     print(f"output_dir={output_dir}")
     print(
@@ -231,17 +265,20 @@ def _diffraction_travel_times(
     void_depth: float,
     vr: float,
 ) -> np.ndarray:
-    """Workflow-only kinematic road-void diffraction curve."""
+    """Workflow adapter for the package-level kinematic diffraction model."""
 
-    receivers = np.asarray(receiver_x, dtype=np.float64)
+    receivers = np.asarray(receiver_x, dtype=np.float64).reshape(-1)
     if void_depth <= 0.0:
         raise ValueError("void_depth must be positive")
     if vr <= 0.0:
         raise ValueError("vr must be positive")
-    return (
-        abs(float(void_x) - float(source_x))
-        + np.sqrt(np.square(receivers - float(void_x)) + float(void_depth) ** 2)
-    ) / float(vr)
+    receiver_xy = np.column_stack([receivers, np.zeros_like(receivers)])
+    return diffraction_travel_time_2d(
+        [float(source_x), 0.0],
+        receiver_xy,
+        [float(void_x), float(void_depth)],
+        float(vr),
+    )
 
 
 def _invert_diffraction_picks(
@@ -299,29 +336,24 @@ def _search_diffraction_grid(
     depth_values: np.ndarray,
     velocity_bounds: tuple[float, float],
 ) -> InversionResult:
-    best = InversionResult(0.0, 0.0, 0.0, float("inf"))
-    v_low, v_high = velocity_bounds
-    for void_x in x_values:
-        paths = (
-            abs(float(void_x) - float(source_x))
-            + np.sqrt(
-                np.square(receiver_x.reshape(1, -1) - float(void_x))
-                + np.square(depth_values.reshape(-1, 1))
-            )
-        )
-        slowness = np.sum(paths * pick_times.reshape(1, -1), axis=1) / np.sum(paths * paths, axis=1)
-        velocities = np.clip(1.0 / slowness, v_low, v_high)
-        residual = paths / velocities.reshape(-1, 1) - pick_times.reshape(1, -1)
-        rmse = np.sqrt(np.mean(np.square(residual), axis=1))
-        index = int(np.argmin(rmse))
-        if float(rmse[index]) < best.rmse:
-            best = InversionResult(
-                void_x=float(void_x),
-                void_depth=float(depth_values[index]),
-                vr=float(velocities[index]),
-                rmse=float(rmse[index]),
-            )
-    return best
+    receivers = np.asarray(receiver_x, dtype=np.float64).reshape(-1)
+    observed = np.asarray(pick_times, dtype=np.float64).reshape(-1)
+    receiver_xy = np.column_stack([receivers, np.zeros_like(receivers)])
+    result = grid_search_point_location_velocity_2d(
+        [float(source_x), 0.0],
+        receiver_xy,
+        observed,
+        x_values,
+        depth_values,
+        velocity_bounds=velocity_bounds,
+    )
+    rmse = float(np.sqrt(np.mean(np.square(result.residuals_at_best))))
+    return InversionResult(
+        void_x=float(result.best_x),
+        void_depth=float(result.best_z),
+        vr=float(result.best_velocity),
+        rmse=rmse,
+    )
 
 
 def _inject_events(
@@ -417,6 +449,7 @@ def _write_result(
     inversion: InversionResult,
     pick_count: int,
     geometry_metadata: dict[str, object],
+    localization_metadata: dict[str, object],
 ) -> None:
     true_values = {
         "source_x": geometry.source_x,
@@ -429,6 +462,7 @@ def _write_result(
         "workflow": "das_void_diffraction_kinematic_prototype",
         "data_layout": "NumPy synthesis uses data[time, channel]; RSF stores (channel, time).",
         "das_geometry": dict(geometry_metadata),
+        "localization_algorithm": dict(localization_metadata),
         "true": true_values,
         "inverted": inverted_values,
         "relative_error": {

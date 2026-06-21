@@ -33,7 +33,7 @@ examples/my_workflows/_outputs/<workflow-name>/
 | `lsqr_minimal_example.py` | Compare bounded LSQR with dense least squares and demonstrate `LeastSquaresProblem` regularization. | `generic.operators`, `generic.least_squares`, `generic.regularization`, `generic.solvers` | printed model/residual/objective summary only | learning prototype |
 | `plot_grey_graph_workflow.py` | Save quicklook graph and grey PNGs from synthetic data. | `plot.graph`, `plot.grey`, `io.rsf` | `plot_trace.rsf`, `plot_panel.rsf`, `plot_trace_graph.png`, `plot_panel_grey.png` | partial plotting substitute |
 | `seismic_basic_agc_mute_stack_workflow.py` | Process a tiny synthetic gather with AGC, mute, stack, and graph. | `seismic.agc`, `seismic.mute`, `seismic.stack`, `plot.graph`, `io.rsf` | `synthetic_gather.rsf`, `synthetic_gather_agc.rsf`, `synthetic_gather_mute.rsf`, `synthetic_stack.rsf`, `synthetic_stack_graph.png` | stable subset |
-| `das_void_diffraction_workflow.py` | Generate a kinematic DAS shot gather, apply the existing FK prototype, overlay void diffraction curves, invert simulated picks, and write regular-linear DAS geometry metadata. | `signal.wavelet`, `seismic.fk`, `plot.grey`, `io.rsf`, workflow-only NumPy helpers | raw/filtered RSF gathers, two PNGs, picks CSV, inversion JSON with `das_geometry` | workflow prototype |
+| `das_void_diffraction_workflow.py` | Generate a kinematic DAS shot gather, apply the existing FK prototype, overlay void diffraction curves, invert simulated picks with the localization grid-search prototype, and write regular-linear DAS geometry metadata. | `signal.wavelet`, `seismic.fk`, `localization.traveltime`, `plot.grey`, `io.rsf`, workflow adapters | raw/filtered RSF gathers, two PNGs, picks CSV, inversion JSON with `das_geometry` and `localization_algorithm` | workflow prototype |
 | `seismic_signal_contract_workflow.py` | Run the S1 deterministic gather contract through existing conditioning, bandpass, AGC, mute, stack, PSD, and quicklook APIs. | `testing.seismic_fixtures`, `signal.qc`, `signal.filter`, `seismic.agc/mute/stack`, `signal.spectral`, `plot.grey` | raw/processed/stack/PSD RSFs, quicklook PNG, metrics JSON | internal contract regression |
 | `seismic_signal_metrics_workflow.py` | Evaluate the S1 gather pipeline with deterministic SNR, band-energy, mute, stack, finite-value, and header-axis metrics. | `testing.seismic_fixtures`, `testing.seismic_metrics`, existing signal/seismic processing APIs, `plot.grey` | raw/intermediate/processed/stack RSFs, quicklook PNG, internal QC report JSON | internal QC regression |
 | `seismic_nmo_contract_workflow.py` | Exercise the existing NMO prototype on the S1 signed-offset fixture and compare correct, absent, and wrong velocity behavior with S2 metrics. | `seismic.nmo`, `seismic.stack`, `testing.seismic_fixtures`, `testing.seismic_metrics`, `plot.grey` | raw/corrected gathers, pre/post/wrong-velocity stacks, quicklook PNG, internal QC report JSON | prototype contract regression |
@@ -56,6 +56,12 @@ examples/my_workflows/_outputs/<workflow-name>/
   contract records regular-linear local metadata for tests and future workflow
   design, but it is not a DAS file adapter, gauge-response model, elastic
   forward model, or production void-detection method.
+- Its D-2B inversion path uses the package-level
+  `pymadagascar.localization.traveltime` diffraction travel-time and
+  variable-velocity grid-search prototype. The added
+  `localization_algorithm` JSON metadata records that linkage, but the workflow
+  still performs simulated-pick inversion only: no real DAS reader, automatic
+  picking, gauge response, CLI, stable/root API, or field-ready claim is added.
 - The S1 contract workflow is deterministic testing infrastructure. It defines
   a regular signed-offset small-gather baseline and is not a production
   processing recipe.

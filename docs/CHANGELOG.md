@@ -8,6 +8,20 @@ optional compatibility checks.
 
 ### Added
 
+- DAS workflow D-2B integration: `das_void_diffraction_workflow.py` now routes
+  its kinematic diffraction curve and variable-velocity grid-search inversion
+  through `pymadagascar.localization.traveltime` instead of keeping the core
+  localization math only in workflow-private helpers. The output JSON records
+  `localization_algorithm` metadata for
+  `grid_search_point_location_velocity_2d`, closed-form slowness velocity mode,
+  and observed-minus-predicted residuals. D-2B remains workflow-only and adds no
+  DAS file adapter, real-data reader, automatic picking, gauge response, CLI,
+  root/stable API, command coverage, or coverage denominator change.
+- `tests/test_das_void_diffraction_workflow.py` now verifies the workflow
+  calls the package-level localization grid-search, preserves the D-2A
+  `das_geometry` JSON contract, records JSON-safe localization metadata, and
+  keeps synthetic `void_x`, `void_depth`, and velocity recovery within the
+  existing tolerances.
 - Localization Topic L0-2 variable-velocity grid-search prototype:
   `grid_search_point_location_velocity_2d` and
   `VariableVelocityLocalizationGridSearchResult` extend

@@ -131,6 +131,17 @@ are no remaining comparison bridge failures.
   sample timing, and explicit `gauge_length_status: not_modeled`. This adds no
   DAS file adapter, field fixture, automatic picking, gauge response, stable
   API, CLI, command coverage, or field-performance claim.
+- Stage D-2B: DAS/localization workflow integration completed. The void
+  diffraction workflow now uses the package-level
+  `pymadagascar.localization.traveltime` kinematic diffraction travel-time and
+  variable-velocity grid-search prototype while keeping only thin
+  workflow-specific coordinate adapters. Its JSON adds
+  `localization_algorithm` metadata documenting
+  `grid_search_point_location_velocity_2d`, closed-form slowness velocity
+  mode, observed-minus-predicted residuals, and prototype/non-field-ready
+  boundaries. This adds no DAS adapter, real-data reader, automatic picking,
+  gauge response, stable/root API, CLI, command coverage, or coverage
+  denominator change.
 - Stage C-7: signal and small-gather QC foundation completed with module-only
   `demean`, `detrend`, `decimate`, `bandstop`, `notch`, and `localrms` CLIs,
   shared NumPy APIs, RSF wrappers, RSFData methods, and a focused demo.
@@ -469,7 +480,7 @@ separate.
 | Topic | Current maturity | T1 decision | Largest shortfall |
 | --- | --- | --- | --- |
 | Seismic data signal analysis and processing | stable subset, with prototype NMO/Semblance/FK/Radon | S1 contracts, S2 metrics/QC, S3 NMO hardening, S4-0 source alignment, S4-1 Semblance hardening, S4-2 small-gather geometry design, S4-3 FK validation, S5 integrated workflow, S6-0/S6-1 route decisions, S6-2 small slant-stack hardening, and S7-0 closeout complete; pause by default | field-scale/non-regular geometry, multi-gather validation, velocity picking, high-resolution Radon, and production processing |
-| DAS / engineering workflows | workflow-only | D-1 kinematic road-void workflow and D-2A workflow-only geometry metadata contract complete; no adapter | DAS file adapters, field fixtures, gauge response, automatic picking, uncertainty, and field-performance validation |
+| DAS / engineering workflows | workflow-only | D-1 kinematic road-void workflow, D-2A workflow-only geometry metadata contract, and D-2B package-level localization grid-search integration complete; no adapter | DAS file adapters, field fixtures, gauge response, automatic picking, uncertainty, and field-performance validation |
 | Localization | prototype | L0-1 pure-Python 2D travel-time/fixed-velocity grid-search primitives and L0-2 homogeneous variable-velocity grid-search prototype complete; no CLI/root API | pick records, uncertainty, identifiability, richer velocity-model interfaces, and production workflows |
 | Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, I0-8A/I0-8B right-preconditioned CGLS diagnostics, I0-9B1 bounded unpreconditioned/regularized LSQR, and I0-9C LSQR learning example/notebook closure complete | Right-preconditioned LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
 | Forward modeling | simplified prototype | design only | reusable model/acquisition geometry and accuracy evidence |

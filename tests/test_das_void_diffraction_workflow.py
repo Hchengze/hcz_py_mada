@@ -25,6 +25,19 @@ def test_workflow_helpers_recover_noise_free_geometry(monkeypatch: pytest.Monkey
     namespace = runpy.run_path(str(WORKFLOW))
     travel_times = namespace["_diffraction_travel_times"]
     invert = namespace["_invert_diffraction_picks"]
+    search_grid = namespace["_search_diffraction_grid"]
+    original_grid_search = namespace["grid_search_point_location_velocity_2d"]
+    calls: list[dict[str, Any]] = []
+
+    def recording_grid_search(*args: Any, **kwargs: Any) -> Any:
+        calls.append({"args": args, "kwargs": kwargs})
+        return original_grid_search(*args, **kwargs)
+
+    monkeypatch.setitem(
+        search_grid.__globals__,
+        "grid_search_point_location_velocity_2d",
+        recording_grid_search,
+    )
 
     receiver_x = np.linspace(0.0, 35.5, 24)
     picks = travel_times(
@@ -47,6 +60,8 @@ def test_workflow_helpers_recover_noise_free_geometry(monkeypatch: pytest.Monkey
     assert result.void_depth == pytest.approx(2.5, rel=0.03)
     assert result.vr == pytest.approx(240.0, rel=0.01)
     assert result.rmse < 1.0e-5
+    assert len(calls) == 3
+    assert all(call["kwargs"]["velocity_bounds"] == (150.0, 400.0) for call in calls)
 
 
 def test_workflow_subprocess_outputs_and_inversion(tmp_path: Path) -> None:
@@ -101,6 +116,23 @@ def test_workflow_subprocess_outputs_and_inversion(tmp_path: Path) -> None:
     assert payload["relative_error"]["vr"] < 0.03
     assert payload["inverted"]["rmse"] < 0.001
 
+    algorithm = payload["localization_algorithm"]
+    assert algorithm["module"] == "pymadagascar.localization.traveltime"
+    assert algorithm["method"] == "grid_search_point_location_velocity_2d"
+    assert algorithm["travel_time_model"] == "source_diffractor_receiver_kinematic"
+    assert algorithm["velocity_mode"] == "closed_form_slowness"
+    assert algorithm["residual_convention"] == "observed_minus_predicted"
+    assert algorithm["coordinate_frame"] == "local_2d_x_z"
+    assert algorithm["depth_positive"] == "down"
+    assert algorithm["objective"] == "0.5_sum_weighted_squared_residuals"
+    assert algorithm["prototype"] is True
+    assert algorithm["field_ready"] is False
+    assert algorithm["automatic_picking"] is False
+    assert algorithm["das_adapter"] is False
+    assert algorithm["gauge_response"] is False
+    assert algorithm["stable_root_api"] is False
+    assert algorithm["cli"] is False
+
     geometry = payload["das_geometry"]
     assert geometry["schema"] == "pymadagascar_workflow_das_geometry_v1"
     assert geometry["geometry_kind"] == "regular_linear_das"
@@ -140,6 +172,7 @@ def test_workflow_subprocess_outputs_and_inversion(tmp_path: Path) -> None:
         + geometry["sample_interval"] * (geometry["sample_count"] - 1)
     )
 
+    json.dumps(algorithm)
     json.dumps(geometry)
     assert not _contains_local_absolute_path(payload)
 
