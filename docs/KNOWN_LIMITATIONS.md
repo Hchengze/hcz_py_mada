@@ -45,10 +45,12 @@ testing details live in the other current docs.
   direct-module prototype. Inversion still lacks preconditioned LSQR, stable
   solver APIs, constraints, production scaling, and domain inversion workflows.
 - Forward modeling has the F0-1 regular local-2D model/acquisition geometry
-  contract, the F0-2 acquisition-driven single-shot wrapper, and the existing
-  acoustic2d finite-difference prototype. It still lacks physical-coordinate
-  interpolation, multi-shot behavior, convergence or dispersion evidence,
-  production boundary studies, and field-scale claims.
+  contract, the F0-2 acquisition-driven single-shot wrapper, the F0-3
+  sequential multi-shot survey wrapper, and the existing acoustic2d
+  finite-difference prototype. It still lacks physical-coordinate
+  interpolation, survey tensor conversion, convergence or dispersion evidence,
+  production boundary studies, parallel/cached survey execution, and
+  field-scale claims.
 - Imaging lacks a shared acquisition model, amplitude/anti-alias treatment,
   adjoint validation, and a reference velocity workflow; implementation is
   deferred.

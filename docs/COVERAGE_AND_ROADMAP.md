@@ -356,13 +356,13 @@ Every topic must define three contracts before broad implementation:
   prototype with integer source/receiver indices, sponge damping, snapshots,
   and a basic arrival test; F0-1 adds a pure-Python regular local-2D
   model/acquisition geometry contract in pymadagascar.modeling.geometry, and
-  F0-2 adds a single-shot acquisition-driven wrapper in
-  pymadagascar.modeling.shot.
+  F0-2/F0-3 add single-shot and sequential multi-shot acquisition-driven
+  wrappers in pymadagascar.modeling.shot.
 - **Maturity / entry:** simplified prototype with topic-level geometry and shot
   helpers; no root/stable API.
-- **Missing:** physical-coordinate interpolation, multi-shot/component support,
-  boundary studies, convergence, dispersion, validation workflows, and
-  reference solutions.
+- **Missing:** physical-coordinate interpolation, component support, survey
+  tensor conversion, boundary studies, convergence, dispersion, validation
+  workflows, and reference solutions.
 - **Data contract:** velocity/density model grids, source wavelet and time
   sampling, shot gathers, component names, units, and snapshot ownership.
 - **Geometry contract:** physical grid origin/spacing, source and receiver
@@ -374,8 +374,10 @@ Every topic must define three contracts before broad implementation:
   point-source/receiver coordinates to the existing acoustic2d integer-index
   contract without changing the solver. F0-2 uses that contract to run one
   acoustic2d shot from physical source/receiver coordinates and return a
-  path-free Pythonic record plus metadata, still without adding a new solver,
-  multi-shot behavior, or interpolation.
+  path-free Pythonic record plus metadata. F0-3 loops over an input-ordered
+  sequence of AcousticAcquisition2D objects, reuses the F0-2 shot wrapper, and
+  returns a list-backed AcousticSurveyRecord2D without adding a new solver,
+  parallelism, caching, interpolation, or a committed survey tensor layout.
 - **Do not:** add new wave-equation algorithms, production boundaries,
   multi-physics, C++ kernels, or performance claims.
 - **Docs:** existing API/roadmap/limitations docs record the prototype

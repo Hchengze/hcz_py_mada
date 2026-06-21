@@ -42,9 +42,10 @@ using existing APIs. Localization now has L0-1/L0-2 direct-module prototype
 travel-time and fixed/variable-velocity grid-search primitives in
 `pymadagascar.localization`, but no root/stable API, CLI, automatic picking,
 uncertainty, or production location workflow. Forward modeling now has F0-1
-geometry helpers and an F0-2 acquisition-driven single-shot wrapper, but no
-root/stable API, CLI, multi-shot survey, interpolation, or production modeling
-claim. Imaging remains a simplified prototype.
+geometry helpers, an F0-2 acquisition-driven single-shot wrapper, and an F0-3
+sequential multi-shot survey wrapper, but no root/stable API, CLI,
+interpolation, committed survey tensor layout, or production modeling claim.
+Imaging remains a simplified prototype.
 Inversion may first design operator composition, regularization, objective,
 residual, and history contracts without promoting a domain inversion API. DAS
 travel-time and least-squares helpers remain workflow-only, and SEG-Y trace
@@ -721,12 +722,20 @@ receiver coordinates in x,z order, and JSON-safe path-free metadata documenting
 the numerical core, grid, source/receiver indices, receiver-time data layout,
 units, and prototype/non-field-ready boundaries.
 
-F0-1/F0-2 document the current acoustic2d axis contract: velocity RSF is
+F0-3 extends the same topic-level module with AcousticSurveyRecord2D and
+run_acoustic2d_survey. The survey wrapper accepts a non-empty sequence of
+AcousticAcquisition2D objects, calls run_acoustic2d_shot sequentially in input
+order, annotates each shot with shot_index metadata, and returns a list of
+AcousticShotRecord2D records plus JSON-safe path-free survey metadata. It does
+not stack shots into a 3D tensor because receiver counts may vary by shot and
+shot-level metadata remains part of the contract.
+
+F0-1/F0-2/F0-3 document the current acoustic2d axis contract: velocity RSF is
 interpreted as n1=z and n2=x, while the NumPy velocity array shape is (nx, nz).
 They do not change the acoustic finite-difference numerical core, add a new
-wave-equation solver, add multi-shot simulation, implement source/receiver
-interpolation, add production validation, or promote modeling to a stable root
-API.
+wave-equation solver, add parallelism or caching, implement source/receiver
+interpolation, add production validation, commit to a survey tensor layout, or
+promote modeling to a stable root API.
 
 ## Stable and Stable-Subset APIs
 

@@ -8,6 +8,20 @@ optional compatibility checks.
 
 ### Added
 
+- Forward Modeling Topic F0-3 multi-shot acoustic survey wrapper:
+  pymadagascar.modeling.shot adds AcousticSurveyRecord2D and
+  run_acoustic2d_survey, a pure-Python topic-level wrapper that accepts a
+  non-empty input-ordered sequence of AcousticAcquisition2D objects, reuses
+  run_acoustic2d_shot for each shot, and returns a list of AcousticShotRecord2D
+  records plus JSON-safe path-free survey metadata documenting shot count,
+  receiver counts per shot, input-order semantics, no parallel execution, no
+  cache, and no committed survey tensor layout.
+- tests/test_acoustic2d_survey_contract.py covers multi-shot execution, shot
+  order, per-shot data shapes, JSON-safe/path-free metadata, empty/invalid
+  acquisition rejection, velocity-shape rejection, modeling-topic exports, and
+  unchanged root/stable API boundaries. F0-3 adds no new wave-equation solver,
+  parallelism, cache, source/receiver interpolation, CLI, root/stable API,
+  command coverage, or coverage denominator change.
 - Forward Modeling Topic F0-2 acquisition-driven acoustic shot wrapper:
   pymadagascar.modeling.shot adds AcousticShotRecord2D and
   run_acoustic2d_shot, a pure-Python topic-level wrapper that accepts a NumPy

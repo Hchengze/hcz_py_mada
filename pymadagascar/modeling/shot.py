@@ -8,6 +8,7 @@ file-backed acoustic2d_forward prototype.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -65,6 +66,31 @@ class AcousticShotRecord2D:
         object.__setattr__(self, "time", np.array(time, dtype=float, copy=True))
         object.__setattr__(self, "receiver_coordinates", np.array(receivers, dtype=float, copy=True))
         object.__setattr__(self, "source_coordinate", np.array(source, dtype=float, copy=True))
+        object.__setattr__(self, "metadata", _json_safe_dict(self.metadata, "metadata"))
+
+
+@dataclass(frozen=True)
+class AcousticSurveyRecord2D:
+    """Multi-shot acoustic2d survey record.
+
+    The survey layer intentionally keeps shots as a list of AcousticShotRecord2D
+    objects instead of committing to a 3D tensor layout. Different shots may
+    have different receiver counts, and shot-level metadata remains part of the
+    contract.
+    """
+
+    shots: list[AcousticShotRecord2D]
+    metadata: dict[str, Any]
+
+    def __post_init__(self) -> None:
+        shots = list(self.shots)
+        if not shots:
+            raise Acoustic2DError("survey record must contain at least one shot")
+        for index, shot in enumerate(shots):
+            if not isinstance(shot, AcousticShotRecord2D):
+                raise Acoustic2DError(f"shots[{index}] must be an AcousticShotRecord2D")
+
+        object.__setattr__(self, "shots", shots)
         object.__setattr__(self, "metadata", _json_safe_dict(self.metadata, "metadata"))
 
 
@@ -167,6 +193,89 @@ def run_acoustic2d_shot(
     )
 
 
+def run_acoustic2d_survey(
+    velocity: np.ndarray,
+    grid: AcousticModelGrid2D,
+    acquisitions: Iterable[AcousticAcquisition2D],
+    *,
+    nt: int,
+    dt: float,
+    **shot_kwargs: Any,
+) -> AcousticSurveyRecord2D:
+    """Run a small sequential multi-shot acoustic2d survey.
+
+    Each acquisition is executed in input order by calling run_acoustic2d_shot.
+    This is a bounded topic-level wrapper: it adds no new finite-difference
+    solver, parallel execution, caching, source/receiver interpolation, or
+    survey tensor layout commitment.
+    """
+
+    if not isinstance(grid, AcousticModelGrid2D):
+        raise Acoustic2DError("grid must be an AcousticModelGrid2D")
+
+    velocity_array = np.asarray(velocity, dtype=np.float32)
+    if velocity_array.shape != (grid.nx, grid.nz):
+        raise Acoustic2DError(
+            f"velocity shape must match grid as {(grid.nx, grid.nz)}, got {velocity_array.shape}"
+        )
+    if np.any(~np.isfinite(velocity_array)):
+        raise Acoustic2DError("velocity values must be finite")
+    if np.any(velocity_array <= 0.0):
+        raise Acoustic2DError("velocity values must be positive")
+
+    try:
+        acquisition_list = list(acquisitions)
+    except TypeError as exc:
+        raise Acoustic2DError("acquisitions must be a non-empty iterable") from exc
+    if not acquisition_list:
+        raise Acoustic2DError("acquisitions must contain at least one AcousticAcquisition2D")
+    for index, acquisition in enumerate(acquisition_list):
+        if not isinstance(acquisition, AcousticAcquisition2D):
+            raise Acoustic2DError(f"acquisitions[{index}] must be an AcousticAcquisition2D")
+    unsupported_path_kwargs = [
+        name for name in ("output_path", "snapshot_path") if shot_kwargs.get(name) is not None
+    ]
+    if unsupported_path_kwargs:
+        raise Acoustic2DError(
+            "run_acoustic2d_survey does not support single-shot file output kwargs "
+            f"{unsupported_path_kwargs}; use run_acoustic2d_shot for explicit file outputs"
+        )
+
+    shots: list[AcousticShotRecord2D] = []
+    shot_count = len(acquisition_list)
+    for shot_index, acquisition in enumerate(acquisition_list):
+        shot = run_acoustic2d_shot(
+            velocity_array,
+            grid,
+            acquisition,
+            nt=nt,
+            dt=dt,
+            **shot_kwargs,
+        )
+        shot_metadata = dict(shot.metadata)
+        shot_metadata["shot_index"] = shot_index
+        shot_metadata["shot_count"] = shot_count
+        shot_metadata["shot_order"] = "input_order"
+        shots.append(
+            AcousticShotRecord2D(
+                data=shot.data,
+                time=shot.time,
+                receiver_coordinates=shot.receiver_coordinates,
+                source_coordinate=shot.source_coordinate,
+                metadata=shot_metadata,
+            )
+        )
+
+    metadata = _survey_metadata(
+        grid=grid,
+        shots=shots,
+        nt=_positive_int(nt, "nt"),
+        dt=_positive_float(dt, "dt"),
+        shot_kwargs=shot_kwargs,
+    )
+    return AcousticSurveyRecord2D(shots=shots, metadata=metadata)
+
+
 def _velocity_header(grid: AcousticModelGrid2D) -> RSFHeader:
     return RSFHeader(
         {
@@ -181,6 +290,57 @@ def _velocity_header(grid: AcousticModelGrid2D) -> RSFHeader:
             "label2": "X",
             "unit2": grid.distance_unit,
         }
+    )
+
+
+def _survey_metadata(
+    *,
+    grid: AcousticModelGrid2D,
+    shots: list[AcousticShotRecord2D],
+    nt: int,
+    dt: float,
+    shot_kwargs: dict[str, Any],
+) -> dict[str, Any]:
+    receiver_counts = [int(shot.data.shape[0]) for shot in shots]
+    return _json_safe_dict(
+        {
+            "method": "acoustic2d_survey",
+            "numerical_core": "acoustic2d_forward",
+            "shot_wrapper": "run_acoustic2d_shot",
+            "coordinate_frame": grid.coordinate_frame,
+            "distance_unit": grid.distance_unit,
+            "time_unit": "s",
+            "velocity_unit": "m/s",
+            "velocity_shape": [grid.nx, grid.nz],
+            "grid_nx": grid.nx,
+            "grid_nz": grid.nz,
+            "dx": grid.dx,
+            "dz": grid.dz,
+            "ox": grid.ox,
+            "oz": grid.oz,
+            "rsf_axis_convention": "n1=z,n2=x",
+            "shot_count": len(shots),
+            "shot_indices": list(range(len(shots))),
+            "shot_order": "input_order",
+            "receiver_count_per_shot": receiver_counts,
+            "receiver_count_consistency": "constant"
+            if len(set(receiver_counts)) == 1
+            else "variable",
+            "data_layout_per_shot": "receiver_time",
+            "survey_tensor_layout": None,
+            "survey_tensor_layout_status": "not_committed",
+            "nt": nt,
+            "dt": dt,
+            "shot_kwargs": _metadata_safe_shot_kwargs(shot_kwargs),
+            "multi_shot": True,
+            "parallel": False,
+            "cache": False,
+            "prototype": True,
+            "field_ready": False,
+            "source_interpolation": False,
+            "receiver_interpolation": False,
+        },
+        "metadata",
     )
 
 
@@ -243,6 +403,14 @@ def _shot_metadata(
     )
 
 
+def _metadata_safe_shot_kwargs(shot_kwargs: dict[str, Any]) -> dict[str, Any]:
+    path_like_names = {"output_path", "snapshot_path"}
+    return {
+        str(key): ("not_recorded" if str(key) in path_like_names and value is not None else value)
+        for key, value in shot_kwargs.items()
+    }
+
+
 def _positive_int(value: Any, name: str) -> int:
     result = int(value)
     if result != value or result <= 0:
@@ -283,4 +451,9 @@ def _json_safe_value(value: Any, name: str) -> Any:
     raise Acoustic2DError(f"{name} is not JSON-safe")
 
 
-__all__ = ["AcousticShotRecord2D", "run_acoustic2d_shot"]
+__all__ = [
+    "AcousticShotRecord2D",
+    "AcousticSurveyRecord2D",
+    "run_acoustic2d_shot",
+    "run_acoustic2d_survey",
+]

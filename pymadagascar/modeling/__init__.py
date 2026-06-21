@@ -15,13 +15,19 @@ from .geometry import (
     acquisition_to_acoustic2d_indices,
     receiver_line_2d,
 )
-from .shot import AcousticShotRecord2D, run_acoustic2d_shot
+from .shot import (
+    AcousticShotRecord2D,
+    AcousticSurveyRecord2D,
+    run_acoustic2d_shot,
+    run_acoustic2d_survey,
+)
 
 __all__ = [
     "AcousticAcquisition2D",
     "AcousticModelGrid2D",
     "Acoustic2DError",
     "AcousticShotRecord2D",
+    "AcousticSurveyRecord2D",
     "GeometryError",
     "PointSource2D",
     "ReceiverArray2D",
@@ -31,4 +37,5 @@ __all__ = [
     "receiver_line_2d",
     "ricker_wavelet",
     "run_acoustic2d_shot",
+    "run_acoustic2d_survey",
 ]
