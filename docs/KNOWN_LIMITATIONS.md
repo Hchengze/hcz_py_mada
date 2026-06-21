@@ -44,9 +44,10 @@ testing details live in the other current docs.
   metadata. I0-9B1 adds bounded unpreconditioned/regularized LSQR as a
   direct-module prototype. Inversion still lacks preconditioned LSQR, stable
   solver APIs, constraints, production scaling, and domain inversion workflows.
-- Forward modeling lacks a reusable model/acquisition geometry contract,
-  physical-coordinate interpolation, multi-shot behavior, and convergence or
-  dispersion evidence.
+- Forward modeling has only the F0-1 regular local-2D model/acquisition
+  geometry contract plus the existing one-shot acoustic2d prototype. It still
+  lacks physical-coordinate interpolation, multi-shot behavior, convergence or
+  dispersion evidence, production boundary studies, and field-scale claims.
 - Imaging lacks a shared acquisition model, amplitude/anti-alias treatment,
   adjoint validation, and a reference velocity workflow; implementation is
   deferred.

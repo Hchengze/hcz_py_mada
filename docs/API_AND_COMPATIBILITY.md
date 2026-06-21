@@ -681,6 +681,38 @@ field-performance claims. A small source audit found related Madagascar
 raytrace, eikonal, diffraction, and book traveltime sources, but this module is
 not a full Madagascar command clone.
 
+## Forward Modeling Geometry Prototype Boundary
+
+F0-1 starts the forward-modeling topic implementation path with
+`pymadagascar.modeling.geometry`, a pure-Python topic-level geometry contract
+for the existing acoustic2d prototype. It is importable from
+`pymadagascar.modeling` but is not imported by `pymadagascar.__init__` or
+`pymadagascar.api`, and it adds no CLI, console script, command-surface
+coverage entry, or coverage-denominator change.
+
+The contract is deliberately limited to regular local 2D acoustic geometry:
+
+- `AcousticModelGrid2D` validates positive `nx/nz/dx/dz`, finite `ox/oz`,
+  coordinate frame `local_2d_x_z`, and depth-positive-down semantics.
+- Coordinates follow `x = ox + ix * dx` and `z = oz + iz * dz`.
+- `index_to_coordinate` and `coordinate_to_nearest_index` provide explicit
+  integer-sample conversion. Nearest-index conversion does not interpolate and
+  rejects out-of-bounds coordinates.
+- `PointSource2D`, `ReceiverArray2D`, `receiver_line_2d`, and
+  `AcousticAcquisition2D` provide point-source/receiver geometry and
+  JSON-safe metadata for small deterministic fixtures.
+- `acquisition_to_acoustic2d_indices(grid, acquisition)` returns
+  `sx, sz, receivers`, where `receivers` is a list of
+  `(x_index, z_index)` pairs accepted by the existing `acoustic2d_forward`
+  signature.
+
+F0-1 documents the current acoustic2d axis contract: velocity RSF is interpreted
+as `n1=z` and `n2=x`, while the NumPy velocity array shape is `(nx, nz)`.
+It does not change the acoustic finite-difference numerical core, add a new
+wave-equation solver, add multi-shot simulation, implement source/receiver
+interpolation, add production validation, or promote modeling to a stable root
+API.
+
 ## Stable and Stable-Subset APIs
 
 - RSF I/O: `read_rsf`, `write_rsf`, `read_header`, `write_header`.

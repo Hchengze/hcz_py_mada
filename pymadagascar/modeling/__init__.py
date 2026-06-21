@@ -6,11 +6,26 @@ from .acoustic2d import (
     acoustic2d_forward,
     ricker_wavelet,
 )
+from .geometry import (
+    AcousticAcquisition2D,
+    AcousticModelGrid2D,
+    GeometryError,
+    PointSource2D,
+    ReceiverArray2D,
+    acquisition_to_acoustic2d_indices,
+    receiver_line_2d,
+)
 
 __all__ = [
+    "AcousticAcquisition2D",
+    "AcousticModelGrid2D",
     "Acoustic2DError",
+    "GeometryError",
+    "PointSource2D",
+    "ReceiverArray2D",
     "absorbing_boundary_simple",
     "acoustic2d_forward",
+    "acquisition_to_acoustic2d_indices",
+    "receiver_line_2d",
     "ricker_wavelet",
 ]
-

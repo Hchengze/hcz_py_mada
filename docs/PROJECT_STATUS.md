@@ -21,7 +21,7 @@ and must never be a hard dependency.
 | --- | ---: |
 | User-facing CLI modules | 134 |
 | Registered `pymada-*` console scripts | 25 |
-| Pytest files | 82 |
+| Pytest files | 83 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -142,6 +142,17 @@ are no remaining comparison bridge failures.
   boundaries. This adds no DAS adapter, real-data reader, automatic picking,
   gauge response, stable/root API, CLI, command coverage, or coverage
   denominator change.
+- Forward Modeling Topic F0-1: model/acquisition geometry contract completed.
+  The new pymadagascar.modeling.geometry topic module defines a regular
+  local-2D acoustic model grid, point-source and receiver-array geometry,
+  regular receiver-line construction, JSON-safe acquisition metadata, and
+  conversion to the existing acoustic2d_forward integer-index signature.
+  It documents the current acoustic2d conventions: physical x,z coordinates,
+  depth positive downward, NumPy velocity shape (nx, nz), RSF n1=z,n2=x,
+  and source/receiver indices in (x_index,z_index) order. F0-1 changes no
+  finite-difference numerical core and adds no wave-equation solver,
+  multi-shot simulation, interpolation, CLI, root/stable API, command
+  coverage, or coverage denominator change.
 - Stage C-7: signal and small-gather QC foundation completed with module-only
   `demean`, `detrend`, `decimate`, `bandstop`, `notch`, and `localrms` CLIs,
   shared NumPy APIs, RSF wrappers, RSFData methods, and a focused demo.
@@ -468,9 +479,10 @@ regularized LSQR. I0-9C adds the minimal LSQR learning example and notebook
 section while leaving right-preconditioned LSQR, stable solver APIs, and domain
 inversions for later passes. Broad
 velocity picking, high-resolution or solved Radon inversion, FK algorithm
-expansion, production localization, modeling, and imaging expansion remain
+expansion, production localization, modeling solver expansion, and imaging remain
 outside the current pass. Localization now has L0-1/L0-2 small travel-time and
-fixed/variable-velocity grid-search primitives only; forward modeling remains design-only, and imaging and
+fixed/variable-velocity grid-search primitives only; forward modeling now has
+F0-1 reusable model/acquisition geometry only, and imaging and
 SEG-Y/header expansion remain deferred. Hybrid
 benchmarking, B-3-3 `sfsegyheader`, release, licensing, and tagging remain
 separate.
@@ -483,7 +495,7 @@ separate.
 | DAS / engineering workflows | workflow-only | D-1 kinematic road-void workflow, D-2A workflow-only geometry metadata contract, and D-2B package-level localization grid-search integration complete; no adapter | DAS file adapters, field fixtures, gauge response, automatic picking, uncertainty, and field-performance validation |
 | Localization | prototype | L0-1 pure-Python 2D travel-time/fixed-velocity grid-search primitives and L0-2 homogeneous variable-velocity grid-search prototype complete; no CLI/root API | pick records, uncertainty, identifiability, richer velocity-model interfaces, and production workflows |
 | Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, I0-8A/I0-8B right-preconditioned CGLS diagnostics, I0-9B1 bounded unpreconditioned/regularized LSQR, and I0-9C LSQR learning example/notebook closure complete | Right-preconditioned LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
-| Forward modeling | simplified prototype | design only | reusable model/acquisition geometry and accuracy evidence |
+| Forward modeling | simplified prototype | F0-1 model/acquisition geometry contract complete; no solver-core change or root API | physical-coordinate interpolation, multi-shot behavior, convergence/dispersion evidence, validation workflows, and production-scale modeling |
 | Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
 | SEG-Y / headers | stable RSF / partial headers / prototype SEG-Y | independent defer | trace ownership, scalars/units, synchronized reorder |
 | Plot / visualization | partial quicklook substitute | support work only | composition, overlays, and domain QC presentation |

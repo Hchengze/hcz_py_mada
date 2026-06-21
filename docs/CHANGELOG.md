@@ -8,6 +8,20 @@ optional compatibility checks.
 
 ### Added
 
+- Forward Modeling Topic F0-1 geometry contract:
+  `pymadagascar.modeling.geometry` adds pure-Python topic-level helpers for
+  regular 2D acoustic model grids, point sources, receiver arrays, regular
+  receiver lines, acoustic acquisition metadata, and conversion to the existing
+  `acoustic2d_forward` integer-index signature. The contract documents the
+  current acoustic2d convention (`x,z` coordinates, velocity arrays shaped
+  `(nx, nz)`, RSF `n1=z,n2=x`, and `(x_index,z_index)` source/receiver
+  samples) without changing the finite-difference numerical core.
+- `tests/test_modeling_geometry_contract.py` covers grid validation,
+  coordinate/index conversion, out-of-bounds rejection, source/receiver
+  index conversion, receiver-line generation, JSON-safe/path-free metadata,
+  modeling-topic exports, and unchanged root/stable API boundaries. F0-1 adds
+  no new wave-equation solver, multi-shot simulation, interpolation, CLI,
+  root/stable API, command coverage, or coverage denominator change.
 - DAS workflow D-2B integration: `das_void_diffraction_workflow.py` now routes
   its kinematic diffraction curve and variable-velocity grid-search inversion
   through `pymadagascar.localization.traveltime` instead of keeping the core

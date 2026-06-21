@@ -354,11 +354,13 @@ Every topic must define three contracts before broad implementation:
 
 - **Existing:** a one-shot 2D scalar acoustic finite-difference simplified
   prototype with integer source/receiver indices, sponge damping, snapshots,
-  and a basic arrival test.
-- **Maturity / entry:** simplified prototype; design only.
-- **Missing:** reusable model/acquisition objects, physical-coordinate
-  interpolation, multi-shot/component support, boundary studies, convergence,
-  dispersion, and reference solutions.
+  and a basic arrival test; F0-1 adds a pure-Python regular local-2D
+  model/acquisition geometry contract in pymadagascar.modeling.geometry.
+- **Maturity / entry:** simplified prototype with topic-level geometry helpers;
+  no root/stable API.
+- **Missing:** physical-coordinate interpolation, multi-shot/component support,
+  boundary studies, convergence, dispersion, validation workflows, and
+  reference solutions.
 - **Data contract:** velocity/density model grids, source wavelet and time
   sampling, shot gathers, component names, units, and snapshot ownership.
 - **Geometry contract:** physical grid origin/spacing, source and receiver
@@ -366,11 +368,13 @@ Every topic must define three contracts before broad implementation:
 - **Validation contract:** CFL rejection, homogeneous analytic arrivals,
   grid-refinement convergence, dispersion and boundary-reflection metrics, and
   deterministic tiny fixtures.
-- **First batch:** specify model and acquisition geometry plus a validation
-  matrix; do not change the solver.
+- **First batch:** F0-1 specifies model and acquisition geometry and converts
+  point-source/receiver coordinates to the existing acoustic2d integer-index
+  contract without changing the solver.
 - **Do not:** add new wave-equation algorithms, production boundaries,
   multi-physics, C++ kernels, or performance claims.
-- **Docs:** existing API/roadmap/limitations docs are enough for design.
+- **Docs:** existing API/roadmap/limitations docs record the prototype
+  boundary; notebook updates are deferred.
 
 ### 6. Imaging
 
@@ -1720,7 +1724,7 @@ decisions and entry contracts above supersede its route recommendations.
 | Array math, statistics, and QC | `math/add/mul/div/scale/normalize/clip/clip2/threshold`, unary transforms, histogram/quantile, robust statistics, non-finite QC, `attr/min/max/diff/byte` | unary, robust-statistics, math, byte, amplitude-conditioning demos | stable subset; several Pythonic conveniences | No weighted/grouped/local statistics, streaming accumulation, or broad complex statistics | Treat as locally usable; add only gaps exposed by workflows | Not as a broad topic | Usually no |
 | Signal processing | FFT family, filters, smoothing, taper, spectra, envelope, correlation/convolution, shifts, calculus, Ricker, demean/detrend, decimation, band-stop/notch, local RMS, standard windows, PSD/CSD/coherence, spectrogram/SNR, Welch averaging, transfer estimates, whitening, attributes, windowed-sinc FIR, response QC, and band decomposition | preprocessing, correlation, calculus, smooth/noise/Ricker, signal-QC, spectral-QC, spectral-averaging, and FIR-design demos; FFT-bandpass workflow | stable subset | No IIR design, advanced windows, multi-taper/AR estimation, arbitrary-axis STFT, full system identification, multirate/polyphase processing, or streaming | Enter the seismic signal topic through contracts, fixtures, and one existing-API pipeline regression | Yes, as the first topic | Yes, shared data and validation fixtures |
 | Seismic processing | gain, AGC, mute/mutter, stack/stacks; NMO, semblance, FK, Radon; bin/linear/slice/max1 helpers | gather-QC demo and AGC/mute/stack workflow plus S1/S2/S3/S4-1/S4-2/S4-3/S6-2 contract workflows and the S5 integrated small-gather workflow | stable subset for basic QC; prototype for NMO/Semblance/FK/Radon | Field-scale/non-regular geometry, velocity picking, high-resolution Radon/inversion foundations, multi-gather tests, and trace-header integration | Pause after S7-0 by default; resume only through an explicit bounded design or source-aligned task | No, unless a narrow follow-up is explicitly selected | Yes, geometry and deterministic validation fixtures |
-| Forward modeling | `modeling.acoustic2d`, Ricker, RSF model grids | no dedicated forward workflow; only component tests and Ricker demo | simplified prototype | No reusable model/geometry API, multi-shot support, accuracy study, mature boundaries, or production scale | Defer new solver algorithms; first add design, geometry helpers, and a tiny validated workflow | Not yet | Yes |
+| Forward modeling | `modeling.acoustic2d`, `modeling.geometry`, Ricker, RSF model grids | no dedicated forward workflow; only component tests and Ricker demo | simplified prototype | No interpolation, multi-shot support, accuracy study, validation workflow, or production scale | Defer new solver algorithms; next add validation evidence or a tiny geometry-driven workflow | Not yet | Yes |
 | Inversion and operators | `LinearOperator`, matrix/callable operators, composition helpers, regularization operators, least-squares problem diagnostics, optional CG/CGNR history adapters, bounded CGLS, bounded unpreconditioned/regularized LSQR, right/model-space preconditioner contract, dot tests, CG/CGNR; Radon operator pair | linear-operator demo | partial / prototype | No preconditioned LSQR, stable/root solver API, constraints/masks, or domain inversion workflow | Continue only through bounded solver-contract passes, with right-preconditioned LSQR as a separate future task | Yes, current topic | Yes |
 | Imaging | simplified Kirchhoff, plus FK/Radon/acoustic2d building blocks | Kirchhoff diffraction demo | simplified prototype | No acquisition model, amplitude/anti-alias treatment, migration adjoint test, velocity workflow, or reference suite | Postpone algorithm expansion; improve synthetic validation before adding methods | No | Yes |
 | DAS and engineering workflows | Existing RSF, signal, QC, picking, FK, and plotting tools can process small regular arrays | D-1 kinematic road-void diffraction workflow | workflow-only | No HDF5/TDMS/DAT adapters, gauge-length/strain response, automatic picks, channel geometry contract, chunking, or field fixtures | Retain D-1 as workflow-first; pause D-2 and all adapter work | Later, by explicit decision | Geometry and validation design |
@@ -1760,8 +1764,9 @@ they have tests and CLI surfaces.
 8. **DAS / engineering workflow.** Retain D-1 as a synthetic workflow and
    consume shared contracts later. D-2, adapters, gauge response, automatic
    picking, and uncertainty implementation remain paused.
-9. **Forward modeling design.** Define model/acquisition geometry and an
-   accuracy-validation matrix without adding a solver or kernel.
+9. **Forward modeling validation.** F0-1 defines model/acquisition geometry;
+   a later pass should add an accuracy-validation matrix or tiny
+   geometry-driven workflow without adding a new solver or kernel.
 10. **Imaging topic.** Defer until geometry, forward, operator, and reference
    validation foundations exist.
 
@@ -1864,7 +1869,7 @@ Stage C-4 audit-only decisions:
 ## Next Recommended Work
 
 S1, S2, S3, S4-0, S4-1, S4-2, S4-3, S5, S6-0, S6-1, S6-2, S7-0, I0-0, I0-1,
-I0-2, I0-3, I0-4, I0-5, I0-6, I0-8A/I0-8B, I0-9B1/I0-9C, D-2A, and L0-1/L0-2 are
+I0-2, I0-3, I0-4, I0-5, I0-6, I0-8A/I0-8B, I0-9B1/I0-9C, D-2A, L0-1/L0-2, and F0-1 are
 complete. The next pass should not start by adding a feature command, broad
 domain inversion, or production workflow. Recommended follow-ups are either a
 bounded localization design pass for pick records/uncertainty/identifiability,
