@@ -8,6 +8,21 @@ optional compatibility checks.
 
 ### Added
 
+- Forward Modeling Topic F0-2 acquisition-driven acoustic shot wrapper:
+  pymadagascar.modeling.shot adds AcousticShotRecord2D and
+  run_acoustic2d_shot, a pure-Python topic-level wrapper that accepts a NumPy
+  velocity model, AcousticModelGrid2D, and AcousticAcquisition2D, converts
+  physical source/receiver coordinates to the existing acoustic2d integer
+  indices, calls the unchanged acoustic2d_forward numerical core through
+  temporary RSF inputs, and returns a receiver-time shot record with a time
+  axis, source/receiver coordinates, and JSON-safe path-free metadata.
+- tests/test_acoustic2d_shot_contract.py covers geometry-driven shot
+  execution, output shape/time-axis contracts, acquisition coordinate
+  preservation, metadata boundaries, velocity-shape and out-of-bounds
+  rejection, modeling-topic exports, and unchanged root/stable API boundaries.
+  F0-2 adds no new wave-equation solver, multi-shot survey loop,
+  source/receiver interpolation, CLI, root/stable API, command coverage, or
+  coverage denominator change.
 - Forward Modeling Topic F0-1 geometry contract:
   `pymadagascar.modeling.geometry` adds pure-Python topic-level helpers for
   regular 2D acoustic model grids, point sources, receiver arrays, regular

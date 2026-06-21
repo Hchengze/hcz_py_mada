@@ -41,8 +41,10 @@ metrics, bounded prototype hardening, and an integrated small-gather workflow
 using existing APIs. Localization now has L0-1/L0-2 direct-module prototype
 travel-time and fixed/variable-velocity grid-search primitives in
 `pymadagascar.localization`, but no root/stable API, CLI, automatic picking,
-uncertainty, or production location workflow. Forward modeling and imaging
-remain simplified prototypes.
+uncertainty, or production location workflow. Forward modeling now has F0-1
+geometry helpers and an F0-2 acquisition-driven single-shot wrapper, but no
+root/stable API, CLI, multi-shot survey, interpolation, or production modeling
+claim. Imaging remains a simplified prototype.
 Inversion may first design operator composition, regularization, objective,
 residual, and history contracts without promoting a domain inversion API. DAS
 travel-time and least-squares helpers remain workflow-only, and SEG-Y trace
@@ -681,7 +683,7 @@ field-performance claims. A small source audit found related Madagascar
 raytrace, eikonal, diffraction, and book traveltime sources, but this module is
 not a full Madagascar command clone.
 
-## Forward Modeling Geometry Prototype Boundary
+## Forward Modeling Geometry and Shot Prototype Boundary
 
 F0-1 starts the forward-modeling topic implementation path with
 `pymadagascar.modeling.geometry`, a pure-Python topic-level geometry contract
@@ -706,9 +708,22 @@ The contract is deliberately limited to regular local 2D acoustic geometry:
   `(x_index, z_index)` pairs accepted by the existing `acoustic2d_forward`
   signature.
 
-F0-1 documents the current acoustic2d axis contract: velocity RSF is interpreted
-as `n1=z` and `n2=x`, while the NumPy velocity array shape is `(nx, nz)`.
-It does not change the acoustic finite-difference numerical core, add a new
+F0-2 adds pymadagascar.modeling.shot, a topic-level single-shot wrapper around
+the same acoustic2d prototype. run_acoustic2d_shot accepts a NumPy velocity
+array, AcousticModelGrid2D, and AcousticAcquisition2D, converts physical
+source/receiver coordinates through acquisition_to_acoustic2d_indices, writes
+a temporary RSF velocity input, calls the existing acoustic2d_forward
+numerical core, and returns AcousticShotRecord2D.
+
+AcousticShotRecord2D.data preserves the existing core layout (receiver, time)
+with shape (nr, nt). The record also carries a 1D time axis, source and
+receiver coordinates in x,z order, and JSON-safe path-free metadata documenting
+the numerical core, grid, source/receiver indices, receiver-time data layout,
+units, and prototype/non-field-ready boundaries.
+
+F0-1/F0-2 document the current acoustic2d axis contract: velocity RSF is
+interpreted as n1=z and n2=x, while the NumPy velocity array shape is (nx, nz).
+They do not change the acoustic finite-difference numerical core, add a new
 wave-equation solver, add multi-shot simulation, implement source/receiver
 interpolation, add production validation, or promote modeling to a stable root
 API.

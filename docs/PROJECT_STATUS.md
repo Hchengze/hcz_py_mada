@@ -21,7 +21,7 @@ and must never be a hard dependency.
 | --- | ---: |
 | User-facing CLI modules | 134 |
 | Registered `pymada-*` console scripts | 25 |
-| Pytest files | 83 |
+| Pytest files | 84 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -153,6 +153,16 @@ are no remaining comparison bridge failures.
   finite-difference numerical core and adds no wave-equation solver,
   multi-shot simulation, interpolation, CLI, root/stable API, command
   coverage, or coverage denominator change.
+- Forward Modeling Topic F0-2: acquisition-driven acoustic2d shot wrapper
+  completed. The new pymadagascar.modeling.shot topic module adds
+  AcousticShotRecord2D and run_acoustic2d_shot, which accept a NumPy velocity
+  model, AcousticModelGrid2D, and AcousticAcquisition2D, convert physical
+  source/receiver coordinates to the existing acoustic2d_forward integer-index
+  contract, run the unchanged finite-difference core through temporary RSF
+  inputs, and return a Pythonic shot record with time axis, receiver/source
+  coordinates, and JSON-safe modeling metadata. F0-2 adds no new wave-equation
+  solver, multi-shot survey loop, source/receiver interpolation, CLI,
+  root/stable API, command coverage, or coverage denominator change.
 - Stage C-7: signal and small-gather QC foundation completed with module-only
   `demean`, `detrend`, `decimate`, `bandstop`, `notch`, and `localrms` CLIs,
   shared NumPy APIs, RSF wrappers, RSFData methods, and a focused demo.
