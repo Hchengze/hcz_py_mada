@@ -292,11 +292,13 @@ Every topic must define three contracts before broad implementation:
 ### 3. Localization
 
 - **Existing:** `max1` picking, synthetic arrival tests, receiver metadata in
-  acoustic2d, D-1 workflow-only travel-time/least-squares helpers, and L0-1
-  pure-Python direct-module 2D travel-time/grid-search primitives in
-  `pymadagascar.localization.traveltime`.
-- **Maturity / entry:** prototype. L0-1 starts reusable localization-topic
-  primitives without promoting a stable/root API, CLI, or production workflow.
+  acoustic2d, D-1 workflow-only travel-time/least-squares helpers, L0-1
+  pure-Python direct-module 2D travel-time/fixed-velocity grid-search
+  primitives, and L0-2 homogeneous variable-velocity point-diffraction
+  grid-search primitives in `pymadagascar.localization.traveltime`.
+- **Maturity / entry:** prototype. L0-1/L0-2 provide reusable
+  localization-topic primitives without promoting a stable/root API, CLI, or
+  production workflow.
 - **Missing:** pick records, uncertainty/quality metadata, richer coordinate
   frames, travel-time provider interfaces, identifiability rules, solver
   reporting, automatic picking, and field-scale validation.
@@ -313,6 +315,12 @@ Every topic must define three contracts before broad implementation:
   residuals with optional positive weights, and deterministic x-z grid-search
   point localization. It is a pure-Python prototype for small local fixtures,
   not a full Madagascar command clone.
+- **Second batch:** L0-2 adds
+  `grid_search_point_location_velocity_2d`, a pure-Python variable-velocity
+  grid-search prototype for the same source-diffractor-receiver kinematic
+  model. It estimates homogeneous velocity with either bounded closed-form
+  slowness or an explicit positive velocity grid, returns 2D objective and
+  selected-velocity grids, and remains uncounted command-surface work.
 - **Do not:** build event catalogs, tomography, automatic production picking,
   real-data readers, waveform modeling, imaging, uncertainty/covariance, field
   claims, or coupling to SEG-Y headers.
@@ -1735,11 +1743,11 @@ they have tests and CLI surfaces.
 3. **Right-preconditioned LSQR design.** Keep Golub-Kahan state, latent/model
    diagnostics, and stopping behavior separate from CGNR/CGLS; do not infer
    preconditioner support from the unpreconditioned LSQR prototype.
-4. **Localization follow-up design.** L0-1 supplies only homogeneous 2D
-   travel-time and grid-search point-location primitives. A later pass should
-   design pick records, uncertainty/weights, identifiability reporting, and
-   interfaces to DAS/seismic geometry before adding automatic picking or
-   production location workflows.
+4. **Localization follow-up design.** L0-1/L0-2 supply only homogeneous 2D
+   travel-time and fixed/variable-velocity grid-search point-location
+   primitives. A later pass should design pick records, uncertainty/weights,
+   identifiability reporting, and interfaces to DAS/seismic geometry before
+   adding automatic picking or production location workflows.
 5. **Minimal velocity-picking design.** Keep this design-only; do not add
    automatic picking or production velocity analysis until uncertainty,
    acceptance metrics, and Semblance/Radon semantics are mature.
@@ -1791,7 +1799,7 @@ C-11.
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
 | `sfslice` | `../src-master/system/generic/Mslice.c` | fixed-index slice subset; upstream uses a picked surface and interpolation |
 | `sfmax1` | `../src-master/system/generic/Mmax1.c` | maximum value/index/coordinate subset; upstream emits complex local-maxima picks |
-| Localization L0-1 primitives | related sources include `../src-master/system/seismic/araytrace.c`, `raytrace.c`, `celltrace3.c`, `Mlineiko.c`, `Mdiffraction.c`, `Mdiffoc.c`, and book traveltime examples under `../src-master/book/geo384w/hw2/cmp/` | pure-Python prototype travel-time/grid-search helpers; not a command clone and not counted as command coverage |
+| Localization L0-1/L0-2 primitives | related sources include `../src-master/system/seismic/araytrace.c`, `raytrace.c`, `celltrace3.c`, `Mlineiko.c`, `Mdiffraction.c`, `Mdiffoc.c`, and book traveltime examples under `../src-master/book/geo384w/hw2/cmp/` | pure-Python prototype fixed- and homogeneous variable-velocity travel-time/grid-search helpers; not a command clone and not counted as command coverage |
 | `sfautocorr` | `../src-master/user/gee/Mautocorr.c` | trace autocorrelation subset; upstream is a helix-filter autocorrelation tool |
 | `sfconvolve` | `../src-master/user/luke/Mconvolve.c` | one-axis two-input convolution subset; upstream is a 2D image kernel tool with adjoint/wrap modes |
 | `sfcconv` | `../src-master/user/gee/Mcconv.c` | circular convolution subset; upstream uses complex internal filter/operator parameters |
@@ -1856,7 +1864,7 @@ Stage C-4 audit-only decisions:
 ## Next Recommended Work
 
 S1, S2, S3, S4-0, S4-1, S4-2, S4-3, S5, S6-0, S6-1, S6-2, S7-0, I0-0, I0-1,
-I0-2, I0-3, I0-4, I0-5, I0-6, I0-8A/I0-8B, I0-9B1/I0-9C, D-2A, and L0-1 are
+I0-2, I0-3, I0-4, I0-5, I0-6, I0-8A/I0-8B, I0-9B1/I0-9C, D-2A, and L0-1/L0-2 are
 complete. The next pass should not start by adding a feature command, broad
 domain inversion, or production workflow. Recommended follow-ups are either a
 bounded localization design pass for pick records/uncertainty/identifiability,

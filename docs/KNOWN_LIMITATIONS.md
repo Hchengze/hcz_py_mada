@@ -25,12 +25,14 @@ testing details live in the other current docs.
   seismic topic by default. The topic still leaves non-regular acquisition
   geometry, production velocity analysis, velocity picking, high-resolution
   `sfradon`, field-scale fixtures, and SEG-Y/header integration unresolved.
-- Localization has only the L0-1 direct-module prototype primitives for small
-  homogeneous 2D local-coordinate travel times and exhaustive x-z grid-search
-  point location. It is not a root/stable API, command clone, CLI, automatic
-  picker, uncertainty estimator, tomography tool, production locator, or field
-  claim. Pick records, uncertainty/quality metadata, identifiability reporting,
-  velocity-model interfaces, and workflow integration remain future work.
+- Localization has only the L0-1/L0-2 direct-module prototype primitives for
+  small homogeneous 2D local-coordinate travel times plus exhaustive x-z
+  fixed-velocity and homogeneous variable-velocity point-location grid search.
+  It is not a root/stable API, command clone, CLI, automatic picker,
+  uncertainty estimator, tomography tool, production locator, or field claim.
+  Pick records, uncertainty/quality metadata, identifiability reporting,
+  general velocity-model interfaces, and workflow integration remain future
+  work.
 - Inversion / Operator Foundation I0-1 through I0-6 have added small
   in-memory operator composition, internal/prototype history/result containers,
   a minimal regularization-operator subset, and a direct-module
@@ -358,8 +360,10 @@ testing details live in the other current docs.
 - D-1 is retained as a prototype, but D-2 adapters, gauge-length/strain
   response, automatic picking, and uncertainty QC are intentionally not the
   current development route.
-- Localization L0-1 is kinematic only: it uses homogeneous 2D Euclidean paths
-  and a brute-force grid objective. It does not model amplitudes, waveforms,
+- Localization L0-1/L0-2 are kinematic only: they use homogeneous 2D Euclidean
+  source-diffractor-receiver paths and brute-force grid objectives. L0-2 can
+  estimate one homogeneous velocity with bounded slowness or an explicit
+  positive velocity grid, but it does not model amplitudes, waveforms,
   anisotropy, velocity heterogeneity, gauge-length/strain response, source-time
   uncertainty, outliers, covariance, or field-data I/O.
 - SEG-Y trace headers must not be conflated with ordinary RSF metadata or the

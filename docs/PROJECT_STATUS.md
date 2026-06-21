@@ -407,6 +407,18 @@ are no remaining comparison bridge failures.
   clone. It adds no CLI, root/stable API export, automatic picking, real-data
   reader, uncertainty, imaging, field-performance claim, command coverage, or
   coverage denominator change.
+- Localization Topic L0-2: Variable-velocity grid-search prototype completed.
+  It extends `pymadagascar.localization.traveltime` with
+  `grid_search_point_location_velocity_2d` and
+  `VariableVelocityLocalizationGridSearchResult` for finite small 2D
+  source-diffractor-receiver localization when homogeneous velocity is also
+  unknown. The prototype supports either bounded closed-form slowness
+  estimation or an explicit positive velocity grid, returning 2D
+  `objective_grid` and selected-velocity grids with observed-minus-predicted
+  residuals. It remains a direct-module pure-Python prototype with no CLI,
+  root/stable API export, automatic picking, uncertainty, real-data reader,
+  imaging, field-performance claim, command coverage, or coverage denominator
+  change.
 
 The route is now topic-oriented. D-1 stays as a bounded workflow prototype and
 D-2A adds a workflow-only geometry metadata contract without starting DAS file
@@ -446,8 +458,8 @@ section while leaving right-preconditioned LSQR, stable solver APIs, and domain
 inversions for later passes. Broad
 velocity picking, high-resolution or solved Radon inversion, FK algorithm
 expansion, production localization, modeling, and imaging expansion remain
-outside the current pass. Localization now has L0-1 small travel-time/grid-search
-primitives only; forward modeling remains design-only, and imaging and
+outside the current pass. Localization now has L0-1/L0-2 small travel-time and
+fixed/variable-velocity grid-search primitives only; forward modeling remains design-only, and imaging and
 SEG-Y/header expansion remain deferred. Hybrid
 benchmarking, B-3-3 `sfsegyheader`, release, licensing, and tagging remain
 separate.
@@ -458,7 +470,7 @@ separate.
 | --- | --- | --- | --- |
 | Seismic data signal analysis and processing | stable subset, with prototype NMO/Semblance/FK/Radon | S1 contracts, S2 metrics/QC, S3 NMO hardening, S4-0 source alignment, S4-1 Semblance hardening, S4-2 small-gather geometry design, S4-3 FK validation, S5 integrated workflow, S6-0/S6-1 route decisions, S6-2 small slant-stack hardening, and S7-0 closeout complete; pause by default | field-scale/non-regular geometry, multi-gather validation, velocity picking, high-resolution Radon, and production processing |
 | DAS / engineering workflows | workflow-only | D-1 kinematic road-void workflow and D-2A workflow-only geometry metadata contract complete; no adapter | DAS file adapters, field fixtures, gauge response, automatic picking, uncertainty, and field-performance validation |
-| Localization | prototype | L0-1 pure-Python 2D travel-time and grid-search point-location primitives complete; no CLI/root API | pick records, uncertainty, identifiability, velocity-model interfaces, and production workflows |
+| Localization | prototype | L0-1 pure-Python 2D travel-time/fixed-velocity grid-search primitives and L0-2 homogeneous variable-velocity grid-search prototype complete; no CLI/root API | pick records, uncertainty, identifiability, richer velocity-model interfaces, and production workflows |
 | Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, I0-8A/I0-8B right-preconditioned CGLS diagnostics, I0-9B1 bounded unpreconditioned/regularized LSQR, and I0-9C LSQR learning example/notebook closure complete | Right-preconditioned LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
 | Forward modeling | simplified prototype | design only | reusable model/acquisition geometry and accuracy evidence |
 | Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
@@ -493,9 +505,10 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   banks.
 - `pymadagascar/seismic`: gain, AGC, mute/mutter, stack, NMO, semblance, FK,
   Radon.
-- `pymadagascar/localization`: L0-1 pure-Python prototype travel-time
-  primitives and deterministic 2D x-z grid-search point localization for small
-  local-coordinate fixtures; not a root/stable API or CLI surface.
+- `pymadagascar/localization`: L0-1/L0-2 pure-Python prototype travel-time
+  primitives plus deterministic 2D x-z fixed-velocity and homogeneous
+  variable-velocity grid-search point localization for small local-coordinate
+  fixtures; not a root/stable API or CLI surface.
 - `pymadagascar/imaging`: simplified Kirchhoff prototype.
 - `pymadagascar/modeling`: simplified acoustic2d prototype.
 - `pymadagascar/plot`: Matplotlib quicklook replacements.

@@ -8,6 +8,21 @@ optional compatibility checks.
 
 ### Added
 
+- Localization Topic L0-2 variable-velocity grid-search prototype:
+  `grid_search_point_location_velocity_2d` and
+  `VariableVelocityLocalizationGridSearchResult` extend
+  `pymadagascar.localization.traveltime` for finite small 2D
+  source-diffractor-receiver localization when homogeneous velocity is unknown.
+  The prototype supports bounded closed-form slowness estimation or explicit
+  positive velocity-grid search, returns 2D objective and selected-velocity
+  grids, and keeps the observed-minus-predicted residual convention.
+- `tests/test_localization_traveltime_contract.py` now covers L0-2 known
+  x/z/velocity recovery, weighted objectives, bounds clipping, explicit
+  velocity-grid mode, JSON-safe metadata, invalid velocity modes, shape
+  mismatches, invalid weights, and root/API export boundaries. L0-2 adds no
+  CLI, root/stable API, automatic picking, real-data reader, uncertainty,
+  imaging, field-performance claim, command coverage, or coverage denominator
+  change.
 - Localization Topic L0-1 travel-time/grid-search prototype:
   `pymadagascar.localization.traveltime` adds finite small 2D local-coordinate
   helpers for Euclidean distance, direct homogeneous travel time,

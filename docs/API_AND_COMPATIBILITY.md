@@ -38,10 +38,11 @@ must not silently reinterpret an existing stable API.
 The first topic, seismic data signal analysis and processing, starts with
 documented trace/panel/gather fixtures, pipeline validation, internal QC
 metrics, bounded prototype hardening, and an integrated small-gather workflow
-using existing APIs. Localization now has L0-1 direct-module prototype
-travel-time and grid-search primitives in `pymadagascar.localization`, but no
-root/stable API, CLI, automatic picking, uncertainty, or production location
-workflow. Forward modeling and imaging remain simplified prototypes.
+using existing APIs. Localization now has L0-1/L0-2 direct-module prototype
+travel-time and fixed/variable-velocity grid-search primitives in
+`pymadagascar.localization`, but no root/stable API, CLI, automatic picking,
+uncertainty, or production location workflow. Forward modeling and imaging
+remain simplified prototypes.
 Inversion may first design operator composition, regularization, objective,
 residual, and history contracts without promoting a domain inversion API. DAS
 travel-time and least-squares helpers remain workflow-only, and SEG-Y trace
@@ -637,12 +638,13 @@ constraints, masks, domain inversion, production scaling, or coverage denominato
 change. Passing `preconditioner=` to LSQR raises an explicit prototype-boundary
 error instead of silently ignoring it.
 
-## Localization Topic L0-1 Boundary
+## Localization Topic Prototype Boundary
 
 L0-1 starts the localization topic with a small pure-Python prototype module,
-`pymadagascar.localization.traveltime`. The module is importable directly from
-the localization package but is not imported by `pymadagascar.__init__` or
-`pymadagascar.api`, and it does not add a CLI, console script, or
+`pymadagascar.localization.traveltime`; L0-2 extends that module with
+homogeneous variable-velocity grid search. The module is importable directly
+from the localization package but is not imported by `pymadagascar.__init__`
+or `pymadagascar.api`, and it does not add a CLI, console script, or
 command-surface coverage entry.
 
 The supported contract is deliberately narrow:
@@ -660,15 +662,24 @@ The supported contract is deliberately narrow:
   a point diffractor/target. Coordinates use `local_2d_x_z`: x is horizontal,
   z is depth positive downward. The objective grid shape is
   `(len(z_grid), len(x_grid))`.
+- `grid_search_point_location_velocity_2d(...)`: deterministic exhaustive x-z
+  search for a point diffractor/target while estimating homogeneous velocity.
+  Exactly one of `velocity_bounds=(vmin, vmax)` or `velocity_grid=` must be
+  supplied. Bounds mode estimates weighted least-squares slowness and clips the
+  implied velocity to the requested interval; explicit-grid mode scans positive
+  finite velocities. The returned `objective_grid` and selected
+  `velocity_grid` both have shape `(len(z_grid), len(x_grid))`.
 
 The `LocalizationGridSearchResult` metadata records method, travel-time model,
 residual convention, coordinate frame, units, grid shape/order, receiver count,
-weighting, and prototype/non-field flags. L0-1 does not implement automatic
-picking, pick records, uncertainty/covariance, tomography, waveform modeling,
-imaging, DAS/SEG-Y readers, field-scale validation, or field-performance
-claims. A small source audit found related Madagascar raytrace, eikonal,
-diffraction, and book traveltime sources, but this module is not a full
-Madagascar command clone.
+weighting, and prototype/non-field flags. The
+`VariableVelocityLocalizationGridSearchResult` adds `best_velocity`, a 2D
+selected-velocity grid, and velocity-mode metadata. L0-1/L0-2 do not implement
+automatic picking, pick records, uncertainty/covariance, tomography, waveform
+modeling, imaging, DAS/SEG-Y readers, field-scale validation, or
+field-performance claims. A small source audit found related Madagascar
+raytrace, eikonal, diffraction, and book traveltime sources, but this module is
+not a full Madagascar command clone.
 
 ## Stable and Stable-Subset APIs
 
