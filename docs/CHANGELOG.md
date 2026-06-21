@@ -8,6 +8,20 @@ optional compatibility checks.
 
 ### Added
 
+- Forward Modeling Topic F0-5 synthetic acoustic velocity model builders:
+  pymadagascar.modeling.models adds AcousticVelocityModel2D,
+  constant_velocity_model_2d, layered_velocity_model_2d,
+  add_rectangular_velocity_anomaly_2d, add_circular_velocity_anomaly_2d, and
+  velocity_model_summary. The builders produce positive finite velocity arrays
+  shaped (nx, nz) for AcousticModelGrid2D, preserve the local_2d_x_z
+  convention, and provide JSON-safe/path-free metadata for constant, layered,
+  rectangular-anomaly, and circular-anomaly synthetic models.
+- tests/test_modeling_velocity_models_contract.py covers model shape/value
+  contracts, z_top layer ordering, inclusive physical-coordinate anomaly masks,
+  copy/no-in-place behavior, final positive-velocity validation, JSON-safe
+  metadata, modeling-topic exports, and unchanged root/stable API boundaries.
+  F0-5 adds no new wave-equation solver, smoothing, random model, geologic GUI,
+  CLI, root/stable API, command coverage, or coverage denominator change.
 - Forward Modeling Topic F0-4 acoustic survey tensor helpers:
   pymadagascar.modeling.shot adds AcousticSurveyTensor2D,
   acoustic_survey_to_tensor, and summarize_acoustic_survey. The default

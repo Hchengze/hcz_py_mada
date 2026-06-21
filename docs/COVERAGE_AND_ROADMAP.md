@@ -359,13 +359,15 @@ Every topic must define three contracts before broad implementation:
   F0-2/F0-3 add single-shot and sequential multi-shot acquisition-driven
   wrappers in pymadagascar.modeling.shot. F0-4 adds explicit survey tensor
   conversion and summary helpers while preserving the list-of-shots survey
-  contract.
+  contract. F0-5 adds pymadagascar.modeling.models synthetic acoustic velocity
+  model builders for constant, layered, rectangular-anomaly, and circular-
+  anomaly small models.
 - **Maturity / entry:** simplified prototype with topic-level geometry and shot
-  helpers; no root/stable API.
+  helpers plus synthetic model builders; no root/stable API.
 - **Missing:** physical-coordinate interpolation, component support,
-  production survey tensor formats, padding/interpolation policies, boundary
-  studies, convergence, dispersion, validation workflows, and reference
-  solutions.
+  smoothing/random/geologic model building, production survey tensor formats,
+  padding/interpolation policies, boundary studies, convergence, dispersion,
+  validation workflows, and reference solutions.
 - **Data contract:** velocity/density model grids, source wavelet and time
   sampling, shot gathers, component names, units, and snapshot ownership.
 - **Geometry contract:** physical grid origin/spacing, source and receiver
@@ -385,7 +387,11 @@ Every topic must define three contracts before broad implementation:
   acoustic_survey_to_tensor helper with shot_receiver_time layout for surveys
   with consistent receiver counts and matching time axes, plus a JSON-safe
   summarize_acoustic_survey helper; it performs no padding, interpolation, or
-  trace dropping.
+  trace dropping. F0-5 adds deterministic AcousticVelocityModel2D builders that
+  return positive finite (nx, nz) velocity arrays compatible with the existing
+  acoustic2d wrappers, with JSON-safe metadata and no smoothing, random model,
+  geologic GUI, solver change, CLI, root/stable API, command coverage, or
+  coverage denominator change.
 - **Do not:** add new wave-equation algorithms, production boundaries,
   multi-physics, C++ kernels, or performance claims.
 - **Docs:** existing API/roadmap/limitations docs record the prototype
@@ -1739,7 +1745,7 @@ decisions and entry contracts above supersede its route recommendations.
 | Array math, statistics, and QC | `math/add/mul/div/scale/normalize/clip/clip2/threshold`, unary transforms, histogram/quantile, robust statistics, non-finite QC, `attr/min/max/diff/byte` | unary, robust-statistics, math, byte, amplitude-conditioning demos | stable subset; several Pythonic conveniences | No weighted/grouped/local statistics, streaming accumulation, or broad complex statistics | Treat as locally usable; add only gaps exposed by workflows | Not as a broad topic | Usually no |
 | Signal processing | FFT family, filters, smoothing, taper, spectra, envelope, correlation/convolution, shifts, calculus, Ricker, demean/detrend, decimation, band-stop/notch, local RMS, standard windows, PSD/CSD/coherence, spectrogram/SNR, Welch averaging, transfer estimates, whitening, attributes, windowed-sinc FIR, response QC, and band decomposition | preprocessing, correlation, calculus, smooth/noise/Ricker, signal-QC, spectral-QC, spectral-averaging, and FIR-design demos; FFT-bandpass workflow | stable subset | No IIR design, advanced windows, multi-taper/AR estimation, arbitrary-axis STFT, full system identification, multirate/polyphase processing, or streaming | Enter the seismic signal topic through contracts, fixtures, and one existing-API pipeline regression | Yes, as the first topic | Yes, shared data and validation fixtures |
 | Seismic processing | gain, AGC, mute/mutter, stack/stacks; NMO, semblance, FK, Radon; bin/linear/slice/max1 helpers | gather-QC demo and AGC/mute/stack workflow plus S1/S2/S3/S4-1/S4-2/S4-3/S6-2 contract workflows and the S5 integrated small-gather workflow | stable subset for basic QC; prototype for NMO/Semblance/FK/Radon | Field-scale/non-regular geometry, velocity picking, high-resolution Radon/inversion foundations, multi-gather tests, and trace-header integration | Pause after S7-0 by default; resume only through an explicit bounded design or source-aligned task | No, unless a narrow follow-up is explicitly selected | Yes, geometry and deterministic validation fixtures |
-| Forward modeling | `modeling.acoustic2d`, `modeling.geometry`, `modeling.shot`, Ricker, RSF model grids | acquisition-driven single-shot and multi-shot wrappers, explicit survey tensor conversion helper, component tests, and Ricker demo | simplified prototype | No interpolation, production tensor/padding policy, accuracy study, validation workflow, or production scale | Defer new solver algorithms; next add validation evidence or a tiny geometry-driven workflow | Not yet | Yes |
+| Forward modeling | `modeling.acoustic2d`, `modeling.geometry`, `modeling.shot`, `modeling.models`, Ricker, RSF model grids | acquisition-driven single-shot and multi-shot wrappers, explicit survey tensor conversion helper, synthetic constant/layered/anomaly velocity builders, component tests, and Ricker demo | simplified prototype | No interpolation, smoothing/random/geologic model building, production tensor/padding policy, accuracy study, validation workflow, or production scale | Defer new solver algorithms; next add validation evidence or a tiny geometry-driven workflow | Not yet | Yes |
 | Inversion and operators | `LinearOperator`, matrix/callable operators, composition helpers, regularization operators, least-squares problem diagnostics, optional CG/CGNR history adapters, bounded CGLS, bounded unpreconditioned/regularized LSQR, right/model-space preconditioner contract, dot tests, CG/CGNR; Radon operator pair | linear-operator demo | partial / prototype | No preconditioned LSQR, stable/root solver API, constraints/masks, or domain inversion workflow | Continue only through bounded solver-contract passes, with right-preconditioned LSQR as a separate future task | Yes, current topic | Yes |
 | Imaging | simplified Kirchhoff, plus FK/Radon/acoustic2d building blocks | Kirchhoff diffraction demo | simplified prototype | No acquisition model, amplitude/anti-alias treatment, migration adjoint test, velocity workflow, or reference suite | Postpone algorithm expansion; improve synthetic validation before adding methods | No | Yes |
 | DAS and engineering workflows | Existing RSF, signal, QC, picking, FK, and plotting tools can process small regular arrays | D-1 kinematic road-void diffraction workflow | workflow-only | No HDF5/TDMS/DAT adapters, gauge-length/strain response, automatic picks, channel geometry contract, chunking, or field fixtures | Retain D-1 as workflow-first; pause D-2 and all adapter work | Later, by explicit decision | Geometry and validation design |
@@ -1781,8 +1787,9 @@ they have tests and CLI surfaces.
    picking, and uncertainty implementation remain paused.
 9. **Forward modeling validation.** F0-1 defines model/acquisition geometry,
    F0-2 connects it to one acoustic2d shot wrapper, F0-3 adds sequential
-   multi-shot survey execution, and F0-4 adds explicit tensor/summary helpers;
-   a later pass should add an accuracy-validation matrix or tiny
+   multi-shot survey execution, F0-4 adds explicit tensor/summary helpers, and
+   F0-5 adds deterministic synthetic velocity model builders; a later pass
+   should add an accuracy-validation matrix or tiny
    geometry-driven workflow without adding a new solver or kernel.
 10. **Imaging topic.** Defer until geometry, forward, operator, and reference
    validation foundations exist.

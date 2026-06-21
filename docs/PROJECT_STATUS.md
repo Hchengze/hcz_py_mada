@@ -183,6 +183,16 @@ are no remaining comparison bridge failures.
   or drop receivers, and F0-4 changes no acoustic2d numerical core, default
   survey return type, CLI, root/stable API, command coverage, or coverage
   denominator.
+- Forward Modeling Topic F0-5: synthetic acoustic velocity model builders
+  completed. The new pymadagascar.modeling.models topic module adds
+  AcousticVelocityModel2D plus constant, layered, rectangular-anomaly, circular-
+  anomaly, and summary helpers. These builders return positive finite velocity
+  arrays shaped (nx, nz) for AcousticModelGrid2D, keep the local_2d_x_z
+  coordinate convention with depth positive downward, and provide JSON-safe
+  path-free metadata compatible with the existing acoustic2d shot/survey
+  wrappers. F0-5 adds no smoothing, random model, geologic GUI, wave-equation
+  solver, CLI, root/stable API, command coverage, or coverage denominator
+  change.
 - Stage C-7: signal and small-gather QC foundation completed with module-only
   `demean`, `detrend`, `decimate`, `bandstop`, `notch`, and `localrms` CLIs,
   shared NumPy APIs, RSF wrappers, RSFData methods, and a focused demo.
@@ -512,8 +522,8 @@ velocity picking, high-resolution or solved Radon inversion, FK algorithm
 expansion, production localization, modeling solver expansion, and imaging remain
 outside the current pass. Localization now has L0-1/L0-2 small travel-time and
 fixed/variable-velocity grid-search primitives only; forward modeling now has
-F0-1 reusable model/acquisition geometry only, and imaging and
-SEG-Y/header expansion remain deferred. Hybrid
+F0-1 through F0-5 geometry, shot/survey, tensor, and synthetic velocity-model
+helpers only, and imaging and SEG-Y/header expansion remain deferred. Hybrid
 benchmarking, B-3-3 `sfsegyheader`, release, licensing, and tagging remain
 separate.
 
@@ -525,7 +535,7 @@ separate.
 | DAS / engineering workflows | workflow-only | D-1 kinematic road-void workflow, D-2A workflow-only geometry metadata contract, and D-2B package-level localization grid-search integration complete; no adapter | DAS file adapters, field fixtures, gauge response, automatic picking, uncertainty, and field-performance validation |
 | Localization | prototype | L0-1 pure-Python 2D travel-time/fixed-velocity grid-search primitives and L0-2 homogeneous variable-velocity grid-search prototype complete; no CLI/root API | pick records, uncertainty, identifiability, richer velocity-model interfaces, and production workflows |
 | Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, I0-8A/I0-8B right-preconditioned CGLS diagnostics, I0-9B1 bounded unpreconditioned/regularized LSQR, and I0-9C LSQR learning example/notebook closure complete | Right-preconditioned LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
-| Forward modeling | simplified prototype | F0-1 model/acquisition geometry contract complete; no solver-core change or root API | physical-coordinate interpolation, multi-shot behavior, convergence/dispersion evidence, validation workflows, and production-scale modeling |
+| Forward modeling | simplified prototype | F0-1 through F0-5 geometry, shot/survey, tensor, and synthetic velocity-model helpers complete; no solver-core change or root API | physical-coordinate interpolation, smoothing/random/geologic model building, convergence/dispersion evidence, validation workflows, and production-scale modeling |
 | Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
 | SEG-Y / headers | stable RSF / partial headers / prototype SEG-Y | independent defer | trace ownership, scalars/units, synchronized reorder |
 | Plot / visualization | partial quicklook substitute | support work only | composition, overlays, and domain QC presentation |
@@ -563,7 +573,8 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   variable-velocity grid-search point localization for small local-coordinate
   fixtures; not a root/stable API or CLI surface.
 - `pymadagascar/imaging`: simplified Kirchhoff prototype.
-- `pymadagascar/modeling`: simplified acoustic2d prototype.
+- `pymadagascar/modeling`: simplified acoustic2d prototype with topic-level
+  geometry, shot/survey, tensor, and synthetic velocity-model helpers.
 - `pymadagascar/plot`: Matplotlib quicklook replacements.
 - `pymadagascar/hybrid`: optional C++ wrappers with NumPy fallback.
 - `pymadagascar/testing`: fixtures, internal seismic regression metrics,
