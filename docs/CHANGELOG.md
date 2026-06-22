@@ -8,6 +8,25 @@ optional compatibility checks.
 
 ### Added
 
+- M1-5 continues source-aligned `system/generic` array algebra / selection
+  migration with `sfmatmult`, `sfmatch`, and `sflinefit`, aligned to
+  `../src-master/system/generic/Mmatmult.c`,
+  `../src-master/system/generic/Mmatch.c`, and
+  `../src-master/system/generic/Mlinefit.c`. It adds
+  `pymadagascar.generic.array_algebra.matmult_rsf`,
+  `pymadagascar.generic.array_algebra.match_rsf`,
+  `pymadagascar.generic.array_algebra.linefit_rsf`, `pymada-matmult`,
+  `pymada-match`, `pymada-linefit`, and `RSFData.matmult(...)`,
+  `RSFData.match(...)`, and `RSFData.linefit(...)` without adding new root
+  exports. `sfmax1` was audited but already counted in Stage C-2; `sfequal`
+  is upstream uchar histogram equalization, `sfextract` requires header-table
+  2D interpolation, and complex matrix multiplication is deferred.
+- M1-5 command-surface coverage increases the numerator only:
+  full coverage is `106 / 2114`, core `system/` + `plot/main` coverage is
+  `93 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, SciPy dependency, large system, notebook, original Madagascar source,
+  tag, release, or force-push work is included.
 - M1-4 continues source-aligned `system/generic` interpolation/remap migration
   with `sfremap1`, `sfspline`, and `sft2warp`, aligned to
   `../src-master/system/generic/Mremap1.c`,
@@ -1001,9 +1020,9 @@ optional compatibility checks.
 
 - This is not a complete Madagascar clone.
 - Full Madagascar/alias command-surface coverage remains low:
-  `103 / 2114 = 4.87%`.
+  `106 / 2114 = 5.01%`.
 - Core `system/` + `plot/main` command-surface coverage is
-  `90 / 301 = 29.90%`.
+  `93 / 301 = 30.90%`.
 - Stage C-7 does not implement polyphase decimation, designed FIR/IIR notch
   filters, arbitrary polynomial detrending, multidimensional upstream RMS
   windows, streaming, or out-of-core processing.

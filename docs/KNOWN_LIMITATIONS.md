@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `103 / 2114 = 4.87%`.
-- Core `system/` + `plot/main` coverage is `90 / 301 = 29.90%`.
+- Full command-surface coverage remains low: `106 / 2114 = 5.01%`.
+- Core `system/` + `plot/main` coverage is `93 / 301 = 30.90%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -116,7 +116,7 @@ testing details live in the other current docs.
 
 ## CLI and Compatibility
 
-- Only 39 commands are registered as `pymada-*` console scripts.
+- Only 42 commands are registered as `pymada-*` console scripts.
 - Other CLI modules must be called with `python -m pymadagascar.cli.<name>`.
 - Text output and floating-point details are not byte-identical to Madagascar.
 - Optional original Madagascar comparisons skip when upstream commands are not
@@ -200,6 +200,14 @@ testing details live in the other current docs.
   spline prefiltering. `sft2warp` is a one-axis linear-interpolation
   time-squared warp and does not implement adjoint modes, stretch
   regularization, logwarp, or byte-identical `sf_stretch4` behavior.
+- M1-5 `sfmatmult` implements real in-memory matrix-vector multiplication
+  only; it does not implement complex, sparse, batched, solver, or
+  out-of-core behavior. `sfmatch` implements the source symmetric
+  zero-boundary loop only and does not implement shaping-filter solvers,
+  frequency-domain matching, or streaming. `sflinefit` fits one ordinary
+  least-squares line from an `n1=2` table; it does not implement pattern files,
+  multi-trace batches, or robust regression. `sfequal`, `sfextract`, and
+  complex matrix multiplication remain deferred.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

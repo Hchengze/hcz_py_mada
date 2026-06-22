@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `103 / 2114 = 4.87%` | Conservative denominator including `user/*` and aliases; M1-4 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `90 / 301 = 29.90%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `106 / 2114 = 5.01%` | Conservative denominator including `user/*` and aliases; M1-5 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `93 / 301 = 30.90%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -400,6 +400,39 @@ M1-4:
   B-spline coefficient prefilter; `sflogwarp` is deferred to avoid expanding a
   larger warp family in this batch.
 - Coverage numerator changes to `103 / 2114` and core coverage to `90 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M1-5:
+
+- Continues source-aligned `system/generic` command migration with the array
+  algebra / selection group after M1-4 and does not continue Forward Modeling,
+  DAS, Localization, solver, notebook, or Windows-only CI known-issue work.
+- The source audit covered only
+  `../src-master/system/generic/Mmatmult.c`,
+  `../src-master/system/generic/Mcmatmult.c`,
+  `../src-master/system/generic/Mcmatmult2.c`,
+  `../src-master/system/generic/Mequal.c`,
+  `../src-master/system/generic/Mextract.c`,
+  `../src-master/system/generic/Mmatch.c`,
+  `../src-master/system/generic/Mlinefit.c`, and
+  `../src-master/system/generic/Mmax1.c`.
+- Counts `sfmatmult`, `sfmatch`, and `sflinefit` because they map directly to
+  `system/generic` source files and now have Python API, RSFData chain method,
+  CLI module, console-script surface, focused tests, and documented bounded
+  behavior.
+- `sfmatmult` supports real in-memory matrix-vector multiplication with
+  optional `adj=`. `sfmatch` supports the source symmetric zero-boundary
+  matching-filter loop in forward and adjoint forms. `sflinefit` supports
+  ordinary least-squares `y=a*x+b` fitting from an `n1=2` table and evaluates a
+  regular output grid.
+- `sfmax1` was audited but already counted in Stage C-2. `sfequal` is upstream
+  uchar histogram equalization rather than scalar equality and is deferred
+  until byte/uchar RSF support is designed. `sfextract` depends on external
+  header-coordinate 2D interpolation, `sfmatch` is kept to a small loop subset,
+  and `sfcmatmult`/`sfcmatmult2` are deferred until complex matrix workflows
+  are separately scoped.
+- Coverage numerator changes to `106 / 2114` and core coverage to `93 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -2039,6 +2072,9 @@ C-11.
 | `sfremap1` | `../src-master/system/generic/Mremap1.c` | bounded one-axis regular-grid linear remap subset; no ENO orders above 1, `pattern=`, or streaming |
 | `sfspline` | `../src-master/system/generic/Mspline.c` | bounded one-axis natural-cubic regular-axis interpolation subset; no irregular table mode, `fp=`, `pattern=`, or SciPy dependency |
 | `sft2warp` | `../src-master/system/generic/Mt2warp.c` | bounded one-axis linear-interpolation time-squared warp and inverse; no adjoint modes, stretch regularization, logwarp, or byte-identical `sf_stretch4` behavior |
+| `sfmatmult` | `../src-master/system/generic/Mmatmult.c` | bounded real matrix-vector multiplication subset with optional `adj=`; no complex, sparse, batched, solver, or out-of-core behavior |
+| `sfmatch` | `../src-master/system/generic/Mmatch.c` | bounded real symmetric matching-filter loop subset; no shaping-filter solver, frequency-domain matching, or streaming |
+| `sflinefit` | `../src-master/system/generic/Mlinefit.c` | bounded ordinary least-squares line fit from an `n1=2` table; no pattern files, multi-trace batches, or robust regression |
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
 | `sfslice` | `../src-master/system/generic/Mslice.c` | fixed-index slice subset; upstream uses a picked surface and interpolation |
 | `sfmax1` | `../src-master/system/generic/Mmax1.c` | maximum value/index/coordinate subset; upstream emits complex local-maxima picks |
@@ -2133,8 +2169,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M1-4, coverage is
-`103 / 2114`, core coverage is `90 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M1-5, coverage is
+`106 / 2114`, core coverage is `93 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

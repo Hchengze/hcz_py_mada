@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 143 |
-| Registered `pymada-*` console scripts | 39 |
-| Pytest files | 91 |
+| User-facing CLI modules | 146 |
+| Registered `pymada-*` console scripts | 42 |
+| Pytest files | 92 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `103 / 2114 = 4.87%` |
-| Core `system/` + `plot/main` command surface | `90 / 301 = 29.90%` |
+| Full Madagascar/alias command surface | `106 / 2114 = 5.01%` |
+| Core `system/` + `plot/main` command surface | `93 / 301 = 30.90%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -50,7 +50,7 @@ D:\HczApp\Anaconda\envs\mywork\python.exe
 Latest Windows full-suite result:
 
 ```text
-1133 passed, 95 skipped
+1144 passed, 95 skipped
 ```
 
 Skip summary:
@@ -184,6 +184,20 @@ are no remaining comparison bridge failures.
   M1-4 does not continue Forward Modeling, DAS, Localization, solver,
   workflow, large-system, original-source, SciPy-dependency, or
   coverage-denominator work.
+- M1-5: `system/generic` array algebra and selection migration continues with
+  `sfmatmult`, `sfmatch`, and `sflinefit`, mapped to
+  `../src-master/system/generic/Mmatmult.c`,
+  `../src-master/system/generic/Mmatch.c`, and
+  `../src-master/system/generic/Mlinefit.c`. The bounded subsets add
+  real-valued matrix-vector multiplication, symmetric matching-filter loops,
+  and ordinary least-squares line fitting with Python API, RSFData methods,
+  CLI modules, console scripts, tests, docs, and coverage mapping. `sfmax1`
+  was already counted in Stage C-2, `sfequal` is uchar histogram equalization
+  not scalar equality, `sfextract` depends on header-coordinate 2D
+  interpolation, and complex matrix multiplication is deferred. M1-5 does not
+  continue Forward Modeling, DAS, Localization, solver, workflow,
+  large-system, original-source, SciPy-dependency, or coverage-denominator
+  work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -626,7 +640,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 143 module entry points, 39 registered console scripts.
+- `pymadagascar/cli`: 146 module entry points, 42 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,

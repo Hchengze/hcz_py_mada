@@ -82,8 +82,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 39:
-        raise RuntimeError("expected exactly 39 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 42:
+        raise RuntimeError("expected exactly 42 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -99,6 +99,7 @@ def _check_package_metadata() -> None:
 
 def _check_lower_level_imports() -> None:
     from pymadagascar.core.params import RSFParams
+    from pymadagascar.generic.array_algebra import linefit, match, matmult
     from pymadagascar.generic.array_math import divide_rsf, multiply_rsf, tpow_rsf
     from pymadagascar.generic.difference import diff_rsf, difference_metric
     from pymadagascar.generic.file_ops import copy_rsf_dataset
@@ -136,6 +137,9 @@ def _check_lower_level_imports() -> None:
         "read_rsf": read_rsf,
         "write_rsf": write_rsf,
         "RSFParams": RSFParams,
+        "generic.matmult": matmult,
+        "generic.match": match,
+        "generic.linefit": linefit,
         "generic.spike": spike,
         "generic.copy_rsf_dataset": copy_rsf_dataset,
         "generic.min_rsf": min_rsf,

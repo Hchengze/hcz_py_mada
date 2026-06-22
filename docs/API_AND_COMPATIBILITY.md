@@ -790,7 +790,7 @@ the default survey return, or promote modeling to a stable root API.
 - Existing C++ kernels remain optional. Building them requires the `cpp` extra,
   an explicit `wheel.cmake=true` setting, and
   `PYMADAGASCAR_BUILD_CPP=ON`.
-- The 39 `pymada-*` names are installed entry points. The other CLI modules are
+- The 42 `pymada-*` names are installed entry points. The other CLI modules are
   supported through `python -m pymadagascar.cli.<name>`.
 - No license metadata is declared yet. Choose and add a license before any
   public redistribution or package-index release.
@@ -1157,6 +1157,30 @@ above 1, irregular coordinate/value tables, `sfspline fp=`, `pattern=`, spline
 prefiltering, `sft2warp adj=`, stretch regularization, `sflogwarp`, streaming,
 or byte-identical interpolation rounding.
 
+M1-5 continues source-aligned `system/generic` array algebra / selection
+migration and adds:
+
+- `pymada-matmult` / `python -m pymadagascar.cli.matmult`, backed by
+  `pymadagascar.generic.array_algebra.matmult_rsf` and aligned to
+  `../src-master/system/generic/Mmatmult.c`.
+- `pymada-match` / `python -m pymadagascar.cli.match`, backed by
+  `pymadagascar.generic.array_algebra.match_rsf` and aligned to
+  `../src-master/system/generic/Mmatch.c`.
+- `pymada-linefit` / `python -m pymadagascar.cli.linefit`, backed by
+  `pymadagascar.generic.array_algebra.linefit_rsf` and aligned to
+  `../src-master/system/generic/Mlinefit.c`.
+- `RSFData.matmult(...)`, `RSFData.match(...)`, and `RSFData.linefit(...)`.
+
+The bounded `sfmatmult` subset is a real-valued matrix-vector multiplication
+wrapper with optional `adj=`. The bounded `sfmatch` subset implements the
+source symmetric zero-boundary matching-filter loop in forward and adjoint
+forms without turning it into a solver framework. The bounded `sflinefit`
+subset fits `y=a*x+b` from an `n1=2` coordinate/value table and evaluates a
+regular output grid. M1-5 does not add root exports, does not add SciPy, and
+does not implement complex matrix multiplication, sparse/batched matmul,
+histogram equalization `sfequal`, header-coordinate `sfextract`, robust
+regression, shaping-filter solvers, streaming, or out-of-core processing.
+
 ## RSFData Behavior Contract
 
 - Transform methods return a new in-memory `RSFData` by default and leave the
@@ -1167,7 +1191,7 @@ or byte-identical interpolation rounding.
   file-backed `RSFData` whose path is the written header path.
 - `header` and `numpy()` return defensive copies by default.
 - `convolve`, `cconv`, `envcorr`, `csd`, `coherence`, `welchcsd`, `transfer`,
-  `firfilter`, `filtfilt`, and `diff` accept a second operand as
+  `firfilter`, `filtfilt`, `diff`, `matmult`, and `match` accept a second operand as
   `RSFData`, RSF path, NumPy array, or Python list. RSF paths preserve operand
   metadata. A 1D array/list receives minimal template metadata using the
   selected source-axis spacing; its origin is `0`.

@@ -11,6 +11,7 @@ import numpy as np
 
 from pymadagascar.core.axis import Axis
 from pymadagascar.core.hypercube import Hypercube
+from pymadagascar.generic.array_algebra import linefit_rsf, match_rsf, matmult_rsf
 from pymadagascar.generic.array_math import clip_rsf, normalize_rsf, scale_rsf
 from pymadagascar.generic.attr import attr_rsf
 from pymadagascar.generic.difference import diff_rsf
@@ -1452,6 +1453,62 @@ class RSFData:
             mode=mode,
             abs_search=abs_search,
             nan_policy=nan_policy,
+            inplace=inplace,
+        )
+
+    def matmult(
+        self,
+        matrix: Any,
+        *,
+        adj: bool = False,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply bounded real sfmatmult matrix-vector multiplication."""
+
+        return self._from_binary_file_op(
+            matmult_rsf,
+            matrix,
+            operand_name="mat.rsf",
+            operand_axis=1,
+            adj=adj,
+            inplace=inplace,
+        )
+
+    def match(
+        self,
+        other: Any,
+        *,
+        adj: bool = False,
+        nf: int | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply bounded real sfmatch symmetric matching filtering."""
+
+        return self._from_binary_file_op(
+            match_rsf,
+            other,
+            operand_name="other.rsf",
+            operand_axis=1,
+            adj=adj,
+            nf=nf,
+            inplace=inplace,
+        )
+
+    def linefit(
+        self,
+        *,
+        n: int,
+        o: float,
+        d: float,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Fit y=a*x+b from an n1=2 table and evaluate a regular output grid."""
+
+        return self._from_file_op(
+            linefit_rsf,
+            n=n,
+            o=o,
+            d=d,
             inplace=inplace,
         )
 

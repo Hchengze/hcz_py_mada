@@ -1,5 +1,6 @@
 """Generic RSF data generation and array utilities."""
 
+from .array_algebra import ArrayAlgebraError, linefit, linefit_rsf, match, match_rsf, matmult, matmult_rsf
 from .array_math import ArrayMathError, add_rsf, clip_rsf, divide_rsf, multiply_rsf, normalize_rsf, scale_rsf, tpow_rsf
 from .attr import attr_rsf, format_attr
 from .byte import ByteScaleError, byte_rsf, byte_scale
@@ -103,6 +104,7 @@ from .window import WindowError, window, window_rsf
 
 __all__ = [
     "MathExpressionError",
+    "ArrayAlgebraError",
     "ArrayMathError",
     "ByteScaleError",
     "CutError",
@@ -192,9 +194,15 @@ __all__ = [
     "laplac_rsf",
     "linear_resample",
     "linear_rsf",
+    "linefit",
+    "linefit_rsf",
     "clip_rsf",
     "dot_test",
     "math_rsf",
+    "match",
+    "match_rsf",
+    "matmult",
+    "matmult_rsf",
     "mask_rsf",
     "max_rsf",
     "max1",
