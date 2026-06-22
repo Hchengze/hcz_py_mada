@@ -82,8 +82,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 42:
-        raise RuntimeError("expected exactly 42 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 45:
+        raise RuntimeError("expected exactly 45 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -115,6 +115,9 @@ def _check_lower_level_imports() -> None:
     from pymadagascar.generic.statistics import fillnan, isnan_mask, mean, range_stats
     from pymadagascar.generic.unary import absolute, histogram, quantile
     from pymadagascar.io.rsf import read_rsf, write_rsf
+    from pymadagascar.seismic.ai2refl import ai2refl
+    from pymadagascar.seismic.avo import avo_intercept_gradient
+    from pymadagascar.seismic.fold import fold_table
     from pymadagascar.seismic.mute import mutter
     from pymadagascar.seismic.stack import stack_along_axis, stack_rsf, stacks_rsf
     from pymadagascar.signal.calculus import causal_integrate, deriv, integral
@@ -140,6 +143,9 @@ def _check_lower_level_imports() -> None:
         "generic.matmult": matmult,
         "generic.match": match,
         "generic.linefit": linefit,
+        "seismic.ai2refl": ai2refl,
+        "seismic.avo_intercept_gradient": avo_intercept_gradient,
+        "seismic.fold_table": fold_table,
         "generic.spike": spike,
         "generic.copy_rsf_dataset": copy_rsf_dataset,
         "generic.min_rsf": min_rsf,
@@ -308,3 +314,6 @@ def _check_output_policy() -> None:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+    from pymadagascar.seismic.ai2refl import ai2refl
+    from pymadagascar.seismic.avo import avo_intercept_gradient
+    from pymadagascar.seismic.fold import fold_table

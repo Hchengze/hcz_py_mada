@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `106 / 2114 = 5.01%` | Conservative denominator including `user/*` and aliases; M1-5 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `93 / 301 = 30.90%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `109 / 2114 = 5.16%` | Conservative denominator including `user/*` and aliases; M2-1 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `96 / 301 = 31.89%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -433,6 +433,39 @@ M1-5:
   and `sfcmatmult`/`sfcmatmult2` are deferred until complex matrix workflows
   are separately scoped.
 - Coverage numerator changes to `106 / 2114` and core coverage to `93 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M2-1:
+
+- Starts source-aligned `system/seismic` command migration after the M1 generic
+  coverage batches and does not continue Forward Modeling, DAS, Localization,
+  solver, notebook, or Windows-only CI known-issue work.
+- The source audit covered
+  `../src-master/system/seismic/Menvelope.c`,
+  `../src-master/system/seismic/Mfold.c`,
+  `../src-master/system/seismic/Mfreqint.c`,
+  `../src-master/system/seismic/Mc2r.c`,
+  `../src-master/system/seismic/Mai2refl.c`,
+  and `../src-master/system/seismic/Mavo.c`; requested optional names
+  `Mi2refl.c`, `Mpick.c`, `Mmask.c`, and `Msemblance.c` were not present under
+  those exact names in `system/seismic`.
+- Counts `sfavo`, `sffold`, and `sfai2refl` because they map directly to
+  `system/seismic` source files and now have Python API, RSFData chain method,
+  CLI module, console-script surface, focused tests, and documented bounded
+  behavior.
+- `sfavo` supports in-memory real CMP gathers with RSF axis 1 as time and axis
+  2 as offset, using ordinary least squares to output intercept and gradient.
+  `sffold` supports numeric header-table 3D histograms with explicit
+  `n/o/d/label` bins and zero-based column selection. `sfai2refl` supports
+  one-axis acoustic impedance to reflectivity conversion with the last sample
+  set to zero.
+- `sfenvelope` was audited but already counted in Stage C-1. `sffreqint` is a
+  complex freqlet regularization/inversion tool and `sfc2r` is Cartesian to
+  Riemannian coordinate interpolation with ray fields, so both are deferred.
+  `sffold` intentionally omits the SEG-Y key lookup ecology and uses numeric
+  table columns only.
+- Coverage numerator changes to `109 / 2114` and core coverage to `96 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -2075,6 +2108,9 @@ C-11.
 | `sfmatmult` | `../src-master/system/generic/Mmatmult.c` | bounded real matrix-vector multiplication subset with optional `adj=`; no complex, sparse, batched, solver, or out-of-core behavior |
 | `sfmatch` | `../src-master/system/generic/Mmatch.c` | bounded real symmetric matching-filter loop subset; no shaping-filter solver, frequency-domain matching, or streaming |
 | `sflinefit` | `../src-master/system/generic/Mlinefit.c` | bounded ordinary least-squares line fit from an `n1=2` table; no pattern files, multi-trace batches, or robust regression |
+| `sfavo` | `../src-master/system/seismic/Mavo.c` | bounded real CMP-gather AVO intercept/gradient least-squares subset over RSF axis 2; no CDPtype shifts, SEG-Y gather handling, or production AVO workflow |
+| `sffold` | `../src-master/system/seismic/Mfold.c` | bounded numeric header-table 3D fold histogram subset; no SEG-Y key lookup layer or trace-header ecology |
+| `sfai2refl` | `../src-master/system/seismic/Mai2refl.c` | bounded one-axis acoustic impedance to reflectivity conversion; no angle-dependent or elastic reflectivity modeling |
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
 | `sfslice` | `../src-master/system/generic/Mslice.c` | fixed-index slice subset; upstream uses a picked surface and interpolation |
 | `sfmax1` | `../src-master/system/generic/Mmax1.c` | maximum value/index/coordinate subset; upstream emits complex local-maxima picks |
@@ -2169,8 +2205,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M1-5, coverage is
-`106 / 2114`, core coverage is `93 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M2-1, coverage is
+`109 / 2114`, core coverage is `96 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

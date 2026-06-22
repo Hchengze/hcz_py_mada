@@ -1181,6 +1181,30 @@ does not implement complex matrix multiplication, sparse/batched matmul,
 histogram equalization `sfequal`, header-coordinate `sfextract`, robust
 regression, shaping-filter solvers, streaming, or out-of-core processing.
 
+M2-1 starts source-aligned `system/seismic` command migration and adds:
+
+- `pymada-avo` / `python -m pymadagascar.cli.avo`, backed by
+  `pymadagascar.seismic.avo.avo_rsf` and aligned to
+  `../src-master/system/seismic/Mavo.c`.
+- `pymada-fold` / `python -m pymadagascar.cli.fold`, backed by
+  `pymadagascar.seismic.fold.fold_rsf` and aligned to
+  `../src-master/system/seismic/Mfold.c`.
+- `pymada-ai2refl` / `python -m pymadagascar.cli.ai2refl`, backed by
+  `pymadagascar.seismic.ai2refl.ai2refl_rsf` and aligned to
+  `../src-master/system/seismic/Mai2refl.c`.
+- `RSFData.avo(...)`, `RSFData.fold(...)`, and `RSFData.ai2refl(...)`.
+
+The bounded `sfavo` subset computes intercept and gradient by ordinary least
+squares along RSF axis 2, using `o2/d2` or an explicit `offset=` file in the
+file API. The bounded `sffold` subset builds a 3D histogram from numeric
+header-table columns with explicit `n/o/d/label` output bins. The bounded
+`sfai2refl` subset computes `(ai[i+1]-ai[i])/(ai[i+1]+ai[i]+eps)` along one
+axis and writes zero at the last sample. M2-1 does not add root exports, does
+not add SciPy, and does not implement `sfenvelope` phase rotation, `sffreqint`
+freqlet inversion, `sfc2r` ray-field coordinate interpolation, SEG-Y key
+lookup in `sffold`, CDPtype offset shifts in `sfavo`, streaming, or out-of-core
+processing.
+
 ## RSFData Behavior Contract
 
 - Transform methods return a new in-memory `RSFData` by default and leave the

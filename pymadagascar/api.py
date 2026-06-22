@@ -46,7 +46,10 @@ from pymadagascar.generic.window import window as window_array
 from pymadagascar.io.rsf import RSFArray, RSFHeader, read_rsf, write_rsf
 from pymadagascar.plot.graph import graph
 from pymadagascar.plot.grey import grey
+from pymadagascar.seismic.ai2refl import ai2refl_rsf
 from pymadagascar.seismic.agc import agc_rsf
+from pymadagascar.seismic.avo import avo_rsf
+from pymadagascar.seismic.fold import fold_rsf
 from pymadagascar.seismic.mute import mute_rsf, mutter_rsf
 from pymadagascar.seismic.stack import stack_rsf, stacks_rsf
 from pymadagascar.signal.calculus import causint_rsf, deriv_rsf, integral_rsf
@@ -1647,6 +1650,44 @@ class RSFData:
         """Apply local RMS automatic gain control."""
 
         return self._from_file_op(agc_rsf, rect=rect, axis=axis, eps=eps, inplace=inplace)
+
+    def avo(self, *, half: bool = True, inplace: bool = False) -> "RSFData":
+        """Compute bounded sfavo intercept and gradient from RSF axis 2."""
+
+        return self._from_file_op(avo_rsf, half=half, inplace=inplace)
+
+    def fold(
+        self,
+        *,
+        columns: tuple[int, int, int] = (0, 1, 2),
+        n: tuple[int, int, int],
+        o: tuple[float, float, float],
+        d: tuple[float, float, float],
+        labels: tuple[str, str, str] = ("offset", "cdp", "iline"),
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Build a bounded numeric-header sffold histogram."""
+
+        return self._from_file_op(
+            fold_rsf,
+            columns=columns,
+            n=n,
+            o=o,
+            d=d,
+            labels=labels,
+            inplace=inplace,
+        )
+
+    def ai2refl(
+        self,
+        *,
+        axis: int = 1,
+        eps: float | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Convert acoustic impedance to reflectivity along one RSF axis."""
+
+        return self._from_file_op(ai2refl_rsf, axis=axis, eps=eps, inplace=inplace)
 
     def mute(
         self,

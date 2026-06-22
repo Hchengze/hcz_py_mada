@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 146 |
-| Registered `pymada-*` console scripts | 42 |
-| Pytest files | 92 |
+| User-facing CLI modules | 149 |
+| Registered `pymada-*` console scripts | 45 |
+| Pytest files | 93 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `106 / 2114 = 5.01%` |
-| Core `system/` + `plot/main` command surface | `93 / 301 = 30.90%` |
+| Full Madagascar/alias command surface | `109 / 2114 = 5.16%` |
+| Core `system/` + `plot/main` command surface | `96 / 301 = 31.89%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -196,6 +196,20 @@ are no remaining comparison bridge failures.
   not scalar equality, `sfextract` depends on header-coordinate 2D
   interpolation, and complex matrix multiplication is deferred. M1-5 does not
   continue Forward Modeling, DAS, Localization, solver, workflow,
+  large-system, original-source, SciPy-dependency, or coverage-denominator
+  work.
+- M2-1: source-aligned `system/seismic` command migration begins with
+  `sfavo`, `sffold`, and `sfai2refl`, mapped to
+  `../src-master/system/seismic/Mavo.c`,
+  `../src-master/system/seismic/Mfold.c`, and
+  `../src-master/system/seismic/Mai2refl.c`. The bounded subsets add
+  AVO intercept/gradient least-squares fitting, numeric header-table foldplot
+  histograms, and acoustic-impedance-to-reflectivity conversion with Python
+  API, RSFData methods, CLI modules, console scripts, tests, docs, and coverage
+  mapping. `sfenvelope` was audited but already counted in Stage C-1;
+  `sffreqint` and `sfc2r` are deferred because the upstream sources require
+  complex freqlet inversion or Riemannian-coordinate interpolation. M2-1 does
+  not continue Forward Modeling, DAS, Localization, solver, workflow,
   large-system, original-source, SciPy-dependency, or coverage-denominator
   work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
@@ -640,7 +654,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 146 module entry points, 42 registered console scripts.
+- `pymadagascar/cli`: 149 module entry points, 45 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,
@@ -660,7 +674,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   attributes, plus FIR design/filtering, response QC, band energy, and filter
   banks.
 - `pymadagascar/seismic`: gain, AGC, mute/mutter, stack, NMO, semblance, FK,
-  Radon.
+  Radon, AVO, foldplot histograms, and acoustic impedance reflectivity.
 - `pymadagascar/localization`: L0-1/L0-2 pure-Python prototype travel-time
   primitives plus deterministic 2D x-z fixed-velocity and homogeneous
   variable-velocity grid-search point localization for small local-coordinate

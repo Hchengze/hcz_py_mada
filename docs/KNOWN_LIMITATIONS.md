@@ -208,6 +208,13 @@ testing details live in the other current docs.
   least-squares line from an `n1=2` table; it does not implement pattern files,
   multi-trace batches, or robust regression. `sfequal`, `sfextract`, and
   complex matrix multiplication remain deferred.
+- M2-1 `sfavo` implements a real in-memory AVO intercept/gradient least-squares
+  subset over RSF axis 2; it does not implement CDPtype offset shifts,
+  irregular SEG-Y gather handling, or a production AVO workflow. `sffold`
+  implements only numeric header-table 3D histograms and does not implement
+  Madagascar's SEG-Y key lookup layer. `sfai2refl` implements one-axis acoustic
+  impedance reflectivity only and does not implement angle-dependent or elastic
+  reflectivity modeling. `sffreqint` and `sfc2r` remain deferred.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

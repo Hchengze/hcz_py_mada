@@ -8,6 +8,24 @@ optional compatibility checks.
 
 ### Added
 
+- M2-1 starts source-aligned `system/seismic` command migration with `sfavo`,
+  `sffold`, and `sfai2refl`, aligned to
+  `../src-master/system/seismic/Mavo.c`,
+  `../src-master/system/seismic/Mfold.c`, and
+  `../src-master/system/seismic/Mai2refl.c`. It adds
+  `pymadagascar.seismic.avo.avo_rsf`,
+  `pymadagascar.seismic.fold.fold_rsf`,
+  `pymadagascar.seismic.ai2refl.ai2refl_rsf`, `pymada-avo`, `pymada-fold`,
+  `pymada-ai2refl`, and `RSFData.avo(...)`, `RSFData.fold(...)`, and
+  `RSFData.ai2refl(...)` without adding new root exports. `sfenvelope` was
+  audited but already counted in Stage C-1; `sffreqint` and `sfc2r` are
+  deferred because their upstream behavior is complex inversion/interpolation.
+- M2-1 command-surface coverage increases the numerator only:
+  full coverage is `109 / 2114`, core `system/` + `plot/main` coverage is
+  `96 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, SciPy dependency, large system, notebook, original Madagascar source,
+  tag, release, or force-push work is included.
 - M1-5 continues source-aligned `system/generic` array algebra / selection
   migration with `sfmatmult`, `sfmatch`, and `sflinefit`, aligned to
   `../src-master/system/generic/Mmatmult.c`,
