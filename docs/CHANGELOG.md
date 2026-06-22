@@ -8,6 +8,20 @@ optional compatibility checks.
 
 ### Added
 
+- M1-1 starts source-aligned `system/generic` command batch migration with
+  `sfclip`, `sfnoise`, and `sfboxsmooth`, aligned to
+  `../src-master/system/generic/Mclip.c`,
+  `../src-master/system/generic/Mnoise.c`, and
+  `../src-master/system/generic/Mboxsmooth.c`. It registers `pymada-clip`,
+  source-aligns `clip_rsf(..., value=...)` non-finite replacement behavior,
+  and adds `RSFData.noise(...)` plus `RSFData.boxsmooth(...)` chain methods
+  without adding new root exports.
+- M1-1 command-surface coverage increases the numerator only:
+  full coverage is `94 / 2114`, core `system/` + `plot/main` coverage is
+  `81 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, large system, notebook, original Madagascar source, tag, release, or
+  force-push work is included.
 - M0-3 continues source-aligned direct `system/main` command coverage with
   `sfpad` and `sfspray`, aligned to `../src-master/system/main/pad.c` and
   `../src-master/system/main/spray.c`. It registers `pymada-pad` and
@@ -936,9 +950,9 @@ optional compatibility checks.
 
 - This is not a complete Madagascar clone.
 - Full Madagascar/alias command-surface coverage remains low:
-  `91 / 2114 = 4.30%`.
+  `94 / 2114 = 4.45%`.
 - Core `system/` + `plot/main` command-surface coverage is
-  `78 / 301 = 25.91%`.
+  `81 / 301 = 26.91%`.
 - Stage C-7 does not implement polyphase decimation, designed FIR/IIR notch
   filters, arbitrary polynomial detrending, multidimensional upstream RMS
   windows, streaming, or out-of-core processing.

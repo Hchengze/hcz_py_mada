@@ -167,18 +167,26 @@ def clip_rsf(
     input_path: str | Path,
     output_path: str | Path,
     clip: float,
+    *,
+    value: float | None = None,
 ) -> RSFArray:
-    """Symmetrically clip real-valued RSF data to ``[-clip, clip]``."""
+    """Clip real-valued RSF data using the ``sfclip`` ``clip=``/``value=`` subset."""
 
     if clip < 0:
         raise ArrayMathError("clip= must be non-negative")
+    replacement = float(clip if value is None else value)
 
     rsf = read_rsf(input_path)
     if np.iscomplexobj(rsf.data):
         raise ArrayMathError("clip_rsf only supports real-valued data")
 
     dtype = _real_output_dtype(rsf.data)
-    result = np.clip(np.asarray(rsf.data, dtype=dtype), -clip, clip)
+    data = np.asarray(rsf.data, dtype=dtype)
+    result = data.copy()
+    result[data > clip] = replacement
+    result[data < -clip] = -replacement
+    nonfinite = ~np.isfinite(data)
+    result[nonfinite] = np.where(np.signbit(data[nonfinite]), -replacement, replacement)
     return write_rsf(output_path, np.ascontiguousarray(result.astype(dtype)), rsf.header.copy())
 
 

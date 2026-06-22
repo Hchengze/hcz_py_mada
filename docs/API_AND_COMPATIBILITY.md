@@ -927,6 +927,17 @@ These methods are stable small-data conveniences, not claims of complete
 Madagascar command compatibility. They follow the same default
 non-mutating/optional-inplace contract.
 
+M1-1 adds RSFData convenience methods for source-aligned `system/generic`
+utilities:
+
+- `RSFData.noise(seed=None, mean=0.0, std=1.0, distribution="normal",
+  var=None, noise_range=None, replace=False)`.
+- `RSFData.boxsmooth(rect, axes=None, repeat=1)`.
+
+Both methods return new objects by default and support `inplace=True`. Existing
+`RSFData.clip(clip, value=None)` is source-aligned to `sfclip` and now accepts
+optional `value=` while preserving the same high-level method name.
+
 Stage C-8 adds RSFData convenience methods for spectral QC:
 
 - `RSFData.windowfunc(kind="hann", axis=1, periodic=False, normalize=False)`.
@@ -1029,6 +1040,31 @@ streaming/out-of-core execution, arbitrary `sfput` parameter passthrough,
 non-constant border modes, or byte-level native trace copying. Both commands
 are counted because they map to direct `system/main` source files;
 denominators remain unchanged.
+
+M1-1 starts the post-M0 source-aligned `system/generic` command migration and
+adds:
+
+- `pymada-clip` as the console-script surface for
+  `pymadagascar.generic.array_math.clip_rsf`, aligned to
+  `../src-master/system/generic/Mclip.c`.
+- `RSFData.noise(seed=None, mean=0.0, std=1.0, distribution="normal",
+  var=None, noise_range=None, replace=False)`, a chainable wrapper over the
+  existing `sfnoise` subset aligned to
+  `../src-master/system/generic/Mnoise.c`.
+- `RSFData.boxsmooth(rect, axes=None, repeat=1)`, a chainable wrapper over
+  the existing box-smoothing subset aligned to
+  `../src-master/system/generic/Mboxsmooth.c`.
+
+The bounded `sfclip` subset supports `clip=` and optional `value=`; values
+outside `[-clip, clip]` are replaced by signed `value`, and non-finite samples
+are replaced by signed `value` according to the source-backed behavior. The
+bounded `sfnoise` subset supports small in-memory normal/uniform add-or-replace
+noise with deterministic NumPy seeds but does not promise byte-identical
+Madagascar RNG streams. The bounded `sfboxsmooth` subset supports centered
+box smoothing with `rect#`, optional selected axes, and `repeat=` using edge
+padding. M1-1 does not add root exports, does not implement streaming,
+out-of-core processing, `sfsmooth` adjoint/differentiation modes, `sflaplac`,
+or `sftrapez`, and does not change coverage denominators.
 
 ## RSFData Behavior Contract
 

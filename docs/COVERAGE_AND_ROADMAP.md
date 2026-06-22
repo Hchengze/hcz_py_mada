@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `91 / 2114 = 4.30%` | Conservative denominator including `user/*` and aliases; M0-3 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `78 / 301 = 25.91%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `94 / 2114 = 4.45%` | Conservative denominator including `user/*` and aliases; M1-1 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `81 / 301 = 26.91%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -283,6 +283,34 @@ M0-3:
   `system/main` source files. No Pythonic-only convenience is counted in M0-3.
 - Coverage numerator changes to `91 / 2114`, core coverage to `78 / 301`, and
   direct `system/main` coverage to `37 / 39`; all denominators remain
+  unchanged.
+
+M1-1:
+
+- Starts the post-M0 `system/generic` command migration batch and does not
+  continue Forward Modeling, DAS, Localization, solver, notebook, or
+  Windows-only CI known-issue work.
+- The source audit covered only
+  `../src-master/system/generic/Mclip.c`,
+  `../src-master/system/generic/Mboxsmooth.c`,
+  `../src-master/system/generic/Msmooth.c`,
+  `../src-master/system/generic/Mlaplac.c`,
+  `../src-master/system/generic/Mtrapez.c`, and
+  `../src-master/system/generic/Mnoise.c`.
+- Counts `sfclip`, `sfnoise`, and `sfboxsmooth` because they map directly to
+  `system/generic` source files and now have Python API, RSFData chain method,
+  CLI/module or console-script surface, focused tests, and documented bounded
+  behavior.
+- `sfclip` supports `clip=` plus optional `value=` and source-aligned
+  non-finite replacement. `sfnoise` supports small deterministic add/replace
+  normal/uniform noise. `sfboxsmooth` supports centered in-memory box kernels
+  with `rect#`, `axis=`, and `repeat=`.
+- Defers `sfsmooth` because upstream includes triangle, box, adjoint, and
+  differentiation modes; `sflaplac` because it is a separate finite-difference
+  operator; and `sftrapez` because upstream is an FFT trapezoidal frequency
+  filter rather than a simple spatial taper.
+- Coverage numerator changes to `94 / 2114` and core coverage to `81 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
 Stage D-1:
@@ -1907,6 +1935,9 @@ C-11.
 | `sfcostaper` | `../src-master/system/generic/Mcostaper.c` | small axis-aware cosine taper subset |
 | `sfthreshold` | `../src-master/system/generic/Mthreshold.c` | explicit hard/soft threshold subset; not pclip-only clone |
 | `sfspectra` | `../src-master/system/generic/Mspectra.c` | simple RFFT amplitude/power spectrum subset |
+| `sfclip` | `../src-master/system/generic/Mclip.c` | bounded `clip=`/`value=` amplitude clipping subset with source-aligned non-finite replacement; no streaming or complex input |
+| `sfnoise` | `../src-master/system/generic/Mnoise.c` | bounded deterministic NumPy normal/uniform add-or-replace subset; no byte-identical upstream RNG promise |
+| `sfboxsmooth` | `../src-master/system/generic/Mboxsmooth.c` | centered in-memory box smoothing subset with `rect#`, `axis=`, and `repeat=`; no streaming |
 | `sfenvelope` | `../src-master/system/seismic/Menvelope.c` | FFT Hilbert envelope subset; no phase-rotation mode |
 | `sflinear` | `../src-master/system/generic/Mlinear.c` | regular-axis resampling subset; upstream is irregular coordinate/value-table interpolation |
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
@@ -2003,8 +2034,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M0-3, coverage is
-`91 / 2114`, core coverage is `78 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M1-1, coverage is
+`94 / 2114`, core coverage is `81 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

@@ -98,12 +98,12 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 30 registered console scripts are:
+The 31 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
 pymada-cmplx, pymada-rtoc, pymada-noise, pymada-ricker, pymada-spike,
-pymada-math, pymada-window, pymada-attr, pymada-put, pymada-dd, pymada-cat,
+pymada-math, pymada-clip, pymada-window, pymada-attr, pymada-put, pymada-dd, pymada-cat,
 pymada-transp, pymada-fft, pymada-bandpass, pymada-byte, pymada-smooth,
 pymada-boxsmooth, pymada-mask, pymada-cut, pymada-reverse, pymada-pad,
 pymada-spray, pymada-scale, pymada-rotate, pymada-stack
@@ -114,6 +114,7 @@ Examples:
 ```powershell
 pymada-spike n1=10 k1=5 out=spike.rsf
 pymada-info spike.rsf
+pymada-clip spike.rsf out=clipped.rsf clip=1 value=1
 pymada-window spike.rsf out=win.rsf n1=5 f1=0
 pymada-fft win.rsf out=fft.rsf axis=1
 pymada-stack win.rsf out=stack.rsf axis=1 mode=sum
@@ -123,7 +124,7 @@ pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 30-entry console-script inventory
+authoritative installed command list is the 31-entry console-script inventory
 above.
 
 ## CLI Module Inventory

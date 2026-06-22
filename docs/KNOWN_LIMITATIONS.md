@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `91 / 2114 = 4.30%`.
-- Core `system/` + `plot/main` coverage is `78 / 301 = 25.91%`.
+- Full command-surface coverage remains low: `94 / 2114 = 4.45%`.
+- Core `system/` + `plot/main` coverage is `81 / 301 = 26.91%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -116,7 +116,7 @@ testing details live in the other current docs.
 
 ## CLI and Compatibility
 
-- Only 30 commands are registered as `pymada-*` console scripts.
+- Only 31 commands are registered as `pymada-*` console scripts.
 - Other CLI modules must be called with `python -m pymadagascar.cli.<name>`.
 - Text output and floating-point details are not byte-identical to Madagascar.
 - Optional original Madagascar comparisons skip when upstream commands are not
@@ -173,6 +173,11 @@ testing details live in the other current docs.
   arbitrary `sfput` command-line passthrough, or non-constant border modes.
   M0-3 `sfspray` implements in-memory new-axis duplication with regular
   metadata only; it does not implement streaming/out-of-core behavior.
+- M1-1 `sfclip` implements the `system/generic/Mclip.c` `clip=`/`value=`
+  amplitude replacement subset and rejects complex input. `sfnoise` keeps a
+  deterministic NumPy RNG contract rather than byte-identical Madagascar random
+  streams. `sfboxsmooth` is centered, in-memory, and edge-padded; it does not
+  implement streaming/out-of-core behavior.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

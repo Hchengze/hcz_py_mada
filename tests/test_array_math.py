@@ -96,10 +96,10 @@ def test_scale_promotes_int_to_float(tmp_path: Path) -> None:
     np.testing.assert_array_equal(loaded.data, data.astype(np.float32) * 0.5)
 
 
-def test_clip_symmetric_threshold_and_preserves_nan(tmp_path: Path) -> None:
+def test_clip_symmetric_threshold(tmp_path: Path) -> None:
     input_path = tmp_path / "input.rsf"
     output = tmp_path / "clipped.rsf"
-    data = np.array([-2.0, -0.5, 0.0, 0.5, 3.0, np.nan], dtype=np.float32)
+    data = np.array([-2.0, -0.5, 0.0, 0.5, 3.0], dtype=np.float32)
     _write(input_path, data, _header())
 
     clip_rsf(input_path, output, clip=1.0)
@@ -107,7 +107,25 @@ def test_clip_symmetric_threshold_and_preserves_nan(tmp_path: Path) -> None:
 
     np.testing.assert_array_equal(
         loaded.data,
-        np.array([-1.0, -0.5, 0.0, 0.5, 1.0, np.nan], dtype=np.float32),
+        np.array([-1.0, -0.5, 0.0, 0.5, 1.0], dtype=np.float32),
+    )
+
+
+def test_clip_value_and_nonfinite_follow_sfclip_subset(tmp_path: Path) -> None:
+    input_path = tmp_path / "input.rsf"
+    output = tmp_path / "clipped.rsf"
+    data = np.array(
+        [-np.inf, -2.0, -0.5, np.nan, 0.5, 3.0, np.inf],
+        dtype=np.float32,
+    )
+    _write(input_path, data, _header())
+
+    clip_rsf(input_path, output, clip=1.0, value=2.5)
+    loaded = read_rsf(output)
+
+    np.testing.assert_array_equal(
+        loaded.data,
+        np.array([-2.5, -2.5, -0.5, 2.5, 0.5, 2.5, 2.5], dtype=np.float32),
     )
 
 
@@ -186,11 +204,11 @@ def test_cli_clip(tmp_path: Path) -> None:
     output = tmp_path / "clipped.rsf"
     _write(input_path, np.array([-2.0, 2.0], dtype=np.float32))
 
-    code = clip_main([str(input_path), "clip=1.0", "out=" + str(output)])
+    code = clip_main([str(input_path), "clip=1.0", "value=2.0", "out=" + str(output)])
     loaded = read_rsf(output)
 
     assert code == 0
-    np.testing.assert_array_equal(loaded.data, np.array([-1.0, 1.0], dtype=np.float32))
+    np.testing.assert_array_equal(loaded.data, np.array([-2.0, 2.0], dtype=np.float32))
 
 
 def test_cli_normalize(tmp_path: Path) -> None:

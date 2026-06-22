@@ -8,6 +8,7 @@ import sys
 import numpy as np
 import pytest
 
+from pymadagascar.api import RSFData
 from pymadagascar.io.rsf import RSFHeader, read_rsf, write_rsf
 from pymadagascar.signal import (
     box_smooth as package_box_smooth,
@@ -137,6 +138,24 @@ def test_smooth_rsf_inherits_header_and_preserves_shape(tmp_path: Path) -> None:
     assert loaded.header.dimensions == (5, 3)
     assert loaded.header["label1"] == "Time"
     assert loaded.header["unit2"] == "m"
+
+
+def test_rsfdata_boxsmooth_chain_method_preserves_header_and_source() -> None:
+    data = np.zeros(7, dtype=np.float32)
+    data[3] = 1.0
+    rsf = RSFData(data, RSFHeader({"n1": 7, "o1": 0.0, "d1": 1.0, "label1": "Sample"}))
+
+    result = rsf.boxsmooth(rect=2, axes=1)
+
+    np.testing.assert_array_equal(rsf.numpy(), data)
+    np.testing.assert_allclose(
+        result.numpy(),
+        np.array([0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0], dtype=np.float32) / 3.0,
+        rtol=1e-6,
+        atol=1e-7,
+    )
+    assert result.header.dimensions == (7,)
+    assert result.header["label1"] == "Sample"
 
 
 def test_smooth_cli_subprocess(tmp_path: Path) -> None:

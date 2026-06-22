@@ -14,6 +14,7 @@ from pymadagascar.core.hypercube import Hypercube
 from pymadagascar.generic.array_math import clip_rsf, normalize_rsf, scale_rsf
 from pymadagascar.generic.attr import attr_rsf
 from pymadagascar.generic.difference import diff_rsf
+from pymadagascar.generic.noise import noise_rsf
 from pymadagascar.generic.pad import pad_rsf
 from pymadagascar.generic.rotate import rotate_rsf
 from pymadagascar.generic.sampling import linear_rsf, max1_rsf, slice_rsf
@@ -65,6 +66,7 @@ from pymadagascar.signal.qc import (
     localrms_rsf,
     notch_rsf,
 )
+from pymadagascar.signal.smooth import smooth_rsf
 from pymadagascar.signal.spectral import (
     coherence_rsf,
     csd_rsf,
@@ -263,10 +265,61 @@ class RSFData:
             inplace=inplace,
         )
 
-    def clip(self, clip: float, *, inplace: bool = False) -> "RSFData":
-        """Symmetrically clip real data to ``[-clip, clip]``."""
+    def clip(
+        self,
+        clip: float,
+        *,
+        value: float | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Clip real data using the ``sfclip`` ``clip=``/``value=`` subset."""
 
-        return self._from_file_op(clip_rsf, clip=clip, inplace=inplace)
+        return self._from_file_op(clip_rsf, clip=clip, value=value, inplace=inplace)
+
+    def noise(
+        self,
+        *,
+        seed: int | None = None,
+        mean: float = 0.0,
+        std: float = 1.0,
+        distribution: str | bool = "normal",
+        var: float | None = None,
+        noise_range: float | None = None,
+        replace: bool = False,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Add noise, or replace samples with noise, using the ``sfnoise`` subset."""
+
+        return self._from_file_op(
+            noise_rsf,
+            seed=seed,
+            mean=mean,
+            std=std,
+            distribution=distribution,
+            var=var,
+            noise_range=noise_range,
+            replace=replace,
+            inplace=inplace,
+        )
+
+    def boxsmooth(
+        self,
+        rect: int | tuple[int, ...] | list[int] | dict[int, int],
+        *,
+        axes: int | tuple[int, ...] | list[int] | None = None,
+        repeat: int = 1,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply source-aligned ``sfboxsmooth`` centered box smoothing."""
+
+        return self._from_file_op(
+            smooth_rsf,
+            rect=rect,
+            axes=axes,
+            repeat=repeat,
+            kind="box",
+            inplace=inplace,
+        )
 
     def normalize(self, mode: str = "max", *, inplace: bool = False) -> "RSFData":
         """Normalize by max absolute value or RMS amplitude."""

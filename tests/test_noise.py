@@ -13,6 +13,7 @@ from pymadagascar.generic import (
     noise as package_noise,
     noise_rsf as package_noise_rsf,
 )
+from pymadagascar.api import RSFData
 from pymadagascar.generic.noise import NoiseError, add_noise, noise, noise_rsf
 from pymadagascar.io.rsf import RSFHeader, read_rsf, write_rsf
 from pymadagascar.testing.compare import assert_rsf_allclose
@@ -141,6 +142,19 @@ def test_noise_rsf_replace_uses_input_shape_and_header(tmp_path: Path) -> None:
     assert loaded.header.dimensions == (3, 2)
     assert loaded.header["o1"] == "0.5"
     np.testing.assert_array_equal(loaded.data, np.full((2, 3), -1.0, dtype=np.float32))
+
+
+def test_rsfdata_noise_chain_method_does_not_mutate_source() -> None:
+    data = np.arange(4, dtype=np.float32)
+    rsf = RSFData(data, RSFHeader({"n1": 4, "o1": 0.0, "d1": 1.0, "label1": "Sample"}))
+
+    noisy = rsf.noise(var=0.0, mean=2.0, seed=11)
+    replaced = rsf.noise(var=0.0, mean=-1.0, seed=11, replace=True)
+
+    np.testing.assert_array_equal(rsf.numpy(), data)
+    np.testing.assert_array_equal(noisy.numpy(), data + np.float32(2.0))
+    np.testing.assert_array_equal(replaced.numpy(), np.full(4, -1.0, dtype=np.float32))
+    assert noisy.header["label1"] == "Sample"
 
 
 def test_uniform_noise_range_bounds() -> None:

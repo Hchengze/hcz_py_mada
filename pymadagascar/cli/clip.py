@@ -14,10 +14,12 @@ from pymadagascar.io.rsf import RSFError
 HELP_TEXT = """Clip parameters:
   input.rsf           Input RSF file.
   clip=1.0            Symmetric clipping threshold.
+  value=1.0           Optional replacement value; defaults to clip.
   out=output.rsf      Output RSF header path.
 
-Values above clip are set to clip and values below -clip are set to -clip.
-NaN values are preserved.
+Values above clip are set to value and values below -clip are set to -value.
+Non-finite values are replaced by signed value, matching the bounded sfclip
+source-backed subset from system/generic/Mclip.c.
 """
 
 
@@ -30,9 +32,10 @@ def clip_command(params: RSFParams) -> int:
     if not params.has("clip"):
         raise MissingParameterError("clip")
     clip = params.get_float("clip")
+    value = params.get_float("value", None)
 
     try:
-        clip_rsf(input_path, output, clip)
+        clip_rsf(input_path, output, clip, value=value)
     except (ArrayMathError, RSFError, OSError, ValueError) as exc:
         raise ParameterParseError(str(exc)) from exc
     return 0

@@ -64,6 +64,7 @@ def test_pyproject_registers_stable_console_scripts() -> None:
         "pymada-ricker",
         "pymada-spike",
         "pymada-math",
+        "pymada-clip",
         "pymada-window",
         "pymada-attr",
         "pymada-put",
