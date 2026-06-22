@@ -17,6 +17,7 @@ from pymadagascar.generic.difference import diff_rsf
 from pymadagascar.generic.laplac import laplac_rsf
 from pymadagascar.generic.noise import noise_rsf
 from pymadagascar.generic.pad import pad_rsf
+from pymadagascar.generic.remap import remap1_rsf, spline_rsf, t2warp_rsf
 from pymadagascar.generic.rotate import rotate_rsf
 from pymadagascar.generic.sampling import linear_rsf, max1_rsf, slice_rsf
 from pymadagascar.generic.spray import spray_rsf
@@ -1360,6 +1361,72 @@ class RSFData:
             o=o,
             d=d,
             fill=fill,
+            inplace=inplace,
+        )
+
+    def remap1(
+        self,
+        *,
+        axis: int = 1,
+        n: int | None = None,
+        o: float | None = None,
+        d: float | None = None,
+        fill_value: float = 0.0,
+        order: int = 1,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Linearly remap one regular RSF axis using the bounded sfremap1 subset."""
+
+        return self._from_file_op(
+            remap1_rsf,
+            axis=axis,
+            n=n,
+            o=o,
+            d=d,
+            fill_value=fill_value,
+            order=order,
+            inplace=inplace,
+        )
+
+    def spline(
+        self,
+        *,
+        axis: int = 1,
+        n: int | None = None,
+        o: float | None = None,
+        d: float | None = None,
+        fill_value: float = 0.0,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply the bounded one-axis natural cubic spline interpolation subset."""
+
+        return self._from_file_op(
+            spline_rsf,
+            axis=axis,
+            n=n,
+            o=o,
+            d=d,
+            fill_value=fill_value,
+            inplace=inplace,
+        )
+
+    def t2warp(
+        self,
+        *,
+        axis: int = 1,
+        inverse: bool = False,
+        pad: int | None = None,
+        fill_value: float = 0.0,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply the bounded one-axis time-squared warp subset."""
+
+        return self._from_file_op(
+            t2warp_rsf,
+            axis=axis,
+            inverse=inverse,
+            pad=pad,
+            fill_value=fill_value,
             inplace=inplace,
         )
 

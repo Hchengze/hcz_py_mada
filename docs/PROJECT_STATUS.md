@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 140 |
-| Registered `pymada-*` console scripts | 36 |
-| Pytest files | 90 |
+| User-facing CLI modules | 143 |
+| Registered `pymada-*` console scripts | 39 |
+| Pytest files | 91 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `100 / 2114 = 4.73%` |
-| Core `system/` + `plot/main` command surface | `87 / 301 = 28.90%` |
+| Full Madagascar/alias command surface | `103 / 2114 = 4.87%` |
+| Core `system/` + `plot/main` command surface | `90 / 301 = 29.90%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -170,6 +170,20 @@ are no remaining comparison bridge failures.
   `sfcostaper` and `sfspectra` mappings were audited but not counted again.
   M1-3 does not continue Forward Modeling, DAS, Localization, solver,
   workflow, large-system, original-source, or coverage-denominator work.
+- M1-4: `system/generic` interpolation/remap migration continues with
+  `sfremap1`, `sfspline`, and `sft2warp`, mapped to
+  `../src-master/system/generic/Mremap1.c`,
+  `../src-master/system/generic/Mspline.c`, and
+  `../src-master/system/generic/Mt2warp.c`. It adds
+  `pymadagascar.generic.remap.remap1_rsf`,
+  `pymadagascar.generic.remap.spline_rsf`,
+  `pymadagascar.generic.remap.t2warp_rsf`, `pymada-remap1`,
+  `pymada-spline`, `pymada-t2warp`, and `RSFData.remap1(...)`,
+  `RSFData.spline(...)`, and `RSFData.t2warp(...)`. Existing `sflinear` was
+  audited but not counted again because it was already counted in Stage C-2.
+  M1-4 does not continue Forward Modeling, DAS, Localization, solver,
+  workflow, large-system, original-source, SciPy-dependency, or
+  coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -612,7 +626,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 140 module entry points, 36 registered console scripts.
+- `pymadagascar/cli`: 143 module entry points, 39 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,
@@ -620,7 +634,8 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   CG/CGNR history adapters, internal solver-history containers, dottest/conjgrad,
   generic sampling/bin/slice/max1 tools, whole-dataset difference metrics,
   unary transforms, histogram/quantile QC, robust statistics, non-finite
-  masks/filling, complex tools, dd, pad/spray/tile, cat/transp.
+  masks/filling, remap/spline/t2warp utilities, complex tools, dd,
+  pad/spray/tile, cat/transp.
 - `pymadagascar/signal`: FFT, source-aligned FFT1/cosft/spectra2 transforms,
   filters, smoothing, convolution/correlation,
   circular/envelope correlation, shifts, axis calculus, amplitude clipping,

@@ -98,14 +98,15 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 36 registered console scripts are:
+The 39 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
 pymada-cmplx, pymada-rtoc, pymada-noise, pymada-ricker, pymada-spike,
 pymada-math, pymada-clip, pymada-window, pymada-attr, pymada-put, pymada-dd, pymada-cat,
 pymada-transp, pymada-fft, pymada-fft1, pymada-bandpass, pymada-byte, pymada-smooth,
-pymada-boxsmooth, pymada-laplac, pymada-trapez, pymada-cosft, pymada-spectra2, pymada-mask, pymada-cut, pymada-reverse, pymada-pad,
+pymada-boxsmooth, pymada-laplac, pymada-trapez, pymada-cosft, pymada-spectra2,
+pymada-remap1, pymada-spline, pymada-t2warp, pymada-mask, pymada-cut, pymada-reverse, pymada-pad,
 pymada-spray, pymada-scale, pymada-rotate, pymada-stack
 ```
 
@@ -120,6 +121,9 @@ pymada-fft win.rsf out=fft.rsf axis=1
 pymada-fft1 win.rsf out=fft1.rsf axis=1
 pymada-cosft win.rsf out=cosft.rsf axis=1
 pymada-spectra2 panel.rsf out=spectra2.rsf axes=1,2
+pymada-remap1 win.rsf out=remap1.rsf n=9 o=0 d=0.5
+pymada-spline win.rsf out=spline.rsf n=9 o=0 d=0.5
+pymada-t2warp win.rsf out=t2warp.rsf pad=9
 pymada-laplac win.rsf out=laplac.rsf axis=1 spacing_from_header=n
 pymada-trapez win.rsf out=trapez.rsf axis=1 frequency=0.05,0.1,0.4,0.45
 pymada-stack win.rsf out=stack.rsf axis=1 mode=sum
@@ -129,12 +133,12 @@ pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 36-entry console-script inventory
+authoritative installed command list is the 39-entry console-script inventory
 above.
 
 ## CLI Module Inventory
 
-There are 140 user-facing CLI modules:
+There are 143 user-facing CLI modules:
 
 ```text
 abs, acoustic2d, add, agc, attr, autocorr, bandenergy, bandpass, bandstop, bin, boxsmooth,
@@ -149,9 +153,9 @@ histogram, ifft, imag, info, integral, interleave, iradon, isnan, kirchhoff,
 laplac, linear, localrms, log, lowpass, mask, math, max, max1, mean, median, min, mul,
 mute, mutter, nmo, noise, normalize, notch, pad, pow, psd, put, quantile, radon,
 range, real,
-reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,
+remap1, reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,
 semblance, shifts, sign, slice, smooth, snr, specnorm, spectra, spectra2, spectrogram,
-spike, spray, sqrt, stack, stacks, std, threshold, tile, tpow, transfer, trapez, transp,
+spike, spray, spline, sqrt, stack, stacks, std, t2warp, threshold, tile, tpow, transfer, trapez, transp,
 var, welch, welchcsd, whiten, wiggle, window, windowfunc, xcorr
 ```
 
@@ -174,6 +178,9 @@ D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.spectra threshold.
 D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.fft1 threshold.rsf out=fft1.rsf axis=1
 D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.cosft threshold.rsf out=cosft.rsf axis=1
 D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.spectra2 panel.rsf out=spectra2.rsf axes=1,2
+D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.remap1 trace.rsf out=remap1.rsf n=200 o=0 d=0.004
+D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.spline trace.rsf out=spline.rsf n=200 o=0 d=0.004
+D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.t2warp trace.rsf out=t2warp.rsf pad=200
 D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.envelope threshold.rsf out=envelope.rsf axis=1
 D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.linear input.rsf out=resampled.rsf axis=1 n=200 o=0 d=0.004
 D:\HczApp\Anaconda\envs\mywork\python.exe -m pymadagascar.cli.bin points.rsf out=grid.rsf x=0 y=1 value=2 n1=50 o1=0 d1=1 n2=40 o2=0 d2=1 statistic=mean

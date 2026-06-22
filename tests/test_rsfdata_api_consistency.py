@@ -19,6 +19,9 @@ EXPECTED_CHAIN_METHODS = {
     "spectra2",
     "envelope",
     "linear",
+    "remap1",
+    "spline",
+    "t2warp",
     "slice",
     "max1",
     "autocorr",
@@ -288,6 +291,9 @@ def test_axis_changing_and_removing_header_contracts() -> None:
     attributes = rsf.freqattr(axis=1)
     band_energy = rsf.bandenergy(axis=1, bands="0.1:0.4", average=False)
     resampled = rsf.linear(axis=1, n=7, d=0.25)
+    remapped = rsf.remap1(axis=1, n=7, d=0.25)
+    splined = rsf.spline(axis=1, n=7, d=0.25)
+    warped = rsf.t2warp(axis=1, pad=7)
     decimated = rsf.decimate(2, axis=1, anti_alias=False)
     sliced = rsf.slice(axis=2, index=1)
     picked = rsf.max1(axis=1, mode="coord")
@@ -314,6 +320,13 @@ def test_axis_changing_and_removing_header_contracts() -> None:
     assert attributes.header["frequency_attributes"] == "dominant,centroid,bandwidth"
     assert resampled.shape == (3, 7)
     assert resampled.header.dimensions == (7, 3)
+    assert remapped.shape == (3, 7)
+    assert remapped.header.dimensions == (7, 3)
+    assert remapped.header["remap1_order"] == "1"
+    assert splined.shape == (3, 7)
+    assert splined.header["spline_boundary"] == "natural"
+    assert warped.shape == (3, 7)
+    assert warped.header["n1_t2warp"] == "5"
     assert decimated.shape == (3, 3)
     assert decimated.header.dimensions == (3, 3)
     assert decimated.header["d1"] == "1"

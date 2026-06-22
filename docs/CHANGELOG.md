@@ -8,6 +8,24 @@ optional compatibility checks.
 
 ### Added
 
+- M1-4 continues source-aligned `system/generic` interpolation/remap migration
+  with `sfremap1`, `sfspline`, and `sft2warp`, aligned to
+  `../src-master/system/generic/Mremap1.c`,
+  `../src-master/system/generic/Mspline.c`, and
+  `../src-master/system/generic/Mt2warp.c`. It adds
+  `pymadagascar.generic.remap.remap1_rsf`,
+  `pymadagascar.generic.remap.spline_rsf`,
+  `pymadagascar.generic.remap.t2warp_rsf`, `pymada-remap1`,
+  `pymada-spline`, `pymada-t2warp`, and `RSFData.remap1(...)`,
+  `RSFData.spline(...)`, and `RSFData.t2warp(...)` without adding new root
+  exports. Existing `sflinear` was audited but already counted in Stage C-2
+  and is not counted again.
+- M1-4 command-surface coverage increases the numerator only:
+  full coverage is `103 / 2114`, core `system/` + `plot/main` coverage is
+  `90 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, SciPy dependency, large system, notebook, original Madagascar source,
+  tag, release, or force-push work is included.
 - M1-3 continues source-aligned `system/generic` spectral/transform migration
   with `sffft1`, `sfcosft`, and `sfspectra2`, aligned to
   `../src-master/system/generic/Mfft1.c`,
@@ -983,9 +1001,9 @@ optional compatibility checks.
 
 - This is not a complete Madagascar clone.
 - Full Madagascar/alias command-surface coverage remains low:
-  `100 / 2114 = 4.73%`.
+  `103 / 2114 = 4.87%`.
 - Core `system/` + `plot/main` command-surface coverage is
-  `87 / 301 = 28.90%`.
+  `90 / 301 = 29.90%`.
 - Stage C-7 does not implement polyphase decimation, designed FIR/IIR notch
   filters, arbitrary polynomial detrending, multidimensional upstream RMS
   windows, streaming, or out-of-core processing.

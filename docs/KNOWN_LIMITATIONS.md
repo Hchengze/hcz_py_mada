@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `100 / 2114 = 4.73%`.
-- Core `system/` + `plot/main` coverage is `87 / 301 = 28.90%`.
+- Full command-surface coverage remains low: `103 / 2114 = 4.87%`.
+- Core `system/` + `plot/main` coverage is `90 / 301 = 29.90%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -116,7 +116,7 @@ testing details live in the other current docs.
 
 ## CLI and Compatibility
 
-- Only 36 commands are registered as `pymada-*` console scripts.
+- Only 39 commands are registered as `pymada-*` console scripts.
 - Other CLI modules must be called with `python -m pymadagascar.cli.<name>`.
 - Text output and floating-point details are not byte-identical to Madagascar.
 - Optional original Madagascar comparisons skip when upstream commands are not
@@ -193,6 +193,13 @@ testing details live in the other current docs.
   amplitude/power spectrum subset and does not implement FFTW optimal padding,
   plotting, streaming, or byte-identical FFT rounding. `sffft3` remains
   deferred.
+- M1-4 `sfremap1` implements one-axis regular-grid linear remapping only; it
+  does not implement ENO orders above 1, `pattern=` files, or streaming.
+  `sfspline` is a NumPy-only natural cubic regular-axis subset and does not
+  implement irregular coordinate/value tables, endpoint derivative `fp=`, or
+  spline prefiltering. `sft2warp` is a one-axis linear-interpolation
+  time-squared warp and does not implement adjoint modes, stretch
+  regularization, logwarp, or byte-identical `sf_stretch4` behavior.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

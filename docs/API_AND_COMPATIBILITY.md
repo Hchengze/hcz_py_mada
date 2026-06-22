@@ -790,7 +790,7 @@ the default survey return, or promote modeling to a stable root API.
 - Existing C++ kernels remain optional. Building them requires the `cpp` extra,
   an explicit `wheel.cmake=true` setting, and
   `PYMADAGASCAR_BUILD_CPP=ON`.
-- The 36 `pymada-*` names are installed entry points. The other CLI modules are
+- The 39 `pymada-*` names are installed entry points. The other CLI modules are
   supported through `python -m pymadagascar.cli.<name>`.
 - No license metadata is declared yet. Choose and add a license before any
   public redistribution or package-index release.
@@ -846,6 +846,10 @@ returns a frequency-domain RSFData with a frequency axis.
 Stage C-2 adds RSFData convenience methods for regular sampling and picking:
 
 - `RSFData.linear(axis=1, n=None, o=None, d=None, fill=0.0)`.
+- `RSFData.remap1(axis=1, n=None, o=None, d=None, fill_value=0.0,
+  order=1)`.
+- `RSFData.spline(axis=1, n=None, o=None, d=None, fill_value=0.0)`.
+- `RSFData.t2warp(axis=1, inverse=False, pad=None, fill_value=0.0)`.
 - `RSFData.slice(axis=3, index=0)`.
 - `RSFData.max1(axis=1, mode="value", abs_search=False,
   nan_policy="propagate")`.
@@ -1122,10 +1126,36 @@ complex-to-real inverse wrapper with ordinary `fft_n#` restoration. The bounded
 bounded `sfspectra2` subset computes an in-memory 2-D amplitude or power
 spectrum over two selected axes, with optional averaging over remaining planes.
 Existing `sfcostaper` and `sfspectra` were audited against `Mcostaper.c` and
-`Mspectra.c` but were already counted in Stage C-1, so M1-3 does not count them
+  `Mspectra.c` but were already counted in Stage C-1, so M1-3 does not count them
 again. M1-3 does not add root exports, does not implement `sffft3`, streaming,
 FFTW planning, `sffft1 opt=`/`ot=`/`sym=`, `sfcosft` multi-axis `sign#`
 dispatch, or byte-identical FFT/DCT rounding.
+
+M1-4 continues source-aligned `system/generic` interpolation/remap migration
+and adds:
+
+- `pymada-remap1` / `python -m pymadagascar.cli.remap1`, backed by
+  `pymadagascar.generic.remap.remap1_rsf` and aligned to
+  `../src-master/system/generic/Mremap1.c`.
+- `pymada-spline` / `python -m pymadagascar.cli.spline`, backed by
+  `pymadagascar.generic.remap.spline_rsf` and aligned to
+  `../src-master/system/generic/Mspline.c`.
+- `pymada-t2warp` / `python -m pymadagascar.cli.t2warp`, backed by
+  `pymadagascar.generic.remap.t2warp_rsf` and aligned to
+  `../src-master/system/generic/Mt2warp.c`.
+- `RSFData.remap1(...)`, `RSFData.spline(...)`, and `RSFData.t2warp(...)`.
+
+The bounded `sfremap1` subset uses one-axis regular-grid linear interpolation
+with explicit output `n/o/d` and fill value. The bounded `sfspline` subset uses
+one-axis natural cubic interpolation implemented with NumPy only. The bounded
+`sft2warp` subset maps one regular axis between time and squared-time
+coordinates with linear interpolation and restores `n#_t2warp` metadata on the
+inverse path. Existing `sflinear` was audited against `Mlinear.c` but was
+already counted in Stage C-2; M1-4 does not count it again. M1-4 does not add
+root exports, does not add SciPy, and does not implement upstream ENO orders
+above 1, irregular coordinate/value tables, `sfspline fp=`, `pattern=`, spline
+prefiltering, `sft2warp adj=`, stretch regularization, `sflogwarp`, streaming,
+or byte-identical interpolation rounding.
 
 ## RSFData Behavior Contract
 

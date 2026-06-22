@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `100 / 2114 = 4.73%` | Conservative denominator including `user/*` and aliases; M1-3 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `87 / 301 = 28.90%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `103 / 2114 = 4.87%` | Conservative denominator including `user/*` and aliases; M1-4 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `90 / 301 = 29.90%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -368,6 +368,38 @@ M1-3:
   complex-input padded extra-axis FFT with centering/sign behavior that is
   larger than this bounded batch.
 - Coverage numerator changes to `100 / 2114` and core coverage to `87 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M1-4:
+
+- Continues source-aligned `system/generic` command migration with the
+  interpolation/remap group after M1-3 and does not continue Forward Modeling,
+  DAS, Localization, solver, notebook, or Windows-only CI known-issue work.
+- The source audit covered only
+  `../src-master/system/generic/Mlinear.c`,
+  `../src-master/system/generic/Mremap1.c`,
+  `../src-master/system/generic/Menoint2.c`,
+  `../src-master/system/generic/Mspline.c`,
+  `../src-master/system/generic/Msplinefilter.c`,
+  `../src-master/system/generic/Mt2warp.c`, and
+  `../src-master/system/generic/Mlogwarp.c`.
+- Counts `sfremap1`, `sfspline`, and `sft2warp` because they map directly to
+  `system/generic` source files and now have Python API, RSFData chain method,
+  CLI module, console-script surface, focused tests, and documented bounded
+  behavior.
+- `sfremap1` supports one-axis regular-grid linear remapping with `axis=`,
+  `n=`, `o=`, `d=`, and `fill_value=`. `sfspline` supports one-axis
+  natural-cubic interpolation without SciPy. `sft2warp` supports a one-axis
+  linear-interpolation time-squared warp and inverse using `n#_t2warp`
+  metadata.
+- Existing `sflinear` was audited against `Mlinear.c`, but it was already
+  counted in Stage C-2 and is not counted again. `sfenoint2` is deferred
+  because it depends on an external header-coordinate file and 2-D ENO
+  interpolation ecology; `sfsplinefilter` is deferred because it is a
+  B-spline coefficient prefilter; `sflogwarp` is deferred to avoid expanding a
+  larger warp family in this batch.
+- Coverage numerator changes to `103 / 2114` and core coverage to `90 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -2004,6 +2036,9 @@ C-11.
 | `sfspectra2` | `../src-master/system/generic/Mspectra2.c` | in-memory two-axis amplitude/power spectrum subset with optional plane averaging; no FFTW optimal padding, plotting, streaming, or byte-identical FFT rounding |
 | `sfenvelope` | `../src-master/system/seismic/Menvelope.c` | FFT Hilbert envelope subset; no phase-rotation mode |
 | `sflinear` | `../src-master/system/generic/Mlinear.c` | regular-axis resampling subset; upstream is irregular coordinate/value-table interpolation |
+| `sfremap1` | `../src-master/system/generic/Mremap1.c` | bounded one-axis regular-grid linear remap subset; no ENO orders above 1, `pattern=`, or streaming |
+| `sfspline` | `../src-master/system/generic/Mspline.c` | bounded one-axis natural-cubic regular-axis interpolation subset; no irregular table mode, `fp=`, `pattern=`, or SciPy dependency |
+| `sft2warp` | `../src-master/system/generic/Mt2warp.c` | bounded one-axis linear-interpolation time-squared warp and inverse; no adjoint modes, stretch regularization, logwarp, or byte-identical `sf_stretch4` behavior |
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
 | `sfslice` | `../src-master/system/generic/Mslice.c` | fixed-index slice subset; upstream uses a picked surface and interpolation |
 | `sfmax1` | `../src-master/system/generic/Mmax1.c` | maximum value/index/coordinate subset; upstream emits complex local-maxima picks |
@@ -2098,8 +2133,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M1-3, coverage is
-`100 / 2114`, core coverage is `87 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M1-4, coverage is
+`103 / 2114`, core coverage is `90 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

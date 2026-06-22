@@ -61,6 +61,7 @@ from .noise import NoiseError, add_noise, noise, noise_rsf
 from .pad import PadError, pad_rsf
 from .put import PutHeaderError, put_header
 from .reverse import ReverseError, reverse_rsf
+from .remap import RemapError, remap1, remap1_rsf, spline, spline_rsf, t2warp, t2warp_rsf
 from .rotate import RotateError, rotate_rsf
 from .sampling import (
     SamplingError,
@@ -124,6 +125,7 @@ __all__ = [
     "DisfilError",
     "NoiseError",
     "ReverseError",
+    "RemapError",
     "RotateError",
     "SamplingError",
     "StatError",
@@ -207,6 +209,8 @@ __all__ = [
     "read_header_table",
     "real_rsf",
     "remove_rsf_dataset",
+    "remap1",
+    "remap1_rsf",
     "normalize_rsf",
     "reshape_rsf",
     "reverse_rsf",
@@ -216,8 +220,12 @@ __all__ = [
     "scale_rsf",
     "slice_array",
     "slice_rsf",
+    "spline",
+    "spline_rsf",
     "spike",
     "spray_rsf",
+    "t2warp",
+    "t2warp_rsf",
     "tile_rsf",
     "transpose_array",
     "transpose_rsf",
