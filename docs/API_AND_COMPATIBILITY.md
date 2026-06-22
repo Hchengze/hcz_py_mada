@@ -789,7 +789,7 @@ the default survey return, or promote modeling to a stable root API.
 - Existing C++ kernels remain optional. Building them requires the `cpp` extra,
   an explicit `wheel.cmake=true` setting, and
   `PYMADAGASCAR_BUILD_CPP=ON`.
-- The 25 `pymada-*` names are installed entry points. The other CLI modules are
+- The 28 `pymada-*` names are installed entry points. The other CLI modules are
   supported through `python -m pymadagascar.cli.<name>`.
 - No license metadata is declared yet. Choose and add a license before any
   public redistribution or package-index release.
@@ -991,6 +991,23 @@ These are counted command-surface entries because they map to direct
 `system/main` source files. M0-1 adds no Pythonic-only counted convenience, no
 Forward Modeling expansion, no DAS/Localization/solver branch, and no coverage
 denominator change.
+
+M0-2 continues source-aligned direct `system/main` command coverage and adds:
+
+- `pymada-stack` as the console-script surface for the existing
+  `pymadagascar.seismic.stack.stack_rsf` subset aligned to
+  `../src-master/system/main/stack.c`.
+- `RSFData.stack(axis=2, mode="mean", nonzero=True)`, already present before
+  M0-2, remains the chainable wrapper over `stack_rsf` and is now covered by a
+  direct command-surface test.
+- The bounded subset supports one-axis stacking with `axis=`, `mode=mean`,
+  `mode=sum`, `mode=rms` for real input, and `nonzero=` fold selection.
+
+M0-2 does not add root/stable exports. It does not implement upstream
+`sfstack axis=0`, `scale=` vectors, `min=`, `max=`, `prod=`, complex RMS,
+program-name aliases, or streaming/out-of-core execution. `sfstack` is counted
+because it maps to a direct `system/main` source file; denominators remain
+unchanged and no Pythonic-only convenience is counted.
 
 ## RSFData Behavior Contract
 

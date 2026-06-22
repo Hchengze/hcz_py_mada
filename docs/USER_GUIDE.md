@@ -98,7 +98,7 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 27 registered console scripts are:
+The 28 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
@@ -106,7 +106,7 @@ pymada-cmplx, pymada-rtoc, pymada-noise, pymada-ricker, pymada-spike,
 pymada-math, pymada-window, pymada-attr, pymada-put, pymada-dd, pymada-cat,
 pymada-transp, pymada-fft, pymada-bandpass, pymada-byte, pymada-smooth,
 pymada-boxsmooth, pymada-mask, pymada-cut, pymada-reverse, pymada-scale,
-pymada-rotate
+pymada-rotate, pymada-stack
 ```
 
 Examples:
@@ -116,11 +116,12 @@ pymada-spike n1=10 k1=5 out=spike.rsf
 pymada-info spike.rsf
 pymada-window spike.rsf out=win.rsf n1=5 f1=0
 pymada-fft win.rsf out=fft.rsf axis=1
+pymada-stack win.rsf out=stack.rsf axis=1 mode=sum
 ```
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 25-entry console-script inventory
+authoritative installed command list is the 28-entry console-script inventory
 above.
 
 ## CLI Module Inventory

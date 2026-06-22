@@ -1,8 +1,11 @@
 from pathlib import Path
+import subprocess
+import sys
 
 import numpy as np
 import pytest
 
+from pymadagascar import RSFData
 from pymadagascar.cli.agc import main as agc_main
 from pymadagascar.cli.gain import main as gain_main
 from pymadagascar.cli.mute import main as mute_main
@@ -205,6 +208,30 @@ def test_stack_rms_mode(tmp_path: Path) -> None:
     loaded = read_rsf(output_path)
 
     np.testing.assert_allclose(loaded.data, np.array([np.sqrt(12.5), np.sqrt(12.5)], dtype=np.float32))
+
+
+def test_stack_rsfdata_chain_method() -> None:
+    data = np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)
+    original = RSFData(data, _header_2d(n1=2, n2=2))
+
+    stacked = original.stack(axis=2, nonzero=False)
+
+    np.testing.assert_allclose(original.numpy(), data)
+    np.testing.assert_allclose(stacked.numpy(), np.array([2.0, 3.0], dtype=np.float32))
+    assert stacked.header.dimensions == (2,)
+
+
+def test_stack_console_script_target_help() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "pymadagascar.cli.stack", "--help"],
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=20,
+    )
+
+    assert result.returncode == 0
+    assert "pymada-stack" in result.stdout
 
 
 def test_stack_rejects_bad_mode(tmp_path: Path) -> None:

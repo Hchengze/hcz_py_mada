@@ -42,6 +42,7 @@ pymada-cut = "pymadagascar.cli.cut:main"
 pymada-reverse = "pymadagascar.cli.reverse:main"
 pymada-scale = "pymadagascar.cli.scale:main"
 pymada-rotate = "pymadagascar.cli.rotate:main"
+pymada-stack = "pymadagascar.cli.stack:main"
 
 [project.optional-dependencies]
 test = [

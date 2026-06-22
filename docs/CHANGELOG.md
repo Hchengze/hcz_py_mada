@@ -8,6 +8,18 @@ optional compatibility checks.
 
 ### Added
 
+- M0-2 continues source-aligned direct `system/main` command coverage with the
+  existing `sfstack` bounded subset aligned to
+  `../src-master/system/main/stack.c`. It registers `pymada-stack`, confirms
+  the existing `RSFData.stack(...)` chain method, and keeps the Python API at
+  `pymadagascar.seismic.stack.stack_rsf` without adding new root/stable
+  exports.
+- M0-2 command-surface coverage increases the numerator only:
+  full coverage is `89 / 2114`, core `system/` + `plot/main` coverage is
+  `76 / 301`, and direct `system/main` coverage is `35 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, large system, notebook, original Madagascar source, tag, release, or
+  force-push work is included.
 - M0-1 resumes source-aligned Madagascar command coverage after pausing further
   Forward Modeling work. It audits only `../src-master/system/main`,
   `../src-master/system/generic`, and `../src-master/system/seismic` for the
@@ -912,9 +924,9 @@ optional compatibility checks.
 
 - This is not a complete Madagascar clone.
 - Full Madagascar/alias command-surface coverage remains low:
-  `88 / 2114 = 4.16%`.
+  `89 / 2114 = 4.21%`.
 - Core `system/` + `plot/main` command-surface coverage is
-  `75 / 301 = 24.92%`.
+  `76 / 301 = 25.25%`.
 - Stage C-7 does not implement polyphase decimation, designed FIR/IIR notch
   filters, arbitrary polynomial detrending, multidimensional upstream RMS
   windows, streaming, or out-of-core processing.
@@ -936,6 +948,9 @@ optional compatibility checks.
 - M0-1 `sfscale` is scalar-only and lacks upstream percentile/axis local
   scaling. `sfrotate` is in-memory and does not implement upstream out-of-core
   random-access behavior.
+- M0-2 `sfstack` is a bounded in-memory one-axis stack subset only. It does
+  not implement upstream `axis=0`, `scale=` vectors, min/max/prod modes,
+  program-name aliases, complex RMS, or streaming/out-of-core behavior.
 - `sfheaderwindow/sfheadercut` operate on ordinary RSF data with a mask RSF.
   They do not implement full Madagascar header table semantics, SEG-Y trace
   headers, `sfheaderwindow inv=`, or non-contiguous window selections.

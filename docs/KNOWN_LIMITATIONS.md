@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `88 / 2114 = 4.16%`.
-- Core `system/` + `plot/main` coverage is `75 / 301 = 24.92%`.
+- Full command-surface coverage remains low: `89 / 2114 = 4.21%`.
+- Core `system/` + `plot/main` coverage is `76 / 301 = 25.25%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -116,7 +116,7 @@ testing details live in the other current docs.
 
 ## CLI and Compatibility
 
-- Only 25 commands are registered as `pymada-*` console scripts.
+- Only 28 commands are registered as `pymada-*` console scripts.
 - Other CLI modules must be called with `python -m pymadagascar.cli.<name>`.
 - Text output and floating-point details are not byte-identical to Madagascar.
 - Optional original Madagascar comparisons skip when upstream commands are not
@@ -164,6 +164,10 @@ testing details live in the other current docs.
   implement upstream percentile-driven `pclip`/axis local scaling. `sfrotate`
   implements in-memory `rot#` cyclic axis rotation and preserves headers; it
   does not implement upstream out-of-core random-access behavior.
+- M0-2 `sfstack` implements one-axis `axis=`, `mode=mean/sum/rms`, and
+  `nonzero=` fold behavior only. It does not implement upstream `axis=0`,
+  `scale=` vectors, `min=`, `max=`, `prod=`, program-name aliases, complex RMS,
+  or streaming/out-of-core behavior.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

@@ -4,9 +4,9 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `88 / 2114 = 4.16%` | Conservative denominator including `user/*` and aliases; M0-1 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `75 / 301 = 24.92%` | Better near-term project signal; denominator unchanged. |
-| Direct `system/main` source-backed commands | `34 / 39 = 87.18%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, and M0-1 `sfscale`/`sfrotate`. |
+| Full Madagascar/alias command surface | `89 / 2114 = 4.21%` | Conservative denominator including `user/*` and aliases; M0-2 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `76 / 301 = 25.25%` | Better near-term project signal; denominator unchanged. |
+| Direct `system/main` source-backed commands | `35 / 39 = 89.74%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, and M0-2 `sfstack`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
 Coverage is a command-surface audit, not a promise of full upstream parameter
@@ -231,6 +231,30 @@ M0-1:
   convenience is counted in M0-1.
 - Coverage numerator changes to `88 / 2114`, core coverage to `75 / 301`, and
   direct `system/main` coverage to `34 / 39`; all denominators remain
+  unchanged.
+
+M0-2:
+
+- Continues source-aligned direct `system/main` command coverage and does not
+  continue Forward Modeling, DAS, Localization, solver, notebook, or CI-known
+  issue work.
+- The small source audit covered only `../src-master/system/main`. Covered
+  direct commands include stable subsets for spike/math/window/info/get/disfil/
+  attr/put/dd/cat/transp/complex tools, cp/rm, mask/cut/reverse, add-family
+  aliases, interleave, scale, rotate, headerwindow/headercut/headersort,
+  dottest/cdottest, conjgrad/cconjgrad, and the M0-2 `sfstack` registration.
+- Remaining direct `system/main` gaps are deferred: `in.c` is mostly an
+  install/path diagnostic, `mpi.c` and `omp.c` are environment diagnostics,
+  `pad.c` and `spray.c` still need a separate direct source-alignment pass,
+  and the `*mpi.c` variants require MPI/external execution.
+- Registers the existing `sfstack` bounded subset from
+  `../src-master/system/main/stack.c` as `pymada-stack` and confirms
+  `pymadagascar.seismic.stack.stack_rsf`, `RSFData.stack(...)`, and
+  `python -m pymadagascar.cli.stack`.
+- Counts `sfstack` in command-surface coverage because it maps to a direct
+  `system/main` source file. No Pythonic-only convenience is counted in M0-2.
+- Coverage numerator changes to `89 / 2114`, core coverage to `76 / 301`, and
+  direct `system/main` coverage to `35 / 39`; all denominators remain
   unchanged.
 
 Stage D-1:
@@ -1840,6 +1864,7 @@ C-11.
 | `sfinterleave` | `../src-master/system/main/interleave.c` | stable subset |
 | `sfscale` | `../src-master/system/main/scale.c` | scalar `scale=`/`dscale=` subset; registered console script in M0-1 |
 | `sfrotate` | `../src-master/system/main/rotate.c` | cyclic `rot#` axis-rotation subset; no out-of-core streaming |
+| `sfstack` | `../src-master/system/main/stack.c` | bounded axis stack subset with `axis=`, `mode=mean/sum/rms`, and `nonzero=` fold behavior; no `axis=0`, scale vector, min/max/prod aliases, or streaming |
 | `sfheaderwindow` | `../src-master/system/main/headerwindow.c` | ordinary-RSF mask subset |
 | `sfheadercut` | `../src-master/system/main/headercut.c` | ordinary-RSF mask subset |
 | `sfheaderattr` | `../src-master/system/seismic/Mheaderattr.c` | minimal header table statistics subset |
@@ -1948,9 +1973,9 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M0-1, coverage is
-`88 / 2114`, core coverage is `75 / 301`, and direct `system/main` coverage is
-`34 / 39`; denominators remain unchanged.
+count Pythonic conveniences or expand `user/*`. After M0-2, coverage is
+`89 / 2114`, core coverage is `76 / 301`, and direct `system/main` coverage is
+`35 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header
 support becomes urgent, handle B-3-3 `sfsegyheader` as its own design task
