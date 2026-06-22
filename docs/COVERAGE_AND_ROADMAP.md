@@ -4,9 +4,9 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `89 / 2114 = 4.21%` | Conservative denominator including `user/*` and aliases; M0-2 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `76 / 301 = 25.25%` | Better near-term project signal; denominator unchanged. |
-| Direct `system/main` source-backed commands | `35 / 39 = 89.74%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, and M0-2 `sfstack`. |
+| Full Madagascar/alias command surface | `91 / 2114 = 4.30%` | Conservative denominator including `user/*` and aliases; M0-3 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `78 / 301 = 25.91%` | Better near-term project signal; denominator unchanged. |
+| Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
 Coverage is a command-surface audit, not a promise of full upstream parameter
@@ -255,6 +255,34 @@ M0-2:
   `system/main` source file. No Pythonic-only convenience is counted in M0-2.
 - Coverage numerator changes to `89 / 2114`, core coverage to `76 / 301`, and
   direct `system/main` coverage to `35 / 39`; all denominators remain
+  unchanged.
+
+M0-3:
+
+- Continues source-aligned direct `system/main` command coverage and does not
+  continue Forward Modeling, DAS, Localization, solver, notebook, or
+  Windows-only CI known-issue work.
+- The source audit covered only `../src-master/system/main/pad.c` and
+  `../src-master/system/main/spray.c`. `pad.c` pads RSF axes with zeros using
+  `beg#`, `end#`, and `n#`/`n#out` output-length requests, updating `n#` and
+  shifting `o#` when leading samples are inserted. `spray.c` inserts a new axis
+  at `axis=` and duplicates each input block `n=` times while writing optional
+  `o=`, `d=`, `label=`, and `unit=` metadata.
+- Registers the existing bounded `sfpad` and `sfspray` subsets from
+  `../src-master/system/main/pad.c` and
+  `../src-master/system/main/spray.c` as `pymada-pad` and `pymada-spray`, and
+  adds `RSFData.pad(...)` / `RSFData.spray(...)` chain methods.
+- `sfpad` supports in-memory constant-value padding with `beg#`, `end#`,
+  `n#`/`n#out`, including safe extension to new singleton-derived axes.
+  `sfspray` supports in-memory new-axis insertion with `axis=`, `n=`, `o=`,
+  `d=`, `label=`, and `unit=`.
+- M0-3 does not implement streaming/out-of-core execution, byte-level native
+  trace copying, arbitrary `sfput` passthrough, non-constant border modes, or
+  any `in.c`, `mpi.c`, `omp.c`, or MPI-variant command.
+- Counts both commands in command-surface coverage because they map to direct
+  `system/main` source files. No Pythonic-only convenience is counted in M0-3.
+- Coverage numerator changes to `91 / 2114`, core coverage to `78 / 301`, and
+  direct `system/main` coverage to `37 / 39`; all denominators remain
   unchanged.
 
 Stage D-1:
@@ -1862,6 +1890,8 @@ C-11.
 | `sfdiv` | alias backed by `../src-master/system/main/add.c` | stable subset |
 | `sftpow` | `../src-master/user/nobody/Mtpow.c` | stable subset, not core coverage |
 | `sfinterleave` | `../src-master/system/main/interleave.c` | stable subset |
+| `sfpad` | `../src-master/system/main/pad.c` | bounded constant-value axis padding with `beg#`, `end#`, `n#`/`n#out`; no streaming, `sfput` passthrough, or native byte-copy path |
+| `sfspray` | `../src-master/system/main/spray.c` | bounded new-axis duplication with `axis=`, `n=`, `o=`, `d=`, `label=`, and `unit=`; no streaming/out-of-core execution |
 | `sfscale` | `../src-master/system/main/scale.c` | scalar `scale=`/`dscale=` subset; registered console script in M0-1 |
 | `sfrotate` | `../src-master/system/main/rotate.c` | cyclic `rot#` axis-rotation subset; no out-of-core streaming |
 | `sfstack` | `../src-master/system/main/stack.c` | bounded axis stack subset with `axis=`, `mode=mean/sum/rms`, and `nonzero=` fold behavior; no `axis=0`, scale vector, min/max/prod aliases, or streaming |
@@ -1973,9 +2003,9 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M0-2, coverage is
-`89 / 2114`, core coverage is `76 / 301`, and direct `system/main` coverage is
-`35 / 39`; denominators remain unchanged.
+count Pythonic conveniences or expand `user/*`. After M0-3, coverage is
+`91 / 2114`, core coverage is `78 / 301`, and direct `system/main` coverage is
+`37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header
 support becomes urgent, handle B-3-3 `sfsegyheader` as its own design task

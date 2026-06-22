@@ -1,8 +1,11 @@
 from pathlib import Path
+import subprocess
+import sys
 
 import numpy as np
 import pytest
 
+from pymadagascar import RSFData
 from pymadagascar.cli.pad import main as pad_main
 from pymadagascar.cli.spray import main as spray_main
 from pymadagascar.cli.tile import main as tile_main
@@ -102,6 +105,31 @@ def test_padding_rejects_too_small_requested_n(tmp_path: Path) -> None:
     assert not output_path.exists()
 
 
+def test_padding_rejects_negative_beg_and_end(tmp_path: Path) -> None:
+    input_path = tmp_path / "input.rsf"
+    output_path = tmp_path / "bad.rsf"
+    _write(input_path, np.ones(3, dtype=np.float32))
+
+    with pytest.raises(PadError, match="beg1= must be non-negative"):
+        pad_rsf(input_path, output_path, beg={1: -1})
+    with pytest.raises(PadError, match="end1= must be non-negative"):
+        pad_rsf(input_path, output_path, end={1: -1})
+
+    assert not output_path.exists()
+
+
+def test_pad_rsfdata_chain_method_does_not_modify_original() -> None:
+    data = np.array([1.0, 2.0], dtype=np.float32)
+    original = RSFData(data, _header(o2=None, d2=None, label2=None, unit2=None))
+
+    padded = original.pad(beg={1: 1}, end={1: 1}, value=-2.0)
+
+    np.testing.assert_array_equal(original.numpy(), data)
+    np.testing.assert_array_equal(padded.numpy(), np.array([-2.0, 1.0, 2.0, -2.0], dtype=np.float32))
+    assert padded.header.dimensions == (4,)
+    assert padded.header["o1"] == "8"
+
+
 def test_spray_generates_new_axis_and_copies_data(tmp_path: Path) -> None:
     input_path = tmp_path / "input.rsf"
     output_path = tmp_path / "sprayed.rsf"
@@ -163,6 +191,30 @@ def test_tile_rejects_invalid_axis(tmp_path: Path) -> None:
     assert not output_path.exists()
 
 
+def test_spray_rejects_non_positive_n(tmp_path: Path) -> None:
+    input_path = tmp_path / "input.rsf"
+    output_path = tmp_path / "bad.rsf"
+    _write(input_path, np.ones(3, dtype=np.float32))
+
+    with pytest.raises(SprayError, match="n= must be >= 1"):
+        spray_rsf(input_path, output_path, axis=2, n=0)
+
+    assert not output_path.exists()
+
+
+def test_spray_rsfdata_chain_method_does_not_modify_original() -> None:
+    data = np.array([1.0, 2.0], dtype=np.float32)
+    original = RSFData(data, _header(o2=None, d2=None, label2=None, unit2=None))
+
+    sprayed = original.spray(axis=2, n=2, o=3.0, d=4.0, label="Copy", unit="count")
+
+    np.testing.assert_array_equal(original.numpy(), data)
+    np.testing.assert_array_equal(sprayed.numpy(), np.stack([data, data], axis=0))
+    assert sprayed.header.dimensions == (2, 2)
+    assert sprayed.header["label2"] == "Copy"
+    assert sprayed.header["unit2"] == "count"
+
+
 def test_pad_cli(tmp_path: Path) -> None:
     input_path = tmp_path / "input.rsf"
     output_path = tmp_path / "padded.rsf"
@@ -175,6 +227,19 @@ def test_pad_cli(tmp_path: Path) -> None:
     assert code == 0
     np.testing.assert_array_equal(loaded.data, np.array([0.0, 1.0, 2.0, 0.0], dtype=np.float32))
     assert loaded.header["o1"] == "8"
+
+
+def test_pad_console_script_target_help() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "pymadagascar.cli.pad", "--help"],
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=20,
+    )
+
+    assert result.returncode == 0
+    assert "pymada-pad" in result.stdout
 
 
 def test_spray_cli(tmp_path: Path) -> None:
@@ -202,6 +267,19 @@ def test_spray_cli(tmp_path: Path) -> None:
     assert loaded.header["label2"] == "Copy"
     assert loaded.header["unit2"] == "count"
     np.testing.assert_array_equal(loaded.data, np.stack([data, data], axis=0))
+
+
+def test_spray_console_script_target_help() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "pymadagascar.cli.spray", "--help"],
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=20,
+    )
+
+    assert result.returncode == 0
+    assert "pymada-spray" in result.stdout
 
 
 def test_tile_cli(tmp_path: Path) -> None:

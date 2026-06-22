@@ -52,6 +52,8 @@ EXPECTED_CHAIN_METHODS = {
     "bandstop",
     "notch",
     "localrms",
+    "pad",
+    "spray",
     "windowfunc",
     "psd",
     "csd",

@@ -34,7 +34,7 @@ def test_all_cli_modules_import_and_expose_main() -> None:
 
 
 def test_console_script_targets_resolve() -> None:
-    assert len(CONSOLE_SCRIPTS) == 28
+    assert len(CONSOLE_SCRIPTS) == 30
     failures: list[str] = []
     for script, target in sorted(CONSOLE_SCRIPTS.items()):
         module_name, attribute = target.split(":", 1)

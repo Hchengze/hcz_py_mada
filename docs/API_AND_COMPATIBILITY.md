@@ -789,7 +789,7 @@ the default survey return, or promote modeling to a stable root API.
 - Existing C++ kernels remain optional. Building them requires the `cpp` extra,
   an explicit `wheel.cmake=true` setting, and
   `PYMADAGASCAR_BUILD_CPP=ON`.
-- The 28 `pymada-*` names are installed entry points. The other CLI modules are
+- The 30 `pymada-*` names are installed entry points. The other CLI modules are
   supported through `python -m pymadagascar.cli.<name>`.
 - No license metadata is declared yet. Choose and add a license before any
   public redistribution or package-index release.
@@ -1009,6 +1009,27 @@ program-name aliases, or streaming/out-of-core execution. `sfstack` is counted
 because it maps to a direct `system/main` source file; denominators remain
 unchanged and no Pythonic-only convenience is counted.
 
+M0-3 continues source-aligned direct `system/main` command coverage and adds:
+
+- `pymada-pad` as the console-script surface for
+  `pymadagascar.generic.pad.pad_rsf`, aligned to
+  `../src-master/system/main/pad.c`.
+- `pymada-spray` as the console-script surface for
+  `pymadagascar.generic.spray.spray_rsf`, aligned to
+  `../src-master/system/main/spray.c`.
+- `RSFData.pad(n=None, beg=None, end=None, value=0.0)` and
+  `RSFData.spray(axis=2, n=..., o=0.0, d=1.0, label=None, unit=None)` as
+  chainable wrappers over the file-backed RSF APIs.
+
+The bounded `sfpad` subset supports constant-value in-memory axis padding with
+`beg#`, `end#`, and `n#`/`n#out` output-length requests. The bounded `sfspray`
+subset supports new-axis insertion with `axis=`, `n=`, `o=`, `d=`, `label=`,
+and `unit=`. M0-3 does not add root/stable exports and does not implement
+streaming/out-of-core execution, arbitrary `sfput` parameter passthrough,
+non-constant border modes, or byte-level native trace copying. Both commands
+are counted because they map to direct `system/main` source files;
+denominators remain unchanged.
+
 ## RSFData Behavior Contract
 
 - Transform methods return a new in-memory `RSFData` by default and leave the
@@ -1036,6 +1057,7 @@ unchanged and no Pythonic-only convenience is counted.
 | `autocorr`, `convolve`, `envcorr` | May change selected-axis length and origin according to mode; other axes remain. | Supported real/complex convolution precision; `envcorr` requires real input. |
 | `cconv`, `shifts` | Preserve input shape and header. | Preserve supported real/complex family. |
 | `slice`, `max1`, `stack`, `stacks` | Remove one RSF axis and shift later axis metadata down. A scalar reduction is represented as one sample. | Picking/stacking returns the implementation's supported numeric output dtype. |
+| `pad`, `spray` | `pad` changes selected axis lengths and shifts origins for leading padding. `spray` inserts a new axis and shifts later axis metadata up. | Preserve the input numeric dtype after constant padding or duplication. |
 | `diff` | Always returns one sample with `label1=Difference` and `difference_metric=`. | Float64 scalar metric, including complex-input comparisons by magnitude. |
 | `abs`, `sign`, `sqrt`, `log`, `exp`, `pow` | Preserve shape and ordinary header metadata. | Float32 remains float32 and float64 remains float64. `abs` converts complex64 magnitude to float32; the other five reject complex input. |
 | `histogram` | Returns a `(bins, 2)` NumPy table / RSF with `n1=2`, `n2=bins`; fields are `center,value`. | Float64 table; non-finite samples are omitted. |

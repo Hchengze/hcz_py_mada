@@ -8,6 +8,18 @@ optional compatibility checks.
 
 ### Added
 
+- M0-3 continues source-aligned direct `system/main` command coverage with
+  `sfpad` and `sfspray`, aligned to `../src-master/system/main/pad.c` and
+  `../src-master/system/main/spray.c`. It registers `pymada-pad` and
+  `pymada-spray`, adds `RSFData.pad(...)` and `RSFData.spray(...)`, and keeps
+  the Python APIs at `pymadagascar.generic.pad.pad_rsf` and
+  `pymadagascar.generic.spray.spray_rsf` without adding new root exports.
+- M0-3 command-surface coverage increases the numerator only:
+  full coverage is `91 / 2114`, core `system/` + `plot/main` coverage is
+  `78 / 301`, and direct `system/main` coverage is `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, large system, notebook, original Madagascar source, tag, release, or
+  force-push work is included.
 - M0-2 continues source-aligned direct `system/main` command coverage with the
   existing `sfstack` bounded subset aligned to
   `../src-master/system/main/stack.c`. It registers `pymada-stack`, confirms
@@ -924,9 +936,9 @@ optional compatibility checks.
 
 - This is not a complete Madagascar clone.
 - Full Madagascar/alias command-surface coverage remains low:
-  `89 / 2114 = 4.21%`.
+  `91 / 2114 = 4.30%`.
 - Core `system/` + `plot/main` command-surface coverage is
-  `76 / 301 = 25.25%`.
+  `78 / 301 = 25.91%`.
 - Stage C-7 does not implement polyphase decimation, designed FIR/IIR notch
   filters, arbitrary polynomial detrending, multidimensional upstream RMS
   windows, streaming, or out-of-core processing.
@@ -951,6 +963,10 @@ optional compatibility checks.
 - M0-2 `sfstack` is a bounded in-memory one-axis stack subset only. It does
   not implement upstream `axis=0`, `scale=` vectors, min/max/prod modes,
   program-name aliases, complex RMS, or streaming/out-of-core behavior.
+- M0-3 `sfpad` is a bounded in-memory constant-padding subset and `sfspray`
+  is a bounded in-memory new-axis duplication subset. They do not implement
+  streaming/out-of-core execution, byte-level native trace copying, arbitrary
+  `sfput` passthrough, or non-constant border modes.
 - `sfheaderwindow/sfheadercut` operate on ordinary RSF data with a mask RSF.
   They do not implement full Madagascar header table semantics, SEG-Y trace
   headers, `sfheaderwindow inv=`, or non-contiguous window selections.

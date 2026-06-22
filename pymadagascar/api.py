@@ -14,8 +14,10 @@ from pymadagascar.core.hypercube import Hypercube
 from pymadagascar.generic.array_math import clip_rsf, normalize_rsf, scale_rsf
 from pymadagascar.generic.attr import attr_rsf
 from pymadagascar.generic.difference import diff_rsf
+from pymadagascar.generic.pad import pad_rsf
 from pymadagascar.generic.rotate import rotate_rsf
 from pymadagascar.generic.sampling import linear_rsf, max1_rsf, slice_rsf
+from pymadagascar.generic.spray import spray_rsf
 from pymadagascar.generic.statistics import (
     fillnan_rsf,
     isnan_rsf,
@@ -216,6 +218,50 @@ class RSFData:
         """Cyclically rotate samples using 1-based RSF axis ``rot#`` counts."""
 
         return self._from_file_op(rotate_rsf, rotations=rotations, inplace=inplace)
+
+    def pad(
+        self,
+        *,
+        n: dict[int, int] | None = None,
+        beg: dict[int, int] | None = None,
+        end: dict[int, int] | None = None,
+        value: float = 0.0,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Pad one or more 1-based RSF axes with a constant value."""
+
+        return self._from_file_op(
+            pad_rsf,
+            n=n,
+            beg=beg,
+            end=end,
+            value=value,
+            inplace=inplace,
+        )
+
+    def spray(
+        self,
+        *,
+        axis: int = 2,
+        n: int,
+        o: float = 0.0,
+        d: float = 1.0,
+        label: str | None = None,
+        unit: str | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Insert a new 1-based RSF axis and duplicate samples along it."""
+
+        return self._from_file_op(
+            spray_rsf,
+            axis=axis,
+            n=n,
+            o=o,
+            d=d,
+            label=label,
+            unit=unit,
+            inplace=inplace,
+        )
 
     def clip(self, clip: float, *, inplace: bool = False) -> "RSFData":
         """Symmetrically clip real data to ``[-clip, clip]``."""
