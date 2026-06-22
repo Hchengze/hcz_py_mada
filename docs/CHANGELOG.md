@@ -8,6 +8,24 @@ optional compatibility checks.
 
 ### Added
 
+- M1-3 continues source-aligned `system/generic` spectral/transform migration
+  with `sffft1`, `sfcosft`, and `sfspectra2`, aligned to
+  `../src-master/system/generic/Mfft1.c`,
+  `../src-master/system/generic/Mcosft.c`, and
+  `../src-master/system/generic/Mspectra2.c`. It adds
+  `pymadagascar.signal.transforms.fft1_rsf`,
+  `pymadagascar.signal.transforms.cosft_rsf`,
+  `pymadagascar.signal.transforms.spectra2_rsf`, `pymada-fft1`,
+  `pymada-cosft`, `pymada-spectra2`, and `RSFData.fft1(...)`,
+  `RSFData.cosft(...)`, and `RSFData.spectra2(...)` without adding new root
+  exports. `sfcostaper` and `sfspectra` were audited but were already counted
+  in Stage C-1 and are not counted again.
+- M1-3 command-surface coverage increases the numerator only:
+  full coverage is `100 / 2114`, core `system/` + `plot/main` coverage is
+  `87 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, large system, notebook, original Madagascar source, tag, release, or
+  force-push work is included.
 - M1-2 continues source-aligned `system/generic` command migration with
   `sflaplac`, `sfsmooth`, and `sftrapez`, aligned to
   `../src-master/system/generic/Mlaplac.c`,
@@ -965,9 +983,9 @@ optional compatibility checks.
 
 - This is not a complete Madagascar clone.
 - Full Madagascar/alias command-surface coverage remains low:
-  `97 / 2114 = 4.59%`.
+  `100 / 2114 = 4.73%`.
 - Core `system/` + `plot/main` command-surface coverage is
-  `84 / 301 = 27.91%`.
+  `87 / 301 = 28.90%`.
 - Stage C-7 does not implement polyphase decimation, designed FIR/IIR notch
   filters, arbitrary polynomial detrending, multidimensional upstream RMS
   windows, streaming, or out-of-core processing.

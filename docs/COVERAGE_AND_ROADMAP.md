@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `97 / 2114 = 4.59%` | Conservative denominator including `user/*` and aliases; M1-2 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `84 / 301 = 27.91%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `100 / 2114 = 4.73%` | Conservative denominator including `user/*` and aliases; M1-3 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `87 / 301 = 28.90%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -338,6 +338,36 @@ M1-2:
   `sfsmooth adj=`/`diff#` modes, `sftrapez` byte-identical FFT rounding, or
   a Laplacian coefficient field/inverse solver.
 - Coverage numerator changes to `97 / 2114` and core coverage to `84 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M1-3:
+
+- Continues source-aligned `system/generic` command migration with the
+  spectral/transform group after M1-2 and does not continue Forward Modeling,
+  DAS, Localization, solver, notebook, or Windows-only CI known-issue work.
+- The source audit covered only
+  `../src-master/system/generic/Mfft1.c`,
+  `../src-master/system/generic/Mfft3.c`,
+  `../src-master/system/generic/Mcosft.c`,
+  `../src-master/system/generic/Mspectra.c`,
+  `../src-master/system/generic/Mspectra2.c`, and
+  `../src-master/system/generic/Mcostaper.c`.
+- Counts `sffft1`, `sfcosft`, and `sfspectra2` because they map directly to
+  `system/generic` source files and now have Python API, RSFData chain method,
+  CLI module, console-script surface, focused tests, and documented bounded
+  behavior.
+- `sffft1` supports one-axis real-to-complex RFFT and complex-to-real inverse
+  with ordinary `fft_n#` metadata restoration. `sfcosft` supports one-axis
+  real-valued orthonormal DCT-II/DCT-III transforms. `sfspectra2` supports an
+  in-memory 2-D amplitude/power spectrum over two selected RSF axes, with
+  optional averaging over remaining planes.
+- Existing `sfcostaper` and `sfspectra` were audited against
+  `Mcostaper.c` and `Mspectra.c`, but they were already counted in Stage C-1
+  and are not counted again. `sffft3` is deferred because upstream is a
+  complex-input padded extra-axis FFT with centering/sign behavior that is
+  larger than this bounded batch.
+- Coverage numerator changes to `100 / 2114` and core coverage to `87 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -1969,6 +1999,9 @@ C-11.
 | `sflaplac` | `../src-master/system/generic/Mlaplac.c` with `laplac2.c` | bounded real graph-Laplacian subset with selected axes and optional header spacing; no `adj=`, coefficient field, inverse solve, or streaming |
 | `sfsmooth` | `../src-master/system/generic/Msmooth.c` | centered triangle smoothing subset with `rect#`, selected axes, and `repeat=`; no `adj=`, `diff#`, per-axis `box#`, complex input, or streaming |
 | `sftrapez` | `../src-master/system/generic/Mtrapez.c` with `trapez.c` | one-axis real-input RFFT trapezoidal frequency-filter subset with `frequency=` or `f1/f2/f3/f4`; no complex input or byte-identical FFT rounding promise |
+| `sffft1` | `../src-master/system/generic/Mfft1.c` | one-axis real-to-complex RFFT and complex-to-real inverse subset with ordinary `fft_n#` metadata; no FFTW planning, `opt=`, `ot=`, `sym=`, streaming, or byte-identical scaling |
+| `sfcosft` | `../src-master/system/generic/Mcosft.c` | one-axis real orthonormal DCT-II/DCT-III subset; no multi-axis `sign#` dispatch, streaming, or byte-identical kiss_fft normalization |
+| `sfspectra2` | `../src-master/system/generic/Mspectra2.c` | in-memory two-axis amplitude/power spectrum subset with optional plane averaging; no FFTW optimal padding, plotting, streaming, or byte-identical FFT rounding |
 | `sfenvelope` | `../src-master/system/seismic/Menvelope.c` | FFT Hilbert envelope subset; no phase-rotation mode |
 | `sflinear` | `../src-master/system/generic/Mlinear.c` | regular-axis resampling subset; upstream is irregular coordinate/value-table interpolation |
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
@@ -2065,8 +2098,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M1-2, coverage is
-`97 / 2114`, core coverage is `84 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M1-3, coverage is
+`100 / 2114`, core coverage is `87 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

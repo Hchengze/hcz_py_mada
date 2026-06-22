@@ -14,6 +14,9 @@ EXPECTED_CHAIN_METHODS = {
     "costaper",
     "threshold",
     "spectra",
+    "fft1",
+    "cosft",
+    "spectra2",
     "envelope",
     "linear",
     "slice",
@@ -271,6 +274,9 @@ def test_axis_changing_and_removing_header_contracts() -> None:
     rsf = RSFData(data, _header_2d(n1=5, n2=3))
 
     spectrum = rsf.spectra(axis=1, average=False)
+    fft1 = rsf.fft1(axis=1)
+    cosft = rsf.cosft(axis=1)
+    spectrum2 = rsf.spectra2(axes=(1, 2), average=False)
     density = rsf.psd(axis=1, average=False)
     welch_density = rsf.welch(
         axis=1,
@@ -290,6 +296,13 @@ def test_axis_changing_and_removing_header_contracts() -> None:
     assert spectrum.shape == (3, 3)
     assert spectrum.header["label1"] == "Frequency"
     assert spectrum.header["unit1"] == "Hz"
+    assert fft1.shape == (3, 3)
+    assert fft1.header["label1"] == "Frequency"
+    assert cosft.shape == rsf.shape
+    assert cosft.header["label1"] == "Frequency"
+    assert spectrum2.shape == (3, 3)
+    assert spectrum2.header["label1"] == "Frequency"
+    assert spectrum2.header["label2"] == "Wavenumber"
     assert density.shape == (3, 3)
     assert density.header["label1"] == "Frequency"
     assert welch_density.shape == (3, 3)

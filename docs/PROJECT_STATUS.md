@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 135 |
-| Registered `pymada-*` console scripts | 31 |
-| Pytest files | 89 |
+| User-facing CLI modules | 140 |
+| Registered `pymada-*` console scripts | 36 |
+| Pytest files | 90 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `97 / 2114 = 4.59%` |
-| Core `system/` + `plot/main` command surface | `84 / 301 = 27.91%` |
+| Full Madagascar/alias command surface | `100 / 2114 = 4.73%` |
+| Core `system/` + `plot/main` command surface | `87 / 301 = 28.90%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -50,12 +50,12 @@ D:\HczApp\Anaconda\envs\mywork\python.exe
 Latest Windows full-suite result:
 
 ```text
-1006 passed, 94 skipped
+1133 passed, 95 skipped
 ```
 
 Skip summary:
 
-- 93 skips are optional original Madagascar comparison tests because upstream
+- 94 skips are optional original Madagascar comparison tests because upstream
   `sf*` commands are not available on the current Windows PATH.
 - 1 skip is the optional C++ extension test because `pymadagascar._core` is not
   compiled.
@@ -157,6 +157,19 @@ are no remaining comparison bridge failures.
   `RSFData.smooth(...)`, and `RSFData.trapez(...)`. M1-2 does not continue
   Forward Modeling, DAS, Localization, solver, workflow, large-system,
   original-source, or coverage-denominator work.
+- M1-3: `system/generic` spectral/transform migration continues with
+  `sffft1`, `sfcosft`, and `sfspectra2`, mapped to
+  `../src-master/system/generic/Mfft1.c`,
+  `../src-master/system/generic/Mcosft.c`, and
+  `../src-master/system/generic/Mspectra2.c`. It adds
+  `pymadagascar.signal.transforms.fft1_rsf`,
+  `pymadagascar.signal.transforms.cosft_rsf`,
+  `pymadagascar.signal.transforms.spectra2_rsf`, `pymada-fft1`,
+  `pymada-cosft`, `pymada-spectra2`, and `RSFData.fft1(...)`,
+  `RSFData.cosft(...)`, and `RSFData.spectra2(...)`. Existing
+  `sfcostaper` and `sfspectra` mappings were audited but not counted again.
+  M1-3 does not continue Forward Modeling, DAS, Localization, solver,
+  workflow, large-system, original-source, or coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -599,7 +612,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 137 module entry points, 33 registered console scripts.
+- `pymadagascar/cli`: 140 module entry points, 36 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,
@@ -608,7 +621,8 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   generic sampling/bin/slice/max1 tools, whole-dataset difference metrics,
   unary transforms, histogram/quantile QC, robust statistics, non-finite
   masks/filling, complex tools, dd, pad/spray/tile, cat/transp.
-- `pymadagascar/signal`: FFT, filters, smoothing, convolution/correlation,
+- `pymadagascar/signal`: FFT, source-aligned FFT1/cosft/spectra2 transforms,
+  filters, smoothing, convolution/correlation,
   circular/envelope correlation, shifts, axis calculus, amplitude clipping,
   wavelets, signal preprocessing, demean/detrend, integer decimation,
   band-stop/notch filtering, local-RMS QC, standard windows, periodogram

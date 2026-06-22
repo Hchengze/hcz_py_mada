@@ -82,8 +82,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 33:
-        raise RuntimeError("expected exactly 33 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 36:
+        raise RuntimeError("expected exactly 36 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -129,6 +129,7 @@ def _check_lower_level_imports() -> None:
         welch_csd,
         welch_psd,
     )
+    from pymadagascar.signal.transforms import cosft, fft1_rsf, spectra2
 
     for name, obj in {
         "read_rsf": read_rsf,
@@ -174,6 +175,9 @@ def _check_lower_level_imports() -> None:
         "signal.cosine_taper": cosine_taper,
         "signal.threshold": threshold,
         "signal.spectra": spectra,
+        "signal.fft1_rsf": fft1_rsf,
+        "signal.cosft": cosft,
+        "signal.spectra2": spectra2,
         "signal.envelope": envelope,
         "signal.demean": demean,
         "signal.detrend": detrend,

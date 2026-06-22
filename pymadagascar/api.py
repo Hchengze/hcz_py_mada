@@ -69,6 +69,7 @@ from pymadagascar.signal.qc import (
 )
 from pymadagascar.signal.smooth import smooth_rsf
 from pymadagascar.signal.trapez import trapez_rsf
+from pymadagascar.signal.transforms import cosft_rsf, fft1_rsf, spectra2_rsf
 from pymadagascar.signal.spectral import (
     coherence_rsf,
     csd_rsf,
@@ -991,6 +992,60 @@ class RSFData:
         return self._from_file_op(
             spectra_rsf,
             axis=axis,
+            mode=mode,
+            average=average,
+            inplace=inplace,
+        )
+
+    def fft1(
+        self,
+        *,
+        axis: int = 1,
+        inverse: bool = False,
+        norm: str | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Run the bounded source-aligned one-axis real/complex FFT subset."""
+
+        return self._from_file_op(
+            fft1_rsf,
+            axis=axis,
+            inverse=inverse,
+            norm=norm,
+            inplace=inplace,
+        )
+
+    def cosft(
+        self,
+        *,
+        axis: int = 1,
+        inverse: bool = False,
+        norm: str = "ortho",
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply a bounded one-axis cosine transform subset."""
+
+        return self._from_file_op(
+            cosft_rsf,
+            axis=axis,
+            inverse=inverse,
+            norm=norm,
+            inplace=inplace,
+        )
+
+    def spectra2(
+        self,
+        *,
+        axes: tuple[int, int] | list[int] = (1, 2),
+        mode: str = "amplitude",
+        average: bool = False,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Compute a bounded 2-D amplitude or power spectrum."""
+
+        return self._from_file_op(
+            spectra2_rsf,
+            axes=axes,
             mode=mode,
             average=average,
             inplace=inplace,

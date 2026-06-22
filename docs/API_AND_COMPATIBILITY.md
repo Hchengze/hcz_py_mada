@@ -768,7 +768,8 @@ the default survey return, or promote modeling to a stable root API.
   and max1 picking tools, whole-dataset difference metrics, unary transforms,
   histogram/quantile distribution QC, robust statistics, and non-finite
   masks/filling.
-- Signal stable subsets: FFT/IFFT/RFFT/IRFFT, bandpass/lowpass/highpass,
+- Signal stable subsets: FFT/IFFT/RFFT/IRFFT, source-aligned FFT1/cosft/
+  spectra2 bounded transforms, bandpass/lowpass/highpass,
   convolution/correlation/xcorr, autocorr, circular convolution, envelope
   correlation, shifts, first-order axis calculus, clip2 amplitude conditioning,
   Ricker wavelet, costaper, threshold, spectra, envelope, demean/detrend,
@@ -789,7 +790,7 @@ the default survey return, or promote modeling to a stable root API.
 - Existing C++ kernels remain optional. Building them requires the `cpp` extra,
   an explicit `wheel.cmake=true` setting, and
   `PYMADAGASCAR_BUILD_CPP=ON`.
-- The 33 `pymada-*` names are installed entry points. The other CLI modules are
+- The 36 `pymada-*` names are installed entry points. The other CLI modules are
   supported through `python -m pymadagascar.cli.<name>`.
 - No license metadata is declared yet. Choose and add a license before any
   public redistribution or package-index release.
@@ -1100,6 +1101,31 @@ frequency response from `frequency=f1,f2,f3,f4` or `f1/f2/f3/f4`. M1-2 does
 not add root exports, does not implement streaming/out-of-core behavior,
 complex input, `sfsmooth adj=`/`diff#`/per-axis `box#`, `sflaplac adj=`,
 coefficient fields, inverse solvers, or byte-identical FFT rounding.
+
+M1-3 continues source-aligned `system/generic` spectral/transform migration and
+adds:
+
+- `pymada-fft1` / `python -m pymadagascar.cli.fft1`, backed by
+  `pymadagascar.signal.transforms.fft1_rsf` and aligned to
+  `../src-master/system/generic/Mfft1.c`.
+- `pymada-cosft` / `python -m pymadagascar.cli.cosft`, backed by
+  `pymadagascar.signal.transforms.cosft_rsf` and aligned to
+  `../src-master/system/generic/Mcosft.c`.
+- `pymada-spectra2` / `python -m pymadagascar.cli.spectra2`, backed by
+  `pymadagascar.signal.transforms.spectra2_rsf` and aligned to
+  `../src-master/system/generic/Mspectra2.c`.
+- `RSFData.fft1(...)`, `RSFData.cosft(...)`, and `RSFData.spectra2(...)`.
+
+The bounded `sffft1` subset is a one-axis real-to-complex RFFT and
+complex-to-real inverse wrapper with ordinary `fft_n#` restoration. The bounded
+`sfcosft` subset is one-axis real-valued orthonormal DCT-II/DCT-III. The
+bounded `sfspectra2` subset computes an in-memory 2-D amplitude or power
+spectrum over two selected axes, with optional averaging over remaining planes.
+Existing `sfcostaper` and `sfspectra` were audited against `Mcostaper.c` and
+`Mspectra.c` but were already counted in Stage C-1, so M1-3 does not count them
+again. M1-3 does not add root exports, does not implement `sffft3`, streaming,
+FFTW planning, `sffft1 opt=`/`ot=`/`sym=`, `sfcosft` multi-axis `sign#`
+dispatch, or byte-identical FFT/DCT rounding.
 
 ## RSFData Behavior Contract
 

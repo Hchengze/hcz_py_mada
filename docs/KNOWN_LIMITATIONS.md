@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `97 / 2114 = 4.59%`.
-- Core `system/` + `plot/main` coverage is `84 / 301 = 27.91%`.
+- Full command-surface coverage remains low: `100 / 2114 = 4.73%`.
+- Core `system/` + `plot/main` coverage is `87 / 301 = 28.90%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -116,7 +116,7 @@ testing details live in the other current docs.
 
 ## CLI and Compatibility
 
-- Only 33 commands are registered as `pymada-*` console scripts.
+- Only 36 commands are registered as `pymada-*` console scripts.
 - Other CLI modules must be called with `python -m pymadagascar.cli.<name>`.
 - Text output and floating-point details are not byte-identical to Madagascar.
 - Optional original Madagascar comparisons skip when upstream commands are not
@@ -185,6 +185,14 @@ testing details live in the other current docs.
   `adj=`, `diff#`, per-axis `box#`, complex input, or streaming. `sftrapez`
   is a one-axis real-input RFFT trapezoidal frequency filter and does not
   promise byte-identical upstream FFT rounding.
+- M1-3 `sffft1` implements a one-axis real-to-complex RFFT and complex-to-real
+  inverse subset only; it does not implement upstream FFTW planning,
+  `opt=` padding, `ot=` shift files, `sym=` scaling, or streaming. `sfcosft`
+  is a one-axis orthonormal DCT-II/DCT-III subset and does not implement
+  upstream multi-axis `sign#` dispatch. `sfspectra2` is an in-memory 2-D
+  amplitude/power spectrum subset and does not implement FFTW optimal padding,
+  plotting, streaming, or byte-identical FFT rounding. `sffft3` remains
+  deferred.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

@@ -71,6 +71,14 @@ from .qc import (
 )
 from .smooth import SmoothError, box_smooth, smooth_rsf, triangle_smooth
 from .trapez import TrapezError, trapez_filter, trapez_response, trapez_rsf
+from .transforms import (
+    TransformError,
+    cosft,
+    cosft_rsf,
+    fft1_rsf,
+    spectra2,
+    spectra2_rsf,
+)
 from .spectral import (
     SpectralQCError,
     apply_window,
@@ -109,6 +117,7 @@ __all__ = [
     "FilterError",
     "SmoothError",
     "TrapezError",
+    "TransformError",
     "PreprocessingError",
     "SignalQCError",
     "SpectralQCError",
@@ -129,6 +138,8 @@ __all__ = [
     "clip2",
     "clip2_rsf",
     "cosine_taper",
+    "cosft",
+    "cosft_rsf",
     "costaper_rsf",
     "coherence",
     "coherence_rsf",
@@ -151,6 +162,7 @@ __all__ = [
     "envcorr_rsf",
     "fft_convolve",
     "fft_axis_header_update",
+    "fft1_rsf",
     "fft_rsf",
     "filter_bank",
     "filterbank_rsf",
@@ -188,6 +200,8 @@ __all__ = [
     "spectral_whiten",
     "smooth_rsf",
     "spectra",
+    "spectra2",
+    "spectra2_rsf",
     "spectra_rsf",
     "spectrogram",
     "spectrogram_rsf",
