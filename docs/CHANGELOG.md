@@ -8,6 +8,21 @@ optional compatibility checks.
 
 ### Added
 
+- M1-2 continues source-aligned `system/generic` command migration with
+  `sflaplac`, `sfsmooth`, and `sftrapez`, aligned to
+  `../src-master/system/generic/Mlaplac.c`,
+  `../src-master/system/generic/Msmooth.c`, and
+  `../src-master/system/generic/Mtrapez.c`. It adds
+  `pymadagascar.generic.laplac.laplac_rsf`,
+  `pymadagascar.signal.trapez.trapez_rsf`, `pymada-laplac`,
+  `pymada-trapez`, and `RSFData.laplac(...)`, `RSFData.smooth(...)`, and
+  `RSFData.trapez(...)` without adding new root exports.
+- M1-2 command-surface coverage increases the numerator only:
+  full coverage is `97 / 2114`, core `system/` + `plot/main` coverage is
+  `84 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, large system, notebook, original Madagascar source, tag, release, or
+  force-push work is included.
 - M1-1 starts source-aligned `system/generic` command batch migration with
   `sfclip`, `sfnoise`, and `sfboxsmooth`, aligned to
   `../src-master/system/generic/Mclip.c`,
@@ -950,9 +965,9 @@ optional compatibility checks.
 
 - This is not a complete Madagascar clone.
 - Full Madagascar/alias command-surface coverage remains low:
-  `94 / 2114 = 4.45%`.
+  `97 / 2114 = 4.59%`.
 - Core `system/` + `plot/main` command-surface coverage is
-  `81 / 301 = 26.91%`.
+  `84 / 301 = 27.91%`.
 - Stage C-7 does not implement polyphase decimation, designed FIR/IIR notch
   filters, arbitrary polynomial detrending, multidimensional upstream RMS
   windows, streaming, or out-of-core processing.

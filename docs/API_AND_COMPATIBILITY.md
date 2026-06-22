@@ -789,7 +789,7 @@ the default survey return, or promote modeling to a stable root API.
 - Existing C++ kernels remain optional. Building them requires the `cpp` extra,
   an explicit `wheel.cmake=true` setting, and
   `PYMADAGASCAR_BUILD_CPP=ON`.
-- The 30 `pymada-*` names are installed entry points. The other CLI modules are
+- The 33 `pymada-*` names are installed entry points. The other CLI modules are
   supported through `python -m pymadagascar.cli.<name>`.
 - No license metadata is declared yet. Choose and add a license before any
   public redistribution or package-index release.
@@ -938,6 +938,18 @@ Both methods return new objects by default and support `inplace=True`. Existing
 `RSFData.clip(clip, value=None)` is source-aligned to `sfclip` and now accepts
 optional `value=` while preserving the same high-level method name.
 
+M1-2 adds RSFData convenience methods for source-aligned `system/generic`
+operator/filter utilities:
+
+- `RSFData.laplac(axes=None, spacing_from_header=True, boundary="edge")`.
+- `RSFData.smooth(rect, axes=None, repeat=1)`.
+- `RSFData.trapez(axis=1, frequency=None, f1=None, f2=None, f3=None,
+  f4=None, dt=None)`.
+
+All three return new objects by default and support `inplace=True`.
+`smooth(...)` is the triangle-smoothing `sfsmooth` subset; `boxsmooth(...)`
+remains the boxcar `sfboxsmooth` subset.
+
 Stage C-8 adds RSFData convenience methods for spectral QC:
 
 - `RSFData.windowfunc(kind="hann", axis=1, periodic=False, normalize=False)`.
@@ -1065,6 +1077,29 @@ box smoothing with `rect#`, optional selected axes, and `repeat=` using edge
 padding. M1-1 does not add root exports, does not implement streaming,
 out-of-core processing, `sfsmooth` adjoint/differentiation modes, `sflaplac`,
 or `sftrapez`, and does not change coverage denominators.
+
+M1-2 continues source-aligned `system/generic` command migration and adds:
+
+- `pymada-laplac` / `python -m pymadagascar.cli.laplac`, backed by
+  `pymadagascar.generic.laplac.laplac_rsf` and aligned to
+  `../src-master/system/generic/Mlaplac.c`.
+- `RSFData.smooth(...)` as the chainable surface for the existing
+  `pymadagascar.signal.smooth.smooth_rsf` triangle subset aligned to
+  `../src-master/system/generic/Msmooth.c`; `pymada-smooth` was already
+  registered.
+- `pymada-trapez` / `python -m pymadagascar.cli.trapez`, backed by
+  `pymadagascar.signal.trapez.trapez_rsf` and aligned to
+  `../src-master/system/generic/Mtrapez.c`.
+
+The bounded `sflaplac` subset applies the source-aligned graph Laplacian sign
+`center - neighbor`, preserves shape/header, supports selected RSF axes, and
+optionally scales by header `d#`. The bounded `sfsmooth` subset applies
+centered triangle smoothing with `rect#`, selected axes, and `repeat=`.
+The bounded `sftrapez` subset applies a one-axis real-input RFFT trapezoidal
+frequency response from `frequency=f1,f2,f3,f4` or `f1/f2/f3/f4`. M1-2 does
+not add root exports, does not implement streaming/out-of-core behavior,
+complex input, `sfsmooth adj=`/`diff#`/per-axis `box#`, `sflaplac adj=`,
+coefficient fields, inverse solvers, or byte-identical FFT rounding.
 
 ## RSFData Behavior Contract
 

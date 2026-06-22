@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `94 / 2114 = 4.45%`.
-- Core `system/` + `plot/main` coverage is `81 / 301 = 26.91%`.
+- Full command-surface coverage remains low: `97 / 2114 = 4.59%`.
+- Core `system/` + `plot/main` coverage is `84 / 301 = 27.91%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -116,7 +116,7 @@ testing details live in the other current docs.
 
 ## CLI and Compatibility
 
-- Only 31 commands are registered as `pymada-*` console scripts.
+- Only 33 commands are registered as `pymada-*` console scripts.
 - Other CLI modules must be called with `python -m pymadagascar.cli.<name>`.
 - Text output and floating-point details are not byte-identical to Madagascar.
 - Optional original Madagascar comparisons skip when upstream commands are not
@@ -178,6 +178,13 @@ testing details live in the other current docs.
   deterministic NumPy RNG contract rather than byte-identical Madagascar random
   streams. `sfboxsmooth` is centered, in-memory, and edge-padded; it does not
   implement streaming/out-of-core behavior.
+- M1-2 `sflaplac` implements the real-valued `center - neighbor`
+  graph-Laplacian subset only; it does not implement upstream `adj=`,
+  coefficient fields, inverse solves, complex input, or streaming.
+  `sfsmooth` is the centered triangle subset and does not implement upstream
+  `adj=`, `diff#`, per-axis `box#`, complex input, or streaming. `sftrapez`
+  is a one-axis real-input RFFT trapezoidal frequency filter and does not
+  promise byte-identical upstream FFT rounding.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

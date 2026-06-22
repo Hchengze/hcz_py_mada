@@ -21,7 +21,7 @@ and must never be a hard dependency.
 | --- | ---: |
 | User-facing CLI modules | 135 |
 | Registered `pymada-*` console scripts | 31 |
-| Pytest files | 88 |
+| Pytest files | 89 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `94 / 2114 = 4.45%` |
-| Core `system/` + `plot/main` command surface | `81 / 301 = 26.91%` |
+| Full Madagascar/alias command surface | `97 / 2114 = 4.59%` |
+| Core `system/` + `plot/main` command surface | `84 / 301 = 27.91%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -147,6 +147,16 @@ are no remaining comparison bridge failures.
   `RSFData.noise(...)` and `RSFData.boxsmooth(...)` chain methods. M1-1 does
   not continue Forward Modeling, DAS, Localization, solver, workflow,
   large-system, original-source, or coverage-denominator work.
+- M1-2: `system/generic` operator/filter migration continues with
+  `sflaplac`, `sfsmooth`, and `sftrapez`, mapped to
+  `../src-master/system/generic/Mlaplac.c`,
+  `../src-master/system/generic/Msmooth.c`, and
+  `../src-master/system/generic/Mtrapez.c`. It adds bounded Python APIs for
+  source-aligned graph Laplacian and trapezoidal frequency filtering, registers
+  `pymada-laplac` and `pymada-trapez`, and adds `RSFData.laplac(...)`,
+  `RSFData.smooth(...)`, and `RSFData.trapez(...)`. M1-2 does not continue
+  Forward Modeling, DAS, Localization, solver, workflow, large-system,
+  original-source, or coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -589,7 +599,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 135 module entry points, 31 registered console scripts.
+- `pymadagascar/cli`: 137 module entry points, 33 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,

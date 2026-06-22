@@ -36,6 +36,7 @@ from .info import (
     info_rsf,
 )
 from .interleave import InterleaveError, interleave_rsf
+from .laplac import LaplacError, laplac, laplac_rsf
 from .linear_operator import (
     CallableLinearOperator,
     ConjugateGradientResult,
@@ -105,6 +106,7 @@ __all__ = [
     "ByteScaleError",
     "CutError",
     "InterleaveError",
+    "LaplacError",
     "MaskError",
     "PadError",
     "PutHeaderError",
@@ -184,6 +186,8 @@ __all__ = [
     "imag_rsf",
     "info_rsf",
     "interleave_rsf",
+    "laplac",
+    "laplac_rsf",
     "linear_resample",
     "linear_rsf",
     "clip_rsf",

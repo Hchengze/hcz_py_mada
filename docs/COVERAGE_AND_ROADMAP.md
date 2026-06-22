@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `94 / 2114 = 4.45%` | Conservative denominator including `user/*` and aliases; M1-1 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `81 / 301 = 26.91%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `97 / 2114 = 4.59%` | Conservative denominator including `user/*` and aliases; M1-2 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `84 / 301 = 27.91%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -310,6 +310,34 @@ M1-1:
   operator; and `sftrapez` because upstream is an FFT trapezoidal frequency
   filter rather than a simple spatial taper.
 - Coverage numerator changes to `94 / 2114` and core coverage to `81 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M1-2:
+
+- Continues source-aligned `system/generic` command migration with the
+  operator/filter group deferred in M1-1. It does not continue Forward
+  Modeling, DAS, Localization, solver, notebook, or Windows-only CI
+  known-issue work.
+- The source audit covered only
+  `../src-master/system/generic/Mlaplac.c`,
+  `../src-master/system/generic/Msmooth.c`, and
+  `../src-master/system/generic/Mtrapez.c`, plus their small helper sources
+  where needed to identify stencil and frequency-response behavior.
+- Counts `sflaplac`, `sfsmooth`, and `sftrapez` because they map directly to
+  `system/generic` source files and now have Python API, RSFData chain method,
+  CLI/module or console-script surface, focused tests, and documented bounded
+  behavior.
+- `sflaplac` supports a real-valued in-memory graph-Laplacian subset using
+  the source-aligned `center - neighbor` sign, optional selected axes, and
+  `d#` spacing. `sfsmooth` supports centered triangle smoothing with `rect#`,
+  `axis=`, and `repeat=` while leaving upstream adjoint/differentiation modes
+  out of scope. `sftrapez` supports one-axis real-input RFFT trapezoidal
+  filtering with `frequency=f1,f2,f3,f4` or `f1/f2/f3/f4`.
+- M1-2 does not implement streaming/out-of-core execution, complex input,
+  `sfsmooth adj=`/`diff#` modes, `sftrapez` byte-identical FFT rounding, or
+  a Laplacian coefficient field/inverse solver.
+- Coverage numerator changes to `97 / 2114` and core coverage to `84 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -1938,6 +1966,9 @@ C-11.
 | `sfclip` | `../src-master/system/generic/Mclip.c` | bounded `clip=`/`value=` amplitude clipping subset with source-aligned non-finite replacement; no streaming or complex input |
 | `sfnoise` | `../src-master/system/generic/Mnoise.c` | bounded deterministic NumPy normal/uniform add-or-replace subset; no byte-identical upstream RNG promise |
 | `sfboxsmooth` | `../src-master/system/generic/Mboxsmooth.c` | centered in-memory box smoothing subset with `rect#`, `axis=`, and `repeat=`; no streaming |
+| `sflaplac` | `../src-master/system/generic/Mlaplac.c` with `laplac2.c` | bounded real graph-Laplacian subset with selected axes and optional header spacing; no `adj=`, coefficient field, inverse solve, or streaming |
+| `sfsmooth` | `../src-master/system/generic/Msmooth.c` | centered triangle smoothing subset with `rect#`, selected axes, and `repeat=`; no `adj=`, `diff#`, per-axis `box#`, complex input, or streaming |
+| `sftrapez` | `../src-master/system/generic/Mtrapez.c` with `trapez.c` | one-axis real-input RFFT trapezoidal frequency-filter subset with `frequency=` or `f1/f2/f3/f4`; no complex input or byte-identical FFT rounding promise |
 | `sfenvelope` | `../src-master/system/seismic/Menvelope.c` | FFT Hilbert envelope subset; no phase-rotation mode |
 | `sflinear` | `../src-master/system/generic/Mlinear.c` | regular-axis resampling subset; upstream is irregular coordinate/value-table interpolation |
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
@@ -2034,8 +2065,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M1-1, coverage is
-`94 / 2114`, core coverage is `81 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M1-2, coverage is
+`97 / 2114`, core coverage is `84 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

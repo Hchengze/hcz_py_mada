@@ -98,14 +98,14 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 31 registered console scripts are:
+The 33 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
 pymada-cmplx, pymada-rtoc, pymada-noise, pymada-ricker, pymada-spike,
 pymada-math, pymada-clip, pymada-window, pymada-attr, pymada-put, pymada-dd, pymada-cat,
 pymada-transp, pymada-fft, pymada-bandpass, pymada-byte, pymada-smooth,
-pymada-boxsmooth, pymada-mask, pymada-cut, pymada-reverse, pymada-pad,
+pymada-boxsmooth, pymada-laplac, pymada-trapez, pymada-mask, pymada-cut, pymada-reverse, pymada-pad,
 pymada-spray, pymada-scale, pymada-rotate, pymada-stack
 ```
 
@@ -117,6 +117,8 @@ pymada-info spike.rsf
 pymada-clip spike.rsf out=clipped.rsf clip=1 value=1
 pymada-window spike.rsf out=win.rsf n1=5 f1=0
 pymada-fft win.rsf out=fft.rsf axis=1
+pymada-laplac win.rsf out=laplac.rsf axis=1 spacing_from_header=n
+pymada-trapez win.rsf out=trapez.rsf axis=1 frequency=0.05,0.1,0.4,0.45
 pymada-stack win.rsf out=stack.rsf axis=1 mode=sum
 pymada-pad win.rsf out=padded.rsf beg1=1 end1=1
 pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
@@ -124,12 +126,12 @@ pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 31-entry console-script inventory
+authoritative installed command list is the 33-entry console-script inventory
 above.
 
 ## CLI Module Inventory
 
-There are 135 user-facing CLI modules:
+There are 137 user-facing CLI modules:
 
 ```text
 abs, acoustic2d, add, agc, attr, autocorr, bandenergy, bandpass, bandstop, bin, boxsmooth,
@@ -141,12 +143,12 @@ envcorr, envelope, exp, fft, fillnan, filterbank, filtfilt, firfilter, firwin,
 fk, fkfilter, freqattr, freqz, gain, get, graph, grey,
 headerattr, headercut, headermath, headersort, headerwindow, highpass,
 histogram, ifft, imag, info, integral, interleave, iradon, isnan, kirchhoff,
-linear, localrms, log, lowpass, mask, math, max, max1, mean, median, min, mul,
+laplac, linear, localrms, log, lowpass, mask, math, max, max1, mean, median, min, mul,
 mute, mutter, nmo, noise, normalize, notch, pad, pow, psd, put, quantile, radon,
 range, real,
 reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,
 semblance, shifts, sign, slice, smooth, snr, specnorm, spectra, spectrogram,
-spike, spray, sqrt, stack, stacks, std, threshold, tile, tpow, transfer, transp,
+spike, spray, sqrt, stack, stacks, std, threshold, tile, tpow, transfer, trapez, transp,
 var, welch, welchcsd, whiten, wiggle, window, windowfunc, xcorr
 ```
 

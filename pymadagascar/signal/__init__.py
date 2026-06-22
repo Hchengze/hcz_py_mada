@@ -70,6 +70,7 @@ from .qc import (
     notch_rsf,
 )
 from .smooth import SmoothError, box_smooth, smooth_rsf, triangle_smooth
+from .trapez import TrapezError, trapez_filter, trapez_response, trapez_rsf
 from .spectral import (
     SpectralQCError,
     apply_window,
@@ -107,6 +108,7 @@ __all__ = [
     "FIRFilterError",
     "FilterError",
     "SmoothError",
+    "TrapezError",
     "PreprocessingError",
     "SignalQCError",
     "SpectralQCError",
@@ -195,6 +197,9 @@ __all__ = [
     "transfer_function",
     "transfer_rsf",
     "triangle_smooth",
+    "trapez_filter",
+    "trapez_response",
+    "trapez_rsf",
     "welch_csd",
     "welch_psd",
     "welch_rsf",

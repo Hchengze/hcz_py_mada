@@ -14,6 +14,7 @@ from pymadagascar.core.hypercube import Hypercube
 from pymadagascar.generic.array_math import clip_rsf, normalize_rsf, scale_rsf
 from pymadagascar.generic.attr import attr_rsf
 from pymadagascar.generic.difference import diff_rsf
+from pymadagascar.generic.laplac import laplac_rsf
 from pymadagascar.generic.noise import noise_rsf
 from pymadagascar.generic.pad import pad_rsf
 from pymadagascar.generic.rotate import rotate_rsf
@@ -67,6 +68,7 @@ from pymadagascar.signal.qc import (
     notch_rsf,
 )
 from pymadagascar.signal.smooth import smooth_rsf
+from pymadagascar.signal.trapez import trapez_rsf
 from pymadagascar.signal.spectral import (
     coherence_rsf,
     csd_rsf,
@@ -318,6 +320,69 @@ class RSFData:
             axes=axes,
             repeat=repeat,
             kind="box",
+            inplace=inplace,
+        )
+
+    def smooth(
+        self,
+        rect: int | tuple[int, ...] | list[int] | dict[int, int],
+        *,
+        axes: int | tuple[int, ...] | list[int] | None = None,
+        repeat: int = 1,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply source-aligned ``sfsmooth`` triangle smoothing."""
+
+        return self._from_file_op(
+            smooth_rsf,
+            rect=rect,
+            axes=axes,
+            repeat=repeat,
+            kind="triangle",
+            inplace=inplace,
+        )
+
+    def laplac(
+        self,
+        *,
+        axes: int | tuple[int, ...] | list[int] | None = None,
+        spacing_from_header: bool = True,
+        boundary: str = "edge",
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply a source-aligned finite-difference Laplacian subset."""
+
+        return self._from_file_op(
+            laplac_rsf,
+            axes=axes,
+            spacing_from_header=spacing_from_header,
+            boundary=boundary,
+            inplace=inplace,
+        )
+
+    def trapez(
+        self,
+        *,
+        axis: int = 1,
+        frequency: tuple[float, float, float, float] | list[float] | None = None,
+        f1: float | None = None,
+        f2: float | None = None,
+        f3: float | None = None,
+        f4: float | None = None,
+        dt: float | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply a source-aligned trapezoidal frequency filter subset."""
+
+        return self._from_file_op(
+            trapez_rsf,
+            axis=axis,
+            frequency=frequency,
+            f1=f1,
+            f2=f2,
+            f3=f3,
+            f4=f4,
+            dt=dt,
             inplace=inplace,
         )
 
