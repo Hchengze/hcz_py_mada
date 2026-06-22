@@ -193,6 +193,16 @@ are no remaining comparison bridge failures.
   wrappers. F0-5 adds no smoothing, random model, geologic GUI, wave-equation
   solver, CLI, root/stable API, command coverage, or coverage denominator
   change.
+- Forward Modeling Topic F0-6: geometry-driven acoustic modeling validation
+  workflow completed. The new
+  examples/my_workflows/acoustic_modeling_validation_workflow.py connects the
+  F0-1 geometry contract, F0-2/F0-3 shot/survey wrappers, F0-4 survey tensor
+  helpers, and F0-5 synthetic velocity model builders into a deterministic
+  smoke-level JSON validation report. It verifies shape/count/time/tensor,
+  finite-data, nonzero-data, stackability, and JSON/path-free acceptance checks.
+  F0-6 is not a production modeling accuracy, convergence, dispersion, or
+  imaging study and adds no solver, interpolation, padding, CLI, root/stable
+  API, command coverage, or coverage denominator change.
 - Stage C-7: signal and small-gather QC foundation completed with module-only
   `demean`, `detrend`, `decimate`, `bandstop`, `notch`, and `localrms` CLIs,
   shared NumPy APIs, RSF wrappers, RSFData methods, and a focused demo.
@@ -522,8 +532,9 @@ velocity picking, high-resolution or solved Radon inversion, FK algorithm
 expansion, production localization, modeling solver expansion, and imaging remain
 outside the current pass. Localization now has L0-1/L0-2 small travel-time and
 fixed/variable-velocity grid-search primitives only; forward modeling now has
-F0-1 through F0-5 geometry, shot/survey, tensor, and synthetic velocity-model
-helpers only, and imaging and SEG-Y/header expansion remain deferred. Hybrid
+F0-1 through F0-6 geometry, shot/survey, tensor, synthetic velocity-model
+helpers, and a deterministic validation workflow only, and imaging and
+SEG-Y/header expansion remain deferred. Hybrid
 benchmarking, B-3-3 `sfsegyheader`, release, licensing, and tagging remain
 separate.
 
@@ -535,7 +546,7 @@ separate.
 | DAS / engineering workflows | workflow-only | D-1 kinematic road-void workflow, D-2A workflow-only geometry metadata contract, and D-2B package-level localization grid-search integration complete; no adapter | DAS file adapters, field fixtures, gauge response, automatic picking, uncertainty, and field-performance validation |
 | Localization | prototype | L0-1 pure-Python 2D travel-time/fixed-velocity grid-search primitives and L0-2 homogeneous variable-velocity grid-search prototype complete; no CLI/root API | pick records, uncertainty, identifiability, richer velocity-model interfaces, and production workflows |
 | Inversion / operators | partial / prototype | I0-1 composition/history, I0-2 regularization, I0-3 problem diagnostics, I0-4 diagnostics/design, I0-5 bounded CGLS, I0-6 right/model-space preconditioner contract, I0-7 module split, I0-8A/I0-8B right-preconditioned CGLS diagnostics, I0-9B1 bounded unpreconditioned/regularized LSQR, and I0-9C LSQR learning example/notebook closure complete | Right-preconditioned LSQR, stable/root solver API, constraints/masks, and domain inversion workflows |
-| Forward modeling | simplified prototype | F0-1 through F0-5 geometry, shot/survey, tensor, and synthetic velocity-model helpers complete; no solver-core change or root API | physical-coordinate interpolation, smoothing/random/geologic model building, convergence/dispersion evidence, validation workflows, and production-scale modeling |
+| Forward modeling | simplified prototype | F0-1 through F0-6 geometry, shot/survey, tensor, synthetic velocity-model helpers, and smoke validation workflow complete; no solver-core change or root API | physical-coordinate interpolation, smoothing/random/geologic model building, convergence/dispersion accuracy evidence, production workflows, and production-scale modeling |
 | Imaging | simplified prototype | defer | acquisition, adjoint, amplitude, and reference validation |
 | SEG-Y / headers | stable RSF / partial headers / prototype SEG-Y | independent defer | trace ownership, scalars/units, synchronized reorder |
 | Plot / visualization | partial quicklook substitute | support work only | composition, overlays, and domain QC presentation |
@@ -574,7 +585,8 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   fixtures; not a root/stable API or CLI surface.
 - `pymadagascar/imaging`: simplified Kirchhoff prototype.
 - `pymadagascar/modeling`: simplified acoustic2d prototype with topic-level
-  geometry, shot/survey, tensor, and synthetic velocity-model helpers.
+  geometry, shot/survey, tensor, synthetic velocity-model helpers, and a
+  workflow-level validation example.
 - `pymadagascar/plot`: Matplotlib quicklook replacements.
 - `pymadagascar/hybrid`: optional C++ wrappers with NumPy fallback.
 - `pymadagascar/testing`: fixtures, internal seismic regression metrics,

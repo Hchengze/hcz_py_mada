@@ -48,16 +48,19 @@ testing details live in the other current docs.
   contract, the F0-2 acquisition-driven single-shot wrapper, the F0-3
   sequential multi-shot survey wrapper, the F0-4 explicit survey tensor
   conversion and summary helpers, F0-5 deterministic synthetic acoustic
-  velocity model builders, and the existing acoustic2d finite-difference
-  prototype. The default survey record remains list-of-shots; tensor stacking is
-  opt-in, uses shot_receiver_time layout, and requires consistent receiver/time
-  axes with no padding or interpolation. The velocity builders cover constant,
-  layered, rectangular-anomaly, and circular-anomaly small models only; they do
-  not provide smoothing, random models, geologic model GUIs, or field model
-  construction. Forward modeling still lacks physical-coordinate interpolation,
-  production tensor/padding policy, convergence or dispersion evidence,
-  production boundary studies, parallel/cached survey execution, and field-scale
-  claims.
+  velocity model builders, the F0-6 deterministic geometry-driven validation
+  workflow, and the existing acoustic2d finite-difference prototype. The default
+  survey record remains list-of-shots; tensor stacking is opt-in, uses
+  shot_receiver_time layout, and requires consistent receiver/time axes with no
+  padding or interpolation. The velocity builders cover constant, layered,
+  rectangular-anomaly, and circular-anomaly small models only; they do not
+  provide smoothing, random models, geologic model GUIs, or field model
+  construction. The F0-6 workflow provides smoke-level acceptance evidence only;
+  it is not an accuracy, convergence, dispersion, boundary, imaging, or
+  production validation study. Forward modeling still lacks physical-coordinate
+  interpolation, production tensor/padding policy, convergence or dispersion
+  evidence, production boundary studies, parallel/cached survey execution, and
+  field-scale claims.
 - Imaging lacks a shared acquisition model, amplitude/anti-alias treatment,
   adjoint validation, and a reference velocity workflow; implementation is
   deferred.

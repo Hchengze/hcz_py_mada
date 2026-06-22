@@ -31,6 +31,7 @@ examples/my_workflows/_outputs/<workflow-name>/
 | `spike_math_window_workflow.py` | Generate a spike panel, create a coordinate expression, and window it. | `generic.spike`, `generic.math`, `generic.window`, `core.Axis` | `spike_panel.rsf`, `math_panel.rsf`, `math_window.rsf` | stable subset |
 | `fft_bandpass_workflow.py` | Build a mixed-frequency trace, compute an RFFT, and apply a bandpass. | `signal.fft`, `signal.filter`, `io.rsf` | `mixed_trace.rsf`, `mixed_trace_rfft.rsf`, `mixed_trace_bandpass.rsf` | stable subset |
 | `lsqr_minimal_example.py` | Compare bounded LSQR with dense least squares and demonstrate `LeastSquaresProblem` regularization. | `generic.operators`, `generic.least_squares`, `generic.regularization`, `generic.solvers` | printed model/residual/objective summary only | learning prototype |
+| `acoustic_modeling_validation_workflow.py` | Run a deterministic geometry-driven acoustic modeling smoke workflow from model grid and synthetic velocity builder through acquisition-driven survey execution, survey summary, and explicit tensor conversion. | `modeling.geometry`, `modeling.models`, `modeling.shot` | path-free validation summary JSON | prototype validation workflow |
 | `plot_grey_graph_workflow.py` | Save quicklook graph and grey PNGs from synthetic data. | `plot.graph`, `plot.grey`, `io.rsf` | `plot_trace.rsf`, `plot_panel.rsf`, `plot_trace_graph.png`, `plot_panel_grey.png` | partial plotting substitute |
 | `seismic_basic_agc_mute_stack_workflow.py` | Process a tiny synthetic gather with AGC, mute, stack, and graph. | `seismic.agc`, `seismic.mute`, `seismic.stack`, `plot.graph`, `io.rsf` | `synthetic_gather.rsf`, `synthetic_gather_agc.rsf`, `synthetic_gather_mute.rsf`, `synthetic_stack.rsf`, `synthetic_stack_graph.png` | stable subset |
 | `das_void_diffraction_workflow.py` | Generate a kinematic DAS shot gather, apply the existing FK prototype, overlay void diffraction curves, invert simulated picks with the localization grid-search prototype, and write regular-linear DAS geometry metadata. | `signal.wavelet`, `seismic.fk`, `localization.traveltime`, `plot.grey`, `io.rsf`, workflow adapters | raw/filtered RSF gathers, two PNGs, picks CSV, inversion JSON with `das_geometry` and `localization_algorithm` | workflow prototype |
@@ -50,6 +51,11 @@ examples/my_workflows/_outputs/<workflow-name>/
 - Plot workflows require Matplotlib, which is included in the project test extra.
 - The LSQR minimal example is in-memory only. It writes no files, calls no CLI,
   and does not enable preconditioned LSQR.
+- The acoustic modeling validation workflow is a deterministic F0-6 smoke
+  workflow. It connects topic-level geometry, synthetic velocity model builders,
+  acquisition-driven survey wrappers, and explicit tensor summaries, but it is
+  not a production accuracy, convergence, dispersion, imaging, interpolation,
+  or new wave-equation solver workflow.
 - These examples are meant to be copied and edited for local work. They prefer
   small, explicit arrays and simple metadata over clever abstractions.
 - The DAS void workflow is deliberately kinematic. Its `das_geometry` JSON

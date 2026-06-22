@@ -8,6 +8,20 @@ optional compatibility checks.
 
 ### Added
 
+- Forward Modeling Topic F0-6 geometry-driven acoustic modeling validation
+  workflow:
+  examples/my_workflows/acoustic_modeling_validation_workflow.py connects
+  AcousticModelGrid2D, synthetic velocity model builders, PointSource2D /
+  ReceiverArray2D / AcousticAcquisition2D, run_acoustic2d_survey,
+  summarize_acoustic_survey, and acoustic_survey_to_tensor into a deterministic
+  smoke-level validation report. The workflow writes a JSON-safe/path-free
+  summary with grid, velocity-model, acquisition, survey, tensor, and acceptance
+  metrics.
+- tests/test_acoustic_modeling_validation_workflow.py covers subprocess
+  execution, JSON schema, velocity/survey/tensor summaries, all-true acceptance
+  flags, path-free metadata, and no repository pollution. F0-6 adds no new
+  wave-equation solver, interpolation, padding, imaging, CLI, root/stable API,
+  command coverage, or coverage denominator change.
 - Forward Modeling Topic F0-5 synthetic acoustic velocity model builders:
   pymadagascar.modeling.models adds AcousticVelocityModel2D,
   constant_velocity_model_2d, layered_velocity_model_2d,

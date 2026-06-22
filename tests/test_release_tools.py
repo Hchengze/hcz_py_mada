@@ -35,7 +35,7 @@ def test_check_examples_inventory_tool_runs() -> None:
     assert result.returncode == 0, result.stderr + result.stdout
     assert "Examples inventory check passed" in result.stdout
     assert "34 top-level examples" in result.stdout
-    assert "15 workflows" in result.stdout
+    assert "16 workflows" in result.stdout
 
 
 def test_check_learning_notebook_tool_runs() -> None:
@@ -44,8 +44,8 @@ def test_check_learning_notebook_tool_runs() -> None:
     assert "Learning notebook check passed" in result.stdout
     assert "134 CLI modules" in result.stdout
     assert "25 console_scripts" in result.stdout
-    assert "86 pytest files" in result.stdout
-    assert "15 workflows" in result.stdout
+    assert "87 pytest files" in result.stdout
+    assert "16 workflows" in result.stdout
 
 
 def _run_tool(name: str) -> subprocess.CompletedProcess[str]:

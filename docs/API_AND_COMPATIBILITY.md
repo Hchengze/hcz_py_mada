@@ -44,9 +44,10 @@ travel-time and fixed/variable-velocity grid-search primitives in
 uncertainty, or production location workflow. Forward modeling now has F0-1
 geometry helpers, an F0-2 acquisition-driven single-shot wrapper, an F0-3
 sequential multi-shot survey wrapper, and F0-4 explicit tensor/summary helpers,
-and F0-5 synthetic velocity model builders, but no root/stable API, CLI,
-interpolation, smoothing/random/geologic model builder, default survey tensor
-return, padding policy, or production modeling claim.
+F0-5 synthetic velocity model builders, and an F0-6 workflow-level validation
+example, but no root/stable API, CLI, interpolation,
+smoothing/random/geologic model builder, default survey tensor return, padding
+policy, or production modeling claim.
 Imaging remains a simplified prototype.
 Inversion may first design operator composition, regularization, objective,
 residual, and history contracts without promoting a domain inversion API. DAS
