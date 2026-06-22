@@ -4,9 +4,9 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `86 / 2114 = 4.07%` | Conservative denominator including `user/*` and aliases. |
-| Core `system/` + `plot/main` command surface | `73 / 301 = 24.25%` | Better near-term project signal. |
-| Direct `system/main` source-backed commands | `32 / 39 = 82.05%` | Includes B-1, B-2, B-3-1, `sfheadersort`, and B-4. Stage C additions are mostly `system/generic`, `system/seismic`, and selected `user/*` source-backed subsets. |
+| Full Madagascar/alias command surface | `88 / 2114 = 4.16%` | Conservative denominator including `user/*` and aliases; M0-1 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `75 / 301 = 24.92%` | Better near-term project signal; denominator unchanged. |
+| Direct `system/main` source-backed commands | `34 / 39 = 87.18%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, and M0-1 `sfscale`/`sfrotate`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
 Coverage is a command-surface audit, not a promise of full upstream parameter
@@ -213,6 +213,25 @@ Roadmap Reassessment R1:
 - Added no command, API, console script, test file, or example.
 - Command-surface coverage remains `86 / 2114`, core coverage remains
   `73 / 301`, and direct `system/main` coverage remains `32 / 39`.
+
+M0-1:
+
+- Resumes source-aligned Madagascar command coverage after the F0 forward
+  modeling loop and explicitly pauses further Forward Modeling expansion.
+- The small source audit covered only `../src-master/system/main`,
+  `../src-master/system/generic`, and `../src-master/system/seismic`.
+- Adds `sfrotate` from `../src-master/system/main/rotate.c` as a pure NumPy
+  cyclic-axis rotation subset with Python API, RSFData method, CLI module,
+  console script, and focused tests.
+- Promotes the existing scalar `sfscale` subset from
+  `../src-master/system/main/scale.c` to registered console-script coverage
+  with a focused CLI/help smoke path.
+- Counts both `sfrotate` and `sfscale` in command-surface coverage because
+  they correspond to direct `system/main` source files. No Pythonic-only
+  convenience is counted in M0-1.
+- Coverage numerator changes to `88 / 2114`, core coverage to `75 / 301`, and
+  direct `system/main` coverage to `34 / 39`; all denominators remain
+  unchanged.
 
 Stage D-1:
 
@@ -1819,6 +1838,8 @@ C-11.
 | `sfdiv` | alias backed by `../src-master/system/main/add.c` | stable subset |
 | `sftpow` | `../src-master/user/nobody/Mtpow.c` | stable subset, not core coverage |
 | `sfinterleave` | `../src-master/system/main/interleave.c` | stable subset |
+| `sfscale` | `../src-master/system/main/scale.c` | scalar `scale=`/`dscale=` subset; registered console script in M0-1 |
+| `sfrotate` | `../src-master/system/main/rotate.c` | cyclic `rot#` axis-rotation subset; no out-of-core streaming |
 | `sfheaderwindow` | `../src-master/system/main/headerwindow.c` | ordinary-RSF mask subset |
 | `sfheadercut` | `../src-master/system/main/headercut.c` | ordinary-RSF mask subset |
 | `sfheaderattr` | `../src-master/system/seismic/Mheaderattr.c` | minimal header table statistics subset |
@@ -1925,10 +1946,11 @@ SEG-Y, DAS adapters, new velocity-picking or production velocity-scan workflow,
 broad Radon/FK algorithm expansion, production localization, modeling,
 production inversion, and imaging remain outside the next pass.
 
-Stage D-1 remains retained without API, CLI, console-script, or coverage
-changes. WSL-1 remains validation infrastructure, not a reason to count
-Pythonic conveniences or expand `user/*`. Coverage stays at `86 / 2114`, core
-coverage at `73 / 301`, and direct `system/main` coverage at `32 / 39`.
+Stage D-1 remains retained without further API, CLI, console-script, or
+coverage changes. WSL-1 remains validation infrastructure, not a reason to
+count Pythonic conveniences or expand `user/*`. After M0-1, coverage is
+`88 / 2114`, core coverage is `75 / 301`, and direct `system/main` coverage is
+`34 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header
 support becomes urgent, handle B-3-3 `sfsegyheader` as its own design task

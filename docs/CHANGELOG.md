@@ -8,6 +8,25 @@ optional compatibility checks.
 
 ### Added
 
+- M0-1 resumes source-aligned Madagascar command coverage after pausing further
+  Forward Modeling work. It audits only `../src-master/system/main`,
+  `../src-master/system/generic`, and `../src-master/system/seismic` for the
+  small batch decision, adds a pure NumPy `sfrotate` subset aligned to
+  `../src-master/system/main/rotate.c`, and promotes the existing scalar
+  `sfscale` subset aligned to `../src-master/system/main/scale.c` to registered
+  console-script coverage.
+- `pymadagascar.generic.rotate.rotate_rsf`, `RotateError`,
+  `RSFData.rotate`, `pymadagascar.cli.rotate`, and `pymada-rotate` provide
+  cyclic `rot#` axis rotation. `pymada-scale` is now registered for the
+  existing scalar scaling subset. Tests cover API, RSFData, CLI subprocess,
+  help smoke, invalid rotations, header preservation, and optional upstream
+  `sfrotate` comparison when available.
+- M0-1 command-surface coverage increases the numerator only:
+  full coverage is `88 / 2114`, core `system/` + `plot/main` coverage is
+  `75 / 301`, and direct `system/main` coverage is `34 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, large system, notebook, original Madagascar source, tag, release, or
+  force-push work is included.
 - Forward Modeling Topic F0-6 geometry-driven acoustic modeling validation
   workflow:
   examples/my_workflows/acoustic_modeling_validation_workflow.py connects
@@ -893,9 +912,9 @@ optional compatibility checks.
 
 - This is not a complete Madagascar clone.
 - Full Madagascar/alias command-surface coverage remains low:
-  `86 / 2114 = 4.07%`.
+  `88 / 2114 = 4.16%`.
 - Core `system/` + `plot/main` command-surface coverage is
-  `73 / 301 = 24.25%`.
+  `75 / 301 = 24.92%`.
 - Stage C-7 does not implement polyphase decimation, designed FIR/IIR notch
   filters, arbitrary polynomial detrending, multidimensional upstream RMS
   windows, streaming, or out-of-core processing.
@@ -914,6 +933,9 @@ optional compatibility checks.
 - `sfmul/sfdiv` do not implement the full upstream `sfadd` preprocessing
   parameter set; `sftpow` does not implement `xpow=`; `sfinterleave` does not
   support unequal target-axis lengths or streaming/out-of-core.
+- M0-1 `sfscale` is scalar-only and lacks upstream percentile/axis local
+  scaling. `sfrotate` is in-memory and does not implement upstream out-of-core
+  random-access behavior.
 - `sfheaderwindow/sfheadercut` operate on ordinary RSF data with a mask RSF.
   They do not implement full Madagascar header table semantics, SEG-Y trace
   headers, `sfheaderwindow inv=`, or non-contiguous window selections.

@@ -14,6 +14,7 @@ from pymadagascar.core.hypercube import Hypercube
 from pymadagascar.generic.array_math import clip_rsf, normalize_rsf, scale_rsf
 from pymadagascar.generic.attr import attr_rsf
 from pymadagascar.generic.difference import diff_rsf
+from pymadagascar.generic.rotate import rotate_rsf
 from pymadagascar.generic.sampling import linear_rsf, max1_rsf, slice_rsf
 from pymadagascar.generic.statistics import (
     fillnan_rsf,
@@ -210,6 +211,11 @@ class RSFData:
         """Multiply data by a scalar."""
 
         return self._from_file_op(scale_rsf, scale=value, inplace=inplace)
+
+    def rotate(self, rotations: dict[int, int], *, inplace: bool = False) -> "RSFData":
+        """Cyclically rotate samples using 1-based RSF axis ``rot#`` counts."""
+
+        return self._from_file_op(rotate_rsf, rotations=rotations, inplace=inplace)
 
     def clip(self, clip: float, *, inplace: bool = False) -> "RSFData":
         """Symmetrically clip real data to ``[-clip, clip]``."""

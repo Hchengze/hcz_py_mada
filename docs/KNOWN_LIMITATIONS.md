@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `86 / 2114 = 4.07%`.
-- Core `system/` + `plot/main` coverage is `73 / 301 = 24.25%`.
+- Full command-surface coverage remains low: `88 / 2114 = 4.16%`.
+- Core `system/` + `plot/main` coverage is `75 / 301 = 24.92%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -160,6 +160,10 @@ testing details live in the other current docs.
 - `sftpow` uses project axis coordinates and has explicit non-positive time
   behavior.
 - `sfinterleave` requires matching input shapes except for the interleave axis.
+- M0-1 `sfscale` is the scalar `scale=`/`dscale=` subset only; it does not
+  implement upstream percentile-driven `pclip`/axis local scaling. `sfrotate`
+  implements in-memory `rot#` cyclic axis rotation and preserves headers; it
+  does not implement upstream out-of-core random-access behavior.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

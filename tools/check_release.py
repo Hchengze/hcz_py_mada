@@ -82,8 +82,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 25:
-        raise RuntimeError("expected exactly 25 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 27:
+        raise RuntimeError("expected exactly 27 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -106,6 +106,7 @@ def _check_lower_level_imports() -> None:
     from pymadagascar.generic.header_table import read_header_table, write_header_table
     from pymadagascar.generic.interleave import interleave_rsf
     from pymadagascar.generic.linear_operator import MatrixOperator, conjugate_gradient_normal, dot_test
+    from pymadagascar.generic.rotate import rotate_rsf
     from pymadagascar.generic.sampling import bin_2d, linear_resample, max1, slice_array
     from pymadagascar.generic.spike import spike
     from pymadagascar.generic.stats import min_rsf
@@ -142,6 +143,7 @@ def _check_lower_level_imports() -> None:
         "generic.difference_metric": difference_metric,
         "generic.tpow_rsf": tpow_rsf,
         "generic.interleave_rsf": interleave_rsf,
+        "generic.rotate_rsf": rotate_rsf,
         "generic.header_window_rsf": header_window_rsf,
         "generic.header_cut_rsf": header_cut_rsf,
         "generic.read_header_table": read_header_table,

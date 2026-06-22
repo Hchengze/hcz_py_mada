@@ -975,6 +975,23 @@ The two FIR methods use the shared second-operand adapter for taps.
 `firwin` and `freq_response` are deliberately not RSFData methods because they
 generate or diagnose filters independently of the current dataset.
 
+M0-1 resumes source-aligned Madagascar command coverage and adds:
+
+- `pymadagascar.generic.rotate.rotate_rsf(input, output, rotations={axis: rot})`
+  for the `../src-master/system/main/rotate.c` `sfrotate` subset. Positive
+  `rot#` moves the first samples of a 1-based RSF axis to the end; negative
+  values wrap by `n#`; headers are preserved.
+- `RSFData.rotate({axis: rot})`, a chainable wrapper over `rotate_rsf`.
+- `pymada-rotate` / `python -m pymadagascar.cli.rotate`.
+- `pymada-scale` as the console-script surface for the existing scalar
+  `scale_rsf` / `RSFData.scale` subset aligned to
+  `../src-master/system/main/scale.c`.
+
+These are counted command-surface entries because they map to direct
+`system/main` source files. M0-1 adds no Pythonic-only counted convenience, no
+Forward Modeling expansion, no DAS/Localization/solver branch, and no coverage
+denominator change.
+
 ## RSFData Behavior Contract
 
 - Transform methods return a new in-memory `RSFData` by default and leave the

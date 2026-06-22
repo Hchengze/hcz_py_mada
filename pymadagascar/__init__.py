@@ -51,6 +51,7 @@ from .generic.linear_operator import (
 from .generic.math import MathExpressionError, math_rsf, safe_eval_math
 from .generic.pad import PadError, pad_rsf
 from .generic.put import PutHeaderError, put_header
+from .generic.rotate import RotateError, rotate_rsf
 from .generic.sampling import (
     SamplingError,
     bin_1d,
@@ -289,6 +290,7 @@ __all__ = [
     "RSFArray",
     "RSFHeader",
     "RadonError",
+    "RotateError",
     "SamplingError",
     "SegyError",
     "SegyHeaders",
@@ -462,6 +464,7 @@ __all__ = [
     "remove_rsf_dataset",
     "reshape_rsf",
     "ricker_wavelet",
+    "rotate_rsf",
     "rsf_to_segy",
     "safe_eval_math",
     "scale_rsf",

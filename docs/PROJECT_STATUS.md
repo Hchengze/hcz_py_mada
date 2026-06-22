@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 134 |
-| Registered `pymada-*` console scripts | 25 |
-| Pytest files | 85 |
+| User-facing CLI modules | 135 |
+| Registered `pymada-*` console scripts | 27 |
+| Pytest files | 88 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,9 +31,9 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `86 / 2114 = 4.07%` |
-| Core `system/` + `plot/main` command surface | `73 / 301 = 24.25%` |
-| Direct `system/main` source-backed commands | `32 / 39 = 82.05%` |
+| Full Madagascar/alias command surface | `88 / 2114 = 4.16%` |
+| Core `system/` + `plot/main` command surface | `75 / 301 = 24.92%` |
+| Direct `system/main` source-backed commands | `34 / 39 = 87.18%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
 Full coverage and core coverage are different denominators and must not be
@@ -118,6 +118,13 @@ are no remaining comparison bridge failures.
   prototype modules classified into ten technical topics; capability matrix,
   maturity boundaries, shortfalls, and six candidate routes documented.
   R1 adds no commands and does not change command-surface coverage.
+- M0-1: source-aligned Madagascar command coverage resumes after the F0-1
+  through F0-6 forward-modeling loop. M0-1 adds `sfrotate` from
+  `../src-master/system/main/rotate.c` and promotes the existing scalar
+  `sfscale` subset from `../src-master/system/main/scale.c` to registered
+  console-script coverage. It does not continue Forward Modeling, DAS,
+  Localization, solver, workflow, large-system, original-source, or coverage
+  denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -560,9 +567,9 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 134 module entry points, 25 registered console scripts.
+- `pymadagascar/cli`: 135 module entry points, 27 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
-  array math, interleave, header mask/window/cut, byte, mask/cut/reverse,
+  array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,
   regularization operators, least-squares problem diagnostics, optional
   CG/CGNR history adapters, internal solver-history containers, dottest/conjgrad,

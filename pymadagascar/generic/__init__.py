@@ -60,6 +60,7 @@ from .noise import NoiseError, add_noise, noise, noise_rsf
 from .pad import PadError, pad_rsf
 from .put import PutHeaderError, put_header
 from .reverse import ReverseError, reverse_rsf
+from .rotate import RotateError, rotate_rsf
 from .sampling import (
     SamplingError,
     bin_1d,
@@ -121,6 +122,7 @@ __all__ = [
     "DisfilError",
     "NoiseError",
     "ReverseError",
+    "RotateError",
     "SamplingError",
     "StatError",
     "CopyResult",
@@ -204,6 +206,7 @@ __all__ = [
     "normalize_rsf",
     "reshape_rsf",
     "reverse_rsf",
+    "rotate_rsf",
     "rtoc_rsf",
     "safe_eval_math",
     "scale_rsf",

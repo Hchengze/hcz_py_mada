@@ -98,14 +98,15 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 25 registered console scripts are:
+The 27 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
 pymada-cmplx, pymada-rtoc, pymada-noise, pymada-ricker, pymada-spike,
 pymada-math, pymada-window, pymada-attr, pymada-put, pymada-dd, pymada-cat,
 pymada-transp, pymada-fft, pymada-bandpass, pymada-byte, pymada-smooth,
-pymada-boxsmooth, pymada-mask, pymada-cut, pymada-reverse
+pymada-boxsmooth, pymada-mask, pymada-cut, pymada-reverse, pymada-scale,
+pymada-rotate
 ```
 
 Examples:
@@ -124,7 +125,7 @@ above.
 
 ## CLI Module Inventory
 
-There are 134 user-facing CLI modules:
+There are 135 user-facing CLI modules:
 
 ```text
 abs, acoustic2d, add, agc, attr, autocorr, bandenergy, bandpass, bandstop, bin, boxsmooth,
@@ -139,7 +140,7 @@ histogram, ifft, imag, info, integral, interleave, iradon, isnan, kirchhoff,
 linear, localrms, log, lowpass, mask, math, max, max1, mean, median, min, mul,
 mute, mutter, nmo, noise, normalize, notch, pad, pow, psd, put, quantile, radon,
 range, real,
-reshape, reverse, rfft, ricker, rm, rms, rtoc, scale, segyread, segywrite,
+reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,
 semblance, shifts, sign, slice, smooth, snr, specnorm, spectra, spectrogram,
 spike, spray, sqrt, stack, stacks, std, threshold, tile, tpow, transfer, transp,
 var, welch, welchcsd, whiten, wiggle, window, windowfunc, xcorr
