@@ -1,5 +1,10 @@
 # API and Compatibility
 
+For a compact inventory of root APIs, topic APIs, `RSFData` chain methods,
+CLI modules, console scripts, workflow/prototype surfaces, and command-coverage
+boundaries, see `API_SURFACE.md`. This file remains the detailed compatibility
+and maturity-label authority.
+
 ## Stability Levels
 
 - `stable`: project-level API expected to remain usable with only compatible

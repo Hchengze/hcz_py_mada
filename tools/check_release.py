@@ -250,6 +250,7 @@ def _check_required_paths() -> None:
         "docs/README.md",
         "docs/PROJECT_STATUS.md",
         "docs/USER_GUIDE.md",
+        "docs/API_SURFACE.md",
         "docs/API_AND_COMPATIBILITY.md",
         "docs/COVERAGE_AND_ROADMAP.md",
         "docs/TESTING_AND_ENVIRONMENT.md",

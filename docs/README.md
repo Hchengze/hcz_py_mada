@@ -15,6 +15,8 @@ Read these files first:
   status, and stage progress.
 - `USER_GUIDE.md`: local install, CLI usage, Python API usage, examples, and
   release tools.
+- `API_SURFACE.md`: public surface inventory for root APIs, topic APIs,
+  `RSFData` chains, CLIs, console scripts, workflows, and coverage boundaries.
 - `API_AND_COMPATIBILITY.md`: API stability levels and compatibility notes.
 - `COVERAGE_AND_ROADMAP.md`: coverage summary, completed batches, and next
   migration direction.
@@ -25,7 +27,7 @@ Read these files first:
 
 The learning entry point is `PYMADAGASCAR_LEARNING_GUIDE.ipynb`. It is a
 Jupyter Notebook for study and usage orientation, not an authority for API or
-coverage. The eight Markdown files above remain the authoritative written
+coverage. The nine Markdown files above remain the authoritative written
 documentation.
 
 ## Archived Documents
