@@ -8,6 +8,22 @@ optional compatibility checks.
 
 ### Added
 
+- M2-2 continues source-aligned `system/seismic` command migration with
+  `sfnmo`, `sfhalfint`, and `sfmoveout`, aligned to
+  `../src-master/system/seismic/Mnmo.c`,
+  `../src-master/system/seismic/Mhalfint.c`, and
+  `../src-master/system/seismic/Mmoveout.c`. It source-aligns existing
+  `pymadagascar.seismic.nmo.nmo_correct` / `inverse_nmo`, adds
+  `pymadagascar.seismic.halfint.halfint_rsf` and
+  `pymadagascar.seismic.moveout.moveout_rsf`, registers `pymada-nmo`,
+  `pymada-halfint`, and `pymada-moveout`, and adds `RSFData.nmo(...)`,
+  `RSFData.halfint(...)`, and `RSFData.moveout(...)`.
+- M2-2 command-surface coverage increases the numerator only:
+  full coverage is `112 / 2114`, core `system/` + `plot/main` coverage is
+  `99 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, SciPy dependency, migration/RTM/DMO/Kirchhoff system, notebook,
+  original Madagascar source, tag, release, or force-push work is included.
 - M2-1 starts source-aligned `system/seismic` command migration with `sfavo`,
   `sffold`, and `sfai2refl`, aligned to
   `../src-master/system/seismic/Mavo.c`,

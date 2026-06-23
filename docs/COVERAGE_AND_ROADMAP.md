@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `109 / 2114 = 5.16%` | Conservative denominator including `user/*` and aliases; M2-1 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `96 / 301 = 31.89%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `112 / 2114 = 5.30%` | Conservative denominator including `user/*` and aliases; M2-2 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `99 / 301 = 32.89%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -466,6 +466,44 @@ M2-1:
   `sffold` intentionally omits the SEG-Y key lookup ecology and uses numeric
   table columns only.
 - Coverage numerator changes to `109 / 2114` and core coverage to `96 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M2-2:
+
+- Continues source-aligned `system/seismic` command migration with the
+  moveout / trace-transform group after M2-1 and does not continue Forward
+  Modeling, DAS, Localization, solver, notebook, Windows-only CI known-issue,
+  migration, RTM, DMO, Kirchhoff, Gazdag, or wave-equation imaging work.
+- The source audit covered
+  `../src-master/system/seismic/Mnmo.c`,
+  `../src-master/system/seismic/Mmoveout.c`,
+  `../src-master/system/seismic/Mhalfint.c`,
+  `../src-master/system/seismic/Mcos2ang.c`,
+  `../src-master/system/seismic/Misin2ang.c`,
+  `../src-master/system/seismic/Mmodrefl.c`,
+  `../src-master/system/seismic/Mmodrefl2.c`,
+  `../src-master/system/seismic/Mmap2coh.c`,
+  `../src-master/system/seismic/Mlinsincos.c`, and
+  `../src-master/system/seismic/Movc.c`.
+- Counts `sfnmo`, `sfhalfint`, and `sfmoveout` because they map directly to
+  `system/seismic` source files and now have Python API, RSFData chain method,
+  CLI module, console-script surface, focused tests, and documented bounded
+  behavior.
+- `sfnmo` supports bounded hyperbolic NMO over regular time/offset gathers
+  with scalar, 1-D, or per-gather velocity and optional explicit offsets.
+  `sfhalfint` supports one-axis real FFT half-order integration or
+  differentiation with `axis=`, `inv=`, `adj=`, and `rho=` metadata.
+  `sfmoveout` supports the source-aligned moveout-time-table to unit-spike
+  trace generator with `n1/o1/d1`, `eps=`, `nw=`, and bounded nearest/linear
+  spike placement.
+- `sfcos2ang` and `sfisin2ang` are stack-panel-to-angle resamplers, not simple
+  arccos/arcsin converters. `sfmodrefl`/`sfmodrefl2` require elastic
+  reflectivity modeling over Vp/Vs/rho, `sfmap2coh` uses parameter-map
+  interpolation into coherency-like plots, `sflinsincos` solves a
+  velocity-grid angle problem, and `sfovc` is oriented velocity continuation;
+  all are deferred.
+- Coverage numerator changes to `112 / 2114` and core coverage to `99 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -2205,8 +2243,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M2-1, coverage is
-`109 / 2114`, core coverage is `96 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M2-2, coverage is
+`112 / 2114`, core coverage is `99 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

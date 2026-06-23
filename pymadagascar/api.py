@@ -50,7 +50,10 @@ from pymadagascar.seismic.ai2refl import ai2refl_rsf
 from pymadagascar.seismic.agc import agc_rsf
 from pymadagascar.seismic.avo import avo_rsf
 from pymadagascar.seismic.fold import fold_rsf
+from pymadagascar.seismic.halfint import halfint_rsf
+from pymadagascar.seismic.moveout import moveout_rsf
 from pymadagascar.seismic.mute import mute_rsf, mutter_rsf
+from pymadagascar.seismic.nmo import inverse_nmo, nmo_correct
 from pymadagascar.seismic.stack import stack_rsf, stacks_rsf
 from pymadagascar.signal.calculus import causint_rsf, deriv_rsf, integral_rsf
 from pymadagascar.signal.conditioning import clip2_rsf, shifts_rsf
@@ -1689,6 +1692,90 @@ class RSFData:
 
         return self._from_file_op(ai2refl_rsf, axis=axis, eps=eps, inplace=inplace)
 
+    def nmo(
+        self,
+        velocity: Any,
+        *,
+        axis: int = 1,
+        offset_axis: int = 2,
+        offset: Any | None = None,
+        half: bool = True,
+        h0: float = 0.0,
+        stretch: float | None = 0.5,
+        inverse: bool = False,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply bounded source-aligned normal moveout correction."""
+
+        op = inverse_nmo if inverse else nmo_correct
+        if offset is None:
+            return self._from_velocity_file_op(
+                op,
+                velocity,
+                axis=axis,
+                offset_axis=offset_axis,
+                offset=None,
+                half=half,
+                h0=h0,
+                stretch=stretch,
+                inplace=inplace,
+            )
+        return self._from_velocity_offset_file_op(
+            op,
+            velocity,
+            offset,
+            axis=axis,
+            offset_axis=offset_axis,
+            half=half,
+            h0=h0,
+            stretch=stretch,
+            inplace=inplace,
+        )
+
+    def halfint(
+        self,
+        *,
+        axis: int = 1,
+        inv: bool = False,
+        adj: bool = False,
+        rho: float | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply bounded sfhalfint half-order trace integration/differentiation."""
+
+        return self._from_file_op(
+            halfint_rsf,
+            axis=axis,
+            inv=inv,
+            adj=adj,
+            rho=rho,
+            inplace=inplace,
+        )
+
+    def moveout(
+        self,
+        *,
+        n1: int,
+        o1: float = 0.0,
+        d1: float = 1.0,
+        eps: float = 0.1,
+        nw: int = 10,
+        interpolation: str = "linear",
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Generate bounded sfmoveout spike traces from moveout-time samples."""
+
+        return self._from_file_op(
+            moveout_rsf,
+            n1=n1,
+            o1=o1,
+            d1=d1,
+            eps=eps,
+            nw=nw,
+            interpolation=interpolation,
+            inplace=inplace,
+        )
+
     def mute(
         self,
         *,
@@ -1825,6 +1912,66 @@ class RSFData:
             result = op(input_path, operand_path, output_path, **kwargs)
             loaded = read_rsf(result.header_path or output_path)
         return self._from_result(RSFArray(loaded.data, loaded.header), inplace=inplace)
+
+    def _from_velocity_file_op(
+        self,
+        op: FileOperation,
+        velocity: Any,
+        *,
+        inplace: bool,
+        **kwargs: Any,
+    ) -> "RSFData":
+        with tempfile.TemporaryDirectory(prefix="pymada_rsfdata_") as tmp:
+            directory = Path(tmp)
+            input_path = directory / "input.rsf"
+            output_path = directory / "output.rsf"
+            write_rsf(input_path, self._data, self._header.copy())
+            velocity_arg = self._write_velocity_operand(directory, velocity, "velocity.rsf", axis=kwargs.get("axis", 1))
+            result = op(input_path, velocity_arg, output_path, **kwargs)
+            loaded = read_rsf(result.header_path or output_path)
+        return self._from_result(RSFArray(loaded.data, loaded.header), inplace=inplace)
+
+    def _from_velocity_offset_file_op(
+        self,
+        op: FileOperation,
+        velocity: Any,
+        offset: Any,
+        *,
+        inplace: bool,
+        **kwargs: Any,
+    ) -> "RSFData":
+        with tempfile.TemporaryDirectory(prefix="pymada_rsfdata_") as tmp:
+            directory = Path(tmp)
+            input_path = directory / "input.rsf"
+            output_path = directory / "output.rsf"
+            write_rsf(input_path, self._data, self._header.copy())
+            velocity_arg = self._write_velocity_operand(directory, velocity, "velocity.rsf", axis=kwargs.get("axis", 1))
+            offset_path = self._write_operand(
+                directory,
+                offset,
+                "offset.rsf",
+                axis=kwargs.get("offset_axis", 2),
+            )
+            result = op(input_path, velocity_arg, output_path, offset=offset_path, **kwargs)
+            loaded = read_rsf(result.header_path or output_path)
+        return self._from_result(RSFArray(loaded.data, loaded.header), inplace=inplace)
+
+    def _write_velocity_operand(
+        self,
+        directory: Path,
+        velocity: Any,
+        filename: str,
+        *,
+        axis: int,
+    ) -> Any:
+        if isinstance(velocity, (int, float, np.number)):
+            return float(velocity)
+        if isinstance(velocity, str):
+            try:
+                return float(velocity)
+            except ValueError:
+                pass
+        return self._write_operand(directory, velocity, filename, axis=axis)
 
     def _from_result(self, result: RSFArray, *, inplace: bool) -> "RSFData":
         data = np.ascontiguousarray(np.asarray(result.data).copy())

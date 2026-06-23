@@ -98,7 +98,7 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 45 registered console scripts are:
+The 48 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
@@ -109,7 +109,8 @@ pymada-boxsmooth, pymada-laplac, pymada-trapez, pymada-cosft, pymada-spectra2,
 pymada-remap1, pymada-spline, pymada-t2warp, pymada-mask, pymada-cut, pymada-reverse, pymada-pad,
 pymada-spray, pymada-scale, pymada-rotate, pymada-stack,
 pymada-matmult, pymada-match, pymada-linefit,
-pymada-avo, pymada-fold, pymada-ai2refl
+pymada-avo, pymada-fold, pymada-ai2refl,
+pymada-nmo, pymada-halfint, pymada-moveout
 ```
 
 Examples:
@@ -132,6 +133,9 @@ pymada-linefit table.rsf out=linefit.rsf n=100 o=0 d=1
 pymada-avo gather.rsf out=avo.rsf half=n
 pymada-fold headers.rsf out=fold.rsf n1=32 n2=64 n3=16 o1=0 o2=1 o3=1 d1=25 d2=1 d3=1
 pymada-ai2refl impedance.rsf out=refl.rsf axis=1
+pymada-nmo gather.rsf out=nmo.rsf velocity=2000 stretch=0
+pymada-halfint trace.rsf out=halfint.rsf axis=1
+pymada-moveout times.rsf out=moveout.rsf n1=500 o1=0 d1=0.004
 pymada-laplac win.rsf out=laplac.rsf axis=1 spacing_from_header=n
 pymada-trapez win.rsf out=trapez.rsf axis=1 frequency=0.05,0.1,0.4,0.45
 pymada-stack win.rsf out=stack.rsf axis=1 mode=sum
@@ -141,12 +145,12 @@ pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 45-entry console-script inventory
+authoritative installed command list is the 48-entry console-script inventory
 above.
 
 ## CLI Module Inventory
 
-There are 149 user-facing CLI modules:
+There are 151 user-facing CLI modules:
 
 ```text
 abs, acoustic2d, add, agc, ai2refl, attr, autocorr, avo, bandenergy, bandpass, bandstop, bin, boxsmooth,
@@ -155,11 +159,11 @@ conjgrad, conv, convolve, corr, cosft, costaper, cp, csd, cut, dd, decimate, dem
 deriv, detrend,
 diff, disfil, div, dottest,
 envcorr, envelope, exp, fft, fft1, fillnan, filterbank, filtfilt, firfilter, firwin,
-fk, fkfilter, fold, freqattr, freqz, gain, get, graph, grey,
+fk, fkfilter, fold, freqattr, freqz, gain, get, graph, grey, halfint,
 headerattr, headercut, headermath, headersort, headerwindow, highpass,
 histogram, ifft, imag, info, integral, interleave, iradon, isnan, kirchhoff,
 laplac, linear, linefit, localrms, log, lowpass, mask, math, match, matmult, max, max1, mean, median, min, mul,
-mute, mutter, nmo, noise, normalize, notch, pad, pow, psd, put, quantile, radon,
+moveout, mute, mutter, nmo, noise, normalize, notch, pad, pow, psd, put, quantile, radon,
 range, real,
 remap1, reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,
 semblance, shifts, sign, slice, smooth, snr, specnorm, spectra, spectra2, spectrogram,

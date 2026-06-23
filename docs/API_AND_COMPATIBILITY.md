@@ -1205,6 +1205,31 @@ freqlet inversion, `sfc2r` ray-field coordinate interpolation, SEG-Y key
 lookup in `sffold`, CDPtype offset shifts in `sfavo`, streaming, or out-of-core
 processing.
 
+M2-2 continues source-aligned `system/seismic` moveout / trace-transform
+migration and adds:
+
+- `pymada-nmo` / `python -m pymadagascar.cli.nmo`, backed by
+  `pymadagascar.seismic.nmo.nmo_correct` / `inverse_nmo` and aligned to
+  `../src-master/system/seismic/Mnmo.c`.
+- `pymada-halfint` / `python -m pymadagascar.cli.halfint`, backed by
+  `pymadagascar.seismic.halfint.halfint_rsf` and aligned to
+  `../src-master/system/seismic/Mhalfint.c`.
+- `pymada-moveout` / `python -m pymadagascar.cli.moveout`, backed by
+  `pymadagascar.seismic.moveout.moveout_rsf` and aligned to
+  `../src-master/system/seismic/Mmoveout.c`.
+- `RSFData.nmo(...)`, `RSFData.halfint(...)`, and `RSFData.moveout(...)`.
+
+The bounded `sfnmo` subset keeps regular hyperbolic NMO with linear
+interpolation, scalar/file/array velocity inputs, optional explicit offsets,
+and no anisotropy, masks, heterogeneity terms, or production stretch/mute
+ecology. The bounded `sfhalfint` subset applies a real FFT half-order
+integration/differentiation operator along one axis and records `axis=`,
+`inv=`, `adj=`, and `rho=` metadata. The bounded `sfmoveout` subset follows
+`Mmoveout.c` as a moveout-time-table to spike-trace generator; it is not a
+generic NMO/moveout correction operator. M2-2 adds no new root exports and
+does not add SciPy, streaming, out-of-core processing, SEG-Y trace-header
+handling, migration, DMO, RTM, Kirchhoff, Gazdag, or wave-equation imaging.
+
 ## RSFData Behavior Contract
 
 - Transform methods return a new in-memory `RSFData` by default and leave the

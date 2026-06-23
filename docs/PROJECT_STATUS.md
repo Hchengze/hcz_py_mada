@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 149 |
-| Registered `pymada-*` console scripts | 45 |
-| Pytest files | 93 |
+| User-facing CLI modules | 151 |
+| Registered `pymada-*` console scripts | 48 |
+| Pytest files | 94 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `109 / 2114 = 5.16%` |
-| Core `system/` + `plot/main` command surface | `96 / 301 = 31.89%` |
+| Full Madagascar/alias command surface | `112 / 2114 = 5.30%` |
+| Core `system/` + `plot/main` command surface | `99 / 301 = 32.89%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -210,6 +210,17 @@ are no remaining comparison bridge failures.
   `sffreqint` and `sfc2r` are deferred because the upstream sources require
   complex freqlet inversion or Riemannian-coordinate interpolation. M2-1 does
   not continue Forward Modeling, DAS, Localization, solver, workflow,
+  large-system, original-source, SciPy-dependency, or coverage-denominator
+  work.
+- M2-2: source-aligned `system/seismic` moveout / trace-transform migration
+  continues with `sfnmo`, `sfhalfint`, and `sfmoveout`, mapped to
+  `../src-master/system/seismic/Mnmo.c`,
+  `../src-master/system/seismic/Mhalfint.c`, and
+  `../src-master/system/seismic/Mmoveout.c`. It source-aligns the existing
+  bounded NMO implementation, adds FFT half-order trace transforms and
+  moveout-time spike generation, and closes Python API, RSFData, CLI, console
+  script, tests, docs, and coverage mapping. M2-2 does not continue Forward
+  Modeling, DAS, Localization, solver, workflow, migration/RTM/DMO/Kirchhoff,
   large-system, original-source, SciPy-dependency, or coverage-denominator
   work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
@@ -654,7 +665,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 149 module entry points, 45 registered console scripts.
+- `pymadagascar/cli`: 151 module entry points, 48 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,

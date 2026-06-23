@@ -155,6 +155,8 @@ def _apply_nmo_rsf(
     header["nmo_direction"] = "inverse" if inverse else "forward"
     header["nmo_interpolation"] = "linear"
     header["nmo_offset_source"] = "axis" if offset is None else "explicit"
+    header["nmo_source"] = "../src-master/system/seismic/Mnmo.c"
+    header["nmo_subset"] = "bounded-hyperbolic-nmo"
     return RSFArray(np.ascontiguousarray(restored.astype(dtype, copy=False)), header)
 
 

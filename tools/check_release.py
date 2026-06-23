@@ -82,8 +82,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 45:
-        raise RuntimeError("expected exactly 45 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 48:
+        raise RuntimeError("expected exactly 48 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -118,6 +118,9 @@ def _check_lower_level_imports() -> None:
     from pymadagascar.seismic.ai2refl import ai2refl
     from pymadagascar.seismic.avo import avo_intercept_gradient
     from pymadagascar.seismic.fold import fold_table
+    from pymadagascar.seismic.halfint import halfint
+    from pymadagascar.seismic.moveout import moveout_spikes
+    from pymadagascar.seismic.nmo import nmo_correct
     from pymadagascar.seismic.mute import mutter
     from pymadagascar.seismic.stack import stack_along_axis, stack_rsf, stacks_rsf
     from pymadagascar.signal.calculus import causal_integrate, deriv, integral
@@ -146,6 +149,9 @@ def _check_lower_level_imports() -> None:
         "seismic.ai2refl": ai2refl,
         "seismic.avo_intercept_gradient": avo_intercept_gradient,
         "seismic.fold_table": fold_table,
+        "seismic.halfint": halfint,
+        "seismic.moveout_spikes": moveout_spikes,
+        "seismic.nmo_correct": nmo_correct,
         "generic.spike": spike,
         "generic.copy_rsf_dataset": copy_rsf_dataset,
         "generic.min_rsf": min_rsf,

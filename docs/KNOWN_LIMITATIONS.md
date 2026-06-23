@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `106 / 2114 = 5.01%`.
-- Core `system/` + `plot/main` coverage is `93 / 301 = 30.90%`.
+- Full command-surface coverage remains low: `112 / 2114 = 5.30%`.
+- Core `system/` + `plot/main` coverage is `99 / 301 = 32.89%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -215,6 +215,13 @@ testing details live in the other current docs.
   Madagascar's SEG-Y key lookup layer. `sfai2refl` implements one-axis acoustic
   impedance reflectivity only and does not implement angle-dependent or elastic
   reflectivity modeling. `sffreqint` and `sfc2r` remain deferred.
+- M2-2 `sfnmo` implements bounded regular hyperbolic NMO only; it does not
+  implement anisotropic NMO, masks, heterogeneous shift/taner parameters,
+  full production stretch/mute handling, 3D NMO, or SEG-Y trace-header
+  workflows. `sfhalfint` uses a bounded FFT fractional transform and is not
+  byte-identical to Madagascar's `sf_halfint` helper. `sfmoveout` generates
+  spike traces from a moveout-time table; it is not a generic moveout
+  correction, DMO, migration, or imaging command.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

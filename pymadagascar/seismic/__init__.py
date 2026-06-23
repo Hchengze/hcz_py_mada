@@ -5,7 +5,9 @@ from .agc import AGCError, agc_rsf
 from .avo import AVOError, avo_intercept_gradient, avo_rsf
 from .fk import FKError, fk_filter, fk_spectrum, make_fk_mask
 from .fold import FoldError, fold_rsf, fold_table
+from .halfint import HalfIntError, halfint, halfint_rsf
 from .gain import GainError, gain_rsf
+from .moveout import MoveoutError, moveout_rsf, moveout_spikes
 from .mute import MuteError, mute_rsf, mutter, mutter_rsf
 from .nmo import NMOError, inverse_nmo, nmo_correct
 from .radon import (
@@ -27,7 +29,9 @@ __all__ = [
     "FKError",
     "FoldError",
     "GainError",
+    "HalfIntError",
     "MuteError",
+    "MoveoutError",
     "NMOError",
     "RadonError",
     "SemblanceError",
@@ -42,6 +46,8 @@ __all__ = [
     "fold_rsf",
     "fold_table",
     "gain_rsf",
+    "halfint",
+    "halfint_rsf",
     "inverse_nmo",
     "inverse_linear_radon",
     "inverse_parabolic_radon",
@@ -50,6 +56,8 @@ __all__ = [
     "mute_rsf",
     "mutter",
     "mutter_rsf",
+    "moveout_rsf",
+    "moveout_spikes",
     "nmo_correct",
     "parabolic_radon",
     "radon_adjoint_array",
