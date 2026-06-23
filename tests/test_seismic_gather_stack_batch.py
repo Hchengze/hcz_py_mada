@@ -1,0 +1,236 @@
+from __future__ import annotations
+
+from pathlib import Path
+import os
+import subprocess
+import sys
+
+import numpy as np
+import pytest
+
+import pymadagascar
+from pymadagascar.api import RSFData
+from pymadagascar.io.rsf import RSFHeader, read_rsf, write_rsf
+from pymadagascar.seismic.gather import (
+    GatherError,
+    cmp2shot,
+    cmp2shot_rsf,
+    intbin,
+    intbin3,
+    intbin3_rsf,
+    intbin_rsf,
+)
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _run_cli(module: str, args: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
+    env = os.environ.copy()
+    env["PYTHONPATH"] = (
+        str(PROJECT_ROOT)
+        if not env.get("PYTHONPATH")
+        else str(PROJECT_ROOT) + os.pathsep + env["PYTHONPATH"]
+    )
+    return subprocess.run(
+        [sys.executable, "-m", f"pymadagascar.cli.{module}", *args],
+        cwd=cwd,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+
+
+def _cmp_header(nt: int, nh: int, ny: int) -> RSFHeader:
+    return RSFHeader(
+        {
+            "n1": nt,
+            "o1": 0.0,
+            "d1": 0.004,
+            "label1": "Time",
+            "unit1": "s",
+            "n2": nh,
+            "o2": 0.0,
+            "d2": 2.0,
+            "label2": "Offset",
+            "n3": ny,
+            "o3": 10.0,
+            "d3": 1.0,
+            "label3": "CMP",
+        }
+    )
+
+
+def _trace_header(nt: int, ntr: int) -> RSFHeader:
+    return RSFHeader(
+        {
+            "n1": nt,
+            "o1": 0.0,
+            "d1": 0.004,
+            "label1": "Time",
+            "unit1": "s",
+            "n2": ntr,
+            "o2": 0,
+            "d2": 1,
+            "label2": "Trace",
+        }
+    )
+
+
+def _header_table_header(nkey: int, ntr: int) -> RSFHeader:
+    return RSFHeader(
+        {
+            "n1": nkey,
+            "o1": 0,
+            "d1": 1,
+            "label1": "Key",
+            "n2": ntr,
+            "o2": 0,
+            "d2": 1,
+            "label2": "Trace",
+        }
+    )
+
+
+def test_cmp2shot_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> None:
+    data = np.arange(4 * 2 * 3, dtype=np.float32).reshape(4, 2, 3)
+    input_path = tmp_path / "cmp.rsf"
+    output_path = tmp_path / "shot.rsf"
+    cli_path = tmp_path / "shot_cli.rsf"
+    write_rsf(input_path, data, _cmp_header(nt=3, nh=2, ny=4))
+
+    direct = cmp2shot(data, dh=2.0, dy=1.0, oh=0.0, oy=10.0, positive=True)
+    original = RSFData(data, _cmp_header(nt=3, nh=2, ny=4))
+    chained = original.cmp2shot()
+    cmp2shot_rsf(input_path, output_path)
+    result = _run_cli("cmp2shot", [str(input_path), "out=" + str(cli_path)], tmp_path)
+
+    expected = np.zeros((3, 4, 3), dtype=np.float32)
+    for ishot in range(3):
+        for ioffset in range(2):
+            for itype in range(2):
+                icmp = itype + 2 * (ishot + ioffset - 1)
+                if 0 <= icmp < 4:
+                    expected[ishot, ioffset * 2 + itype] = data[icmp, ioffset]
+    assert result.returncode == 0, result.stderr
+    np.testing.assert_array_equal(direct, expected)
+    np.testing.assert_array_equal(read_rsf(output_path).data, expected)
+    np.testing.assert_array_equal(read_rsf(cli_path).data, expected)
+    np.testing.assert_array_equal(chained.numpy(), expected)
+    np.testing.assert_array_equal(original.numpy(), data)
+    header = read_rsf(output_path).header
+    assert header.dimensions == (3, 4, 3)
+    assert header["label3"] == "Shot"
+    assert header["cmp2shot_source"] == "../src-master/system/seismic/Mcmp2shot.c"
+    assert not hasattr(pymadagascar, "cmp2shot_rsf")
+    with pytest.raises(GatherError, match="shape"):
+        cmp2shot(data[0], dh=2.0, dy=1.0, oh=0.0, oy=10.0)
+    with pytest.raises(GatherError, match="dh/dy"):
+        cmp2shot(data, dh=1.5, dy=1.0, oh=0.0, oy=10.0)
+
+
+def test_intbin_values_header_chain_cli_and_bounds(tmp_path: Path) -> None:
+    traces = np.array(
+        [
+            [1.0, 1.5],
+            [2.0, 2.5],
+            [3.0, 3.5],
+            [4.0, 4.5],
+        ],
+        dtype=np.float32,
+    )
+    headers = np.array([[0, 0], [1, 0], [0, 1], [3, 3]], dtype=np.int32)
+    input_path = tmp_path / "traces.rsf"
+    header_path = tmp_path / "headers.rsf"
+    output_path = tmp_path / "intbin.rsf"
+    cli_path = tmp_path / "intbin_cli.rsf"
+    write_rsf(input_path, traces, _trace_header(nt=2, ntr=4))
+    write_rsf(header_path, headers, _header_table_header(nkey=2, ntr=4))
+
+    direct = intbin(traces, headers, xmin=0, xmax=1, ymin=0, ymax=1)
+    original = RSFData(traces, _trace_header(nt=2, ntr=4))
+    chained = original.intbin(headers, xmin=0, xmax=1, ymin=0, ymax=1)
+    intbin_rsf(input_path, header_path, output_path, xmin=0, xmax=1, ymin=0, ymax=1)
+    result = _run_cli(
+        "intbin",
+        [str(input_path), "head=" + str(header_path), "out=" + str(cli_path), "xmin=0", "xmax=1", "ymin=0", "ymax=1"],
+        tmp_path,
+    )
+
+    expected = np.zeros((2, 2, 2), dtype=np.float32)
+    expected[0, 0] = traces[0]
+    expected[0, 1] = traces[1]
+    expected[1, 0] = traces[2]
+    assert result.returncode == 0, result.stderr
+    np.testing.assert_array_equal(direct, expected)
+    np.testing.assert_array_equal(read_rsf(output_path).data, expected)
+    np.testing.assert_array_equal(read_rsf(cli_path).data, expected)
+    np.testing.assert_array_equal(chained.numpy(), expected)
+    np.testing.assert_array_equal(original.numpy(), traces)
+    header = read_rsf(output_path).header
+    assert header.dimensions == (2, 2, 2)
+    assert header["intbin_source"] == "../src-master/system/seismic/Mintbin.c"
+    assert not hasattr(pymadagascar, "intbin_rsf")
+    with pytest.raises(GatherError, match="row count"):
+        intbin(traces, headers[:2])
+    with pytest.raises(GatherError, match="integer-valued"):
+        intbin(traces, headers.astype(np.float32) + 0.25)
+
+
+def test_intbin3_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> None:
+    traces = np.array(
+        [
+            [1.0, 1.5],
+            [2.0, 2.5],
+            [3.0, 3.5],
+        ],
+        dtype=np.float32,
+    )
+    headers = np.array([[0, 0, 0], [1, 0, 1], [0, 1, 0]], dtype=np.int32)
+    input_path = tmp_path / "traces3.rsf"
+    header_path = tmp_path / "headers3.rsf"
+    output_path = tmp_path / "intbin3.rsf"
+    cli_path = tmp_path / "intbin3_cli.rsf"
+    write_rsf(input_path, traces, _trace_header(nt=2, ntr=3))
+    write_rsf(header_path, headers, _header_table_header(nkey=3, ntr=3))
+
+    direct = intbin3(traces, headers)
+    original = RSFData(traces, _trace_header(nt=2, ntr=3))
+    chained = original.intbin3(headers)
+    intbin3_rsf(input_path, header_path, output_path)
+    result = _run_cli("intbin3", [str(input_path), "head=" + str(header_path), "out=" + str(cli_path)], tmp_path)
+
+    expected = np.zeros((2, 2, 2, 2), dtype=np.float32)
+    expected[0, 0, 0] = traces[0]
+    expected[1, 0, 1] = traces[1]
+    expected[0, 1, 0] = traces[2]
+    assert result.returncode == 0, result.stderr
+    np.testing.assert_array_equal(direct, expected)
+    np.testing.assert_array_equal(read_rsf(output_path).data, expected)
+    np.testing.assert_array_equal(read_rsf(cli_path).data, expected)
+    np.testing.assert_array_equal(chained.numpy(), expected)
+    np.testing.assert_array_equal(original.numpy(), traces)
+    header = read_rsf(output_path).header
+    assert header.dimensions == (2, 2, 2, 2)
+    assert header["intbin_source"] == "../src-master/system/seismic/Mintbin3.c"
+    assert not hasattr(pymadagascar, "intbin3_rsf")
+    with pytest.raises(GatherError, match="zkey"):
+        intbin3(traces, headers, zkey=3)
+    with pytest.raises(GatherError, match="xmax"):
+        intbin3(traces, headers, xmin=2, xmax=1)
+
+
+@pytest.mark.parametrize("module", ["cmp2shot", "intbin", "intbin3"])
+def test_console_script_help_smoke(module: str) -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", f"pymadagascar.cli.{module}", "--help"],
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=20,
+    )
+    assert result.returncode == 0
+    assert "Madagascar-style parameters" in result.stdout

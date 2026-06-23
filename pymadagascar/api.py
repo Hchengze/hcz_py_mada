@@ -51,6 +51,7 @@ from pymadagascar.seismic.agc import agc_rsf
 from pymadagascar.seismic.angle import cos2ang_rsf, isin2ang_rsf
 from pymadagascar.seismic.avo import avo_rsf
 from pymadagascar.seismic.fold import fold_rsf
+from pymadagascar.seismic.gather import cmp2shot_rsf, intbin3_rsf, intbin_rsf
 from pymadagascar.seismic.halfint import halfint_rsf
 from pymadagascar.seismic.map2coh import map2coh_rsf
 from pymadagascar.seismic.moveout import moveout_rsf
@@ -1680,6 +1681,73 @@ class RSFData:
             o=o,
             d=d,
             labels=labels,
+            inplace=inplace,
+        )
+
+    def cmp2shot(self, *, positive: bool = True, inplace: bool = False) -> "RSFData":
+        """Convert regular 2-D CMP gathers to shot gathers."""
+
+        return self._from_file_op(cmp2shot_rsf, positive=positive, inplace=inplace)
+
+    def intbin(
+        self,
+        headers: Any,
+        *,
+        xkey: int = 0,
+        ykey: int = 1,
+        xmin: int | None = None,
+        xmax: int | None = None,
+        ymin: int | None = None,
+        ymax: int | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Sort traces into a bounded 2-D integer-key bin grid."""
+
+        return self._from_binary_file_op(
+            intbin_rsf,
+            headers,
+            operand_name="head.rsf",
+            operand_axis=2,
+            xkey=xkey,
+            ykey=ykey,
+            xmin=xmin,
+            xmax=xmax,
+            ymin=ymin,
+            ymax=ymax,
+            inplace=inplace,
+        )
+
+    def intbin3(
+        self,
+        headers: Any,
+        *,
+        xkey: int = 0,
+        ykey: int = 1,
+        zkey: int = 2,
+        xmin: int | None = None,
+        xmax: int | None = None,
+        ymin: int | None = None,
+        ymax: int | None = None,
+        zmin: int | None = None,
+        zmax: int | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Sort traces into a bounded 3-D integer-key bin grid."""
+
+        return self._from_binary_file_op(
+            intbin3_rsf,
+            headers,
+            operand_name="head.rsf",
+            operand_axis=2,
+            xkey=xkey,
+            ykey=ykey,
+            zkey=zkey,
+            xmin=xmin,
+            xmax=xmax,
+            ymin=ymin,
+            ymax=ymax,
+            zmin=zmin,
+            zmax=zmax,
             inplace=inplace,
         )
 

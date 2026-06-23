@@ -1257,6 +1257,31 @@ streaming, out-of-core processing, SEG-Y trace-header handling, full
 Zoeppritz/elastic reflectivity, local-similarity coherence, migration, DMO,
 RTM, Kirchhoff, Gazdag, or wave-equation imaging.
 
+M2-4 continues source-aligned `system/seismic` gather organization / stacking
+utility migration and adds:
+
+- `pymada-cmp2shot` / `python -m pymadagascar.cli.cmp2shot`, backed by
+  `pymadagascar.seismic.gather.cmp2shot_rsf` and aligned to
+  `../src-master/system/seismic/Mcmp2shot.c`.
+- `pymada-intbin` / `python -m pymadagascar.cli.intbin`, backed by
+  `pymadagascar.seismic.gather.intbin_rsf` and aligned to
+  `../src-master/system/seismic/Mintbin.c`.
+- `pymada-intbin3` / `python -m pymadagascar.cli.intbin3`, backed by
+  `pymadagascar.seismic.gather.intbin3_rsf` and aligned to
+  `../src-master/system/seismic/Mintbin3.c`.
+- `RSFData.cmp2shot(...)`, `RSFData.intbin(...)`, and
+  `RSFData.intbin3(...)`.
+
+The bounded `sfcmp2shot` subset reorders regular 2-D CMP gathers with
+`n1=time`, `n2=offset`, `n3=CMP`, an integer `d2/d3` ratio, and
+`positive=` orientation. The bounded `sfintbin` and `sfintbin3` subsets sort
+finite trace rows into 2-D or 3-D integer-key bin grids from numeric
+integer-valued header tables and optional integer bounds. M2-4 adds no new
+root exports and does not add SciPy, streaming, out-of-core processing, SEG-Y
+key-name lookup, inverse unbinning, map/mask side outputs, duplicate-trace
+accumulation policies, production acquisition binning, reconstruction,
+migration, DMO, RTM, Kirchhoff, Gazdag, or wave-equation imaging.
+
 ## RSFData Behavior Contract
 
 - Transform methods return a new in-memory `RSFData` by default and leave the

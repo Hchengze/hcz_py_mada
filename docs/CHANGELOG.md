@@ -8,6 +8,24 @@ optional compatibility checks.
 
 ### Added
 
+- M2-4 continues source-aligned `system/seismic` command migration with
+  `sfcmp2shot`, `sfintbin`, and `sfintbin3`, aligned to
+  `../src-master/system/seismic/Mcmp2shot.c`,
+  `../src-master/system/seismic/Mintbin.c`, and
+  `../src-master/system/seismic/Mintbin3.c`. It adds
+  `pymadagascar.seismic.gather.cmp2shot_rsf`,
+  `pymadagascar.seismic.gather.intbin_rsf`,
+  `pymadagascar.seismic.gather.intbin3_rsf`, registers
+  `pymada-cmp2shot`, `pymada-intbin`, and `pymada-intbin3`, and adds
+  `RSFData.cmp2shot(...)`, `RSFData.intbin(...)`, and
+  `RSFData.intbin3(...)` without adding new root exports.
+- M2-4 command-surface coverage increases the numerator only:
+  full coverage is `118 / 2114`, core `system/` + `plot/main` coverage is
+  `105 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No Forward Modeling, DAS/Localization/solver
+  branch, SciPy dependency, production binning/reconstruction,
+  migration/RTM/DMO/Kirchhoff/Gazdag system, notebook, original Madagascar
+  source, tag, release, or force-push work is included.
 - M2-3 continues source-aligned `system/seismic` command migration with
   `sfcos2ang`, `sfisin2ang`, and `sfmap2coh`, aligned to
   `../src-master/system/seismic/Mcos2ang.c`,

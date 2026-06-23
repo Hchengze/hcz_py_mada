@@ -6,6 +6,7 @@ from .angle import AngleTransformError, cos2ang, cos2ang_rsf, isin2ang, isin2ang
 from .avo import AVOError, avo_intercept_gradient, avo_rsf
 from .fk import FKError, fk_filter, fk_spectrum, make_fk_mask
 from .fold import FoldError, fold_rsf, fold_table
+from .gather import GatherError, cmp2shot, cmp2shot_rsf, intbin, intbin3, intbin3_rsf, intbin_rsf
 from .halfint import HalfIntError, halfint, halfint_rsf
 from .gain import GainError, gain_rsf
 from .map2coh import Map2CohError, map2coh, map2coh_rsf
@@ -32,6 +33,7 @@ __all__ = [
     "FKError",
     "FoldError",
     "GainError",
+    "GatherError",
     "HalfIntError",
     "Map2CohError",
     "MuteError",
@@ -52,8 +54,14 @@ __all__ = [
     "fold_rsf",
     "fold_table",
     "gain_rsf",
+    "cmp2shot",
+    "cmp2shot_rsf",
     "halfint",
     "halfint_rsf",
+    "intbin",
+    "intbin3",
+    "intbin3_rsf",
+    "intbin_rsf",
     "isin2ang",
     "isin2ang_rsf",
     "inverse_nmo",

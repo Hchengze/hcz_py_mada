@@ -82,8 +82,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 51:
-        raise RuntimeError("expected exactly 51 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 54:
+        raise RuntimeError("expected exactly 54 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -119,6 +119,7 @@ def _check_lower_level_imports() -> None:
     from pymadagascar.seismic.angle import cos2ang, isin2ang
     from pymadagascar.seismic.avo import avo_intercept_gradient
     from pymadagascar.seismic.fold import fold_table
+    from pymadagascar.seismic.gather import cmp2shot, intbin, intbin3
     from pymadagascar.seismic.halfint import halfint
     from pymadagascar.seismic.map2coh import map2coh
     from pymadagascar.seismic.moveout import moveout_spikes
@@ -152,8 +153,11 @@ def _check_lower_level_imports() -> None:
         "seismic.cos2ang": cos2ang,
         "seismic.isin2ang": isin2ang,
         "seismic.avo_intercept_gradient": avo_intercept_gradient,
+        "seismic.cmp2shot": cmp2shot,
         "seismic.fold_table": fold_table,
         "seismic.halfint": halfint,
+        "seismic.intbin": intbin,
+        "seismic.intbin3": intbin3,
         "seismic.map2coh": map2coh,
         "seismic.moveout_spikes": moveout_spikes,
         "seismic.nmo_correct": nmo_correct,

@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 154 |
-| Registered `pymada-*` console scripts | 51 |
-| Pytest files | 95 |
+| User-facing CLI modules | 157 |
+| Registered `pymada-*` console scripts | 54 |
+| Pytest files | 96 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `115 / 2114 = 5.44%` |
-| Core `system/` + `plot/main` command surface | `102 / 301 = 33.89%` |
+| Full Madagascar/alias command surface | `118 / 2114 = 5.58%` |
+| Core `system/` + `plot/main` command surface | `105 / 301 = 34.88%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -50,7 +50,7 @@ D:\HczApp\Anaconda\envs\mywork\python.exe
 Latest Windows full-suite result:
 
 ```text
-1162 passed, 95 skipped
+1168 passed, 95 skipped
 ```
 
 Skip summary:
@@ -234,6 +234,17 @@ are no remaining comparison bridge failures.
   M2-3 does not continue Forward Modeling, DAS, Localization, solver,
   workflow, migration/RTM/DMO/Kirchhoff/Gazdag, large-system, original-source,
   SciPy-dependency, or coverage-denominator work.
+- M2-4: source-aligned `system/seismic` gather organization / stacking utility
+  migration continues with `sfcmp2shot`, `sfintbin`, and `sfintbin3`, mapped to
+  `../src-master/system/seismic/Mcmp2shot.c`,
+  `../src-master/system/seismic/Mintbin.c`, and
+  `../src-master/system/seismic/Mintbin3.c`. The bounded subsets add regular
+  CMP-to-shot gather reorganization and numeric integer-header trace sorting
+  to 2D/3D bin grids with Python API, RSFData methods, CLI modules, console
+  scripts, tests, docs, and coverage mapping. M2-4 does not continue Forward
+  Modeling, DAS, Localization, solver, workflow, production binning,
+  reconstruction, migration/RTM/DMO/Kirchhoff/Gazdag, large-system,
+  original-source, SciPy-dependency, or coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -676,7 +687,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 154 module entry points, 51 registered console scripts.
+- `pymadagascar/cli`: 157 module entry points, 54 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,

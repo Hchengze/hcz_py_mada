@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `115 / 2114 = 5.44%`.
-- Core `system/` + `plot/main` coverage is `102 / 301 = 33.89%`.
+- Full command-surface coverage remains low: `118 / 2114 = 5.58%`.
+- Core `system/` + `plot/main` coverage is `105 / 301 = 34.88%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -116,7 +116,7 @@ testing details live in the other current docs.
 
 ## CLI and Compatibility
 
-- Only 42 commands are registered as `pymada-*` console scripts.
+- Only 54 commands are registered as `pymada-*` console scripts.
 - Other CLI modules must be called with `python -m pymadagascar.cli.<name>`.
 - Text output and floating-point details are not byte-identical to Madagascar.
 - Optional original Madagascar comparisons skip when upstream commands are not
@@ -228,6 +228,12 @@ testing details live in the other current docs.
   implements same-shape in-memory parameter-map accumulation into a velocity
   axis; it is not a production coherence, local-similarity, elastic
   reflectivity, migration, DMO, or imaging workflow.
+- M2-4 `sfcmp2shot` implements regular 2D CMP-to-shot trace reorganization
+  only and does not reconstruct irregular geometry or use SEG-Y trace headers.
+  `sfintbin` and `sfintbin3` sort by numeric integer header tables only; they
+  do not implement SEG-Y key-name lookup, inverse mode, map/mask side outputs,
+  duplicate-trace stacking policy, production binning, reconstruction, DMO,
+  migration, or imaging.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

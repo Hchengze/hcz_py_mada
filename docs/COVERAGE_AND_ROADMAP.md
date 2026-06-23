@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `115 / 2114 = 5.44%` | Conservative denominator including `user/*` and aliases; M2-3 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `102 / 301 = 33.89%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `118 / 2114 = 5.58%` | Conservative denominator including `user/*` and aliases; M2-4 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `105 / 301 = 34.88%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -542,6 +542,45 @@ M2-3:
   fitting problem, and `sfovc`/`sfovcco`/`sfovczo` are oriented velocity
   continuation utilities; all are deferred.
 - Coverage numerator changes to `115 / 2114` and core coverage to `102 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M2-4:
+
+- Continues source-aligned `system/seismic` command migration with the gather
+  organization / stacking utility group after M2-3 and does not continue
+  Forward Modeling, DAS, Localization, solver, notebook, Windows-only CI
+  known-issue, production binning/reconstruction, migration, RTM, DMO,
+  Kirchhoff, Gazdag, or wave-equation imaging work.
+- The source audit covered
+  `../src-master/system/seismic/Maastack.c`,
+  `../src-master/system/seismic/Mfinstack.c`,
+  `../src-master/system/seismic/Mcmp2shot.c`,
+  `../src-master/system/seismic/Mbeamspray.c`,
+  `../src-master/system/seismic/Mintbin.c`,
+  `../src-master/system/seismic/Mintbin3.c`,
+  `../src-master/system/seismic/Minfill.c`,
+  `../src-master/system/seismic/Mradial.c`,
+  `../src-master/system/seismic/Mradial2.c`, and
+  `../src-master/system/seismic/Moway1.c`.
+- Counts `sfcmp2shot`, `sfintbin`, and `sfintbin3` because they map directly
+  to `system/seismic` source files and now have Python API, RSFData chain
+  method, CLI module, console-script surface, focused tests, and documented
+  bounded behavior.
+- `sfcmp2shot` supports regular 2D CMP-to-shot trace reorganization for
+  finite 3D RSF arrays with axes `n1=time`, `n2=offset`, `n3=CMP` and integer
+  `d2/d3` geometry ratio. It does not reconstruct irregular field geometry or
+  read SEG-Y trace headers.
+- `sfintbin` and `sfintbin3` support numeric integer-valued header tables and
+  sort trace rows into 2D or 3D regular bin grids with optional integer bounds.
+  They omit SEG-Y key-name lookup, inverse unbinning, map/mask side outputs,
+  duplicate-trace accumulation policies, and production acquisition binning.
+- `sfaastack` uses antialias stretch operators, `sffinstack` is finite-
+  difference DMO/offset continuation, `sfinfill` is complex frequency-domain
+  shot interpolation, `sfbeamspray` uses dip/curvature beam spreading,
+  `sfradial`/`sfradial2` are radial stretch transforms, and `sfoway1` is an
+  oriented one-way wave-equation propagator; all are deferred.
+- Coverage numerator changes to `118 / 2114` and core coverage to `105 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -2190,6 +2229,9 @@ C-11.
 | `sfcos2ang` | `../src-master/system/seismic/Mcos2ang.c` | bounded inverse-cosine stack-panel-to-angle linear resampling; no `top=` velocity scaling or ray-parameter model |
 | `sfisin2ang` | `../src-master/system/seismic/Misin2ang.c` | bounded inverse-sine stack-panel-to-angle linear resampling; no anisotropic angle transform or ray-parameter model |
 | `sfmap2coh` | `../src-master/system/seismic/Mmap2coh.c` | bounded parameter-map accumulation into a velocity/coherence axis; no production coherence or local-similarity workflow |
+| `sfcmp2shot` | `../src-master/system/seismic/Mcmp2shot.c` | bounded regular 2D CMP-to-shot trace reorganization; no SEG-Y trace headers or irregular geometry reconstruction |
+| `sfintbin` | `../src-master/system/seismic/Mintbin.c` | bounded numeric integer-header trace sorting into a 2D bin grid; no SEG-Y key-name lookup, inverse mode, map/mask outputs, or production binning |
+| `sfintbin3` | `../src-master/system/seismic/Mintbin3.c` | bounded numeric integer-header trace sorting into a 3D bin grid; no SEG-Y key-name lookup, mask output, or production 3D survey binning |
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
 | `sfslice` | `../src-master/system/generic/Mslice.c` | fixed-index slice subset; upstream uses a picked surface and interpolation |
 | `sfmax1` | `../src-master/system/generic/Mmax1.c` | maximum value/index/coordinate subset; upstream emits complex local-maxima picks |
@@ -2284,8 +2326,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M2-3, coverage is
-`115 / 2114`, core coverage is `102 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M2-4, coverage is
+`118 / 2114`, core coverage is `105 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header
