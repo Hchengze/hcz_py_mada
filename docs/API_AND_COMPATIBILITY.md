@@ -1230,6 +1230,33 @@ generic NMO/moveout correction operator. M2-2 adds no new root exports and
 does not add SciPy, streaming, out-of-core processing, SEG-Y trace-header
 handling, migration, DMO, RTM, Kirchhoff, Gazdag, or wave-equation imaging.
 
+M2-3 continues source-aligned `system/seismic` angle / reflectivity /
+coherence utility migration and adds:
+
+- `pymada-cos2ang` / `python -m pymadagascar.cli.cos2ang`, backed by
+  `pymadagascar.seismic.angle.cos2ang_rsf` and aligned to
+  `../src-master/system/seismic/Mcos2ang.c`.
+- `pymada-isin2ang` / `python -m pymadagascar.cli.isin2ang`, backed by
+  `pymadagascar.seismic.angle.isin2ang_rsf` and aligned to
+  `../src-master/system/seismic/Misin2ang.c`.
+- `pymada-map2coh` / `python -m pymadagascar.cli.map2coh`, backed by
+  `pymadagascar.seismic.map2coh.map2coh_rsf` and aligned to
+  `../src-master/system/seismic/Mmap2coh.c`.
+- `RSFData.cos2ang(...)`, `RSFData.isin2ang(...)`, and
+  `RSFData.map2coh(...)`.
+
+The bounded `sfcos2ang` and `sfisin2ang` subsets are stack-panel-to-angle
+resamplers. They replace one inverse-cosine or inverse-sine transform axis
+with a degree angle axis using linear interpolation and `axis=`, `na=`,
+`a0=`, `da=`, and `fill=` parameters; they are not elementwise arccos/arcsin
+converters and do not implement upstream `top=` velocity scaling. The bounded
+`sfmap2coh` subset accumulates same-shape ordinate and parameter-map panels
+into a velocity/coherence axis with `nv/v0/dv`, `axis_time=`, `axis_map=`, and
+optional `min2/max2`. M2-3 adds no new root exports and does not add SciPy,
+streaming, out-of-core processing, SEG-Y trace-header handling, full
+Zoeppritz/elastic reflectivity, local-similarity coherence, migration, DMO,
+RTM, Kirchhoff, Gazdag, or wave-equation imaging.
+
 ## RSFData Behavior Contract
 
 - Transform methods return a new in-memory `RSFData` by default and leave the

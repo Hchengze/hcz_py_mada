@@ -82,8 +82,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 48:
-        raise RuntimeError("expected exactly 48 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 51:
+        raise RuntimeError("expected exactly 51 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -116,9 +116,11 @@ def _check_lower_level_imports() -> None:
     from pymadagascar.generic.unary import absolute, histogram, quantile
     from pymadagascar.io.rsf import read_rsf, write_rsf
     from pymadagascar.seismic.ai2refl import ai2refl
+    from pymadagascar.seismic.angle import cos2ang, isin2ang
     from pymadagascar.seismic.avo import avo_intercept_gradient
     from pymadagascar.seismic.fold import fold_table
     from pymadagascar.seismic.halfint import halfint
+    from pymadagascar.seismic.map2coh import map2coh
     from pymadagascar.seismic.moveout import moveout_spikes
     from pymadagascar.seismic.nmo import nmo_correct
     from pymadagascar.seismic.mute import mutter
@@ -147,9 +149,12 @@ def _check_lower_level_imports() -> None:
         "generic.match": match,
         "generic.linefit": linefit,
         "seismic.ai2refl": ai2refl,
+        "seismic.cos2ang": cos2ang,
+        "seismic.isin2ang": isin2ang,
         "seismic.avo_intercept_gradient": avo_intercept_gradient,
         "seismic.fold_table": fold_table,
         "seismic.halfint": halfint,
+        "seismic.map2coh": map2coh,
         "seismic.moveout_spikes": moveout_spikes,
         "seismic.nmo_correct": nmo_correct,
         "generic.spike": spike,

@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `112 / 2114 = 5.30%`.
-- Core `system/` + `plot/main` coverage is `99 / 301 = 32.89%`.
+- Full command-surface coverage remains low: `115 / 2114 = 5.44%`.
+- Core `system/` + `plot/main` coverage is `102 / 301 = 33.89%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -222,6 +222,12 @@ testing details live in the other current docs.
   byte-identical to Madagascar's `sf_halfint` helper. `sfmoveout` generates
   spike traces from a moveout-time table; it is not a generic moveout
   correction, DMO, migration, or imaging command.
+- M2-3 `sfcos2ang` and `sfisin2ang` implement bounded stack-panel-to-angle
+  linear resampling only; they are not elementwise trigonometric converters
+  and do not implement upstream `top=` velocity scaling. `sfmap2coh`
+  implements same-shape in-memory parameter-map accumulation into a velocity
+  axis; it is not a production coherence, local-similarity, elastic
+  reflectivity, migration, DMO, or imaging workflow.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 151 |
-| Registered `pymada-*` console scripts | 48 |
-| Pytest files | 94 |
+| User-facing CLI modules | 154 |
+| Registered `pymada-*` console scripts | 51 |
+| Pytest files | 95 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `112 / 2114 = 5.30%` |
-| Core `system/` + `plot/main` command surface | `99 / 301 = 32.89%` |
+| Full Madagascar/alias command surface | `115 / 2114 = 5.44%` |
+| Core `system/` + `plot/main` command surface | `102 / 301 = 33.89%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -50,7 +50,7 @@ D:\HczApp\Anaconda\envs\mywork\python.exe
 Latest Windows full-suite result:
 
 ```text
-1144 passed, 95 skipped
+1162 passed, 95 skipped
 ```
 
 Skip summary:
@@ -223,6 +223,17 @@ are no remaining comparison bridge failures.
   Modeling, DAS, Localization, solver, workflow, migration/RTM/DMO/Kirchhoff,
   large-system, original-source, SciPy-dependency, or coverage-denominator
   work.
+- M2-3: source-aligned `system/seismic` angle / reflectivity / coherence
+  utility migration continues with `sfcos2ang`, `sfisin2ang`, and
+  `sfmap2coh`, mapped to `../src-master/system/seismic/Mcos2ang.c`,
+  `../src-master/system/seismic/Misin2ang.c`, and
+  `../src-master/system/seismic/Mmap2coh.c`. The bounded subsets add
+  inverse-cosine and inverse-sine stack-panel-to-angle resampling plus
+  parameter-map velocity/coherence accumulation with Python API, RSFData
+  methods, CLI modules, console scripts, tests, docs, and coverage mapping.
+  M2-3 does not continue Forward Modeling, DAS, Localization, solver,
+  workflow, migration/RTM/DMO/Kirchhoff/Gazdag, large-system, original-source,
+  SciPy-dependency, or coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -665,7 +676,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 151 module entry points, 48 registered console scripts.
+- `pymadagascar/cli`: 154 module entry points, 51 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,

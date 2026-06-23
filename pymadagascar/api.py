@@ -48,9 +48,11 @@ from pymadagascar.plot.graph import graph
 from pymadagascar.plot.grey import grey
 from pymadagascar.seismic.ai2refl import ai2refl_rsf
 from pymadagascar.seismic.agc import agc_rsf
+from pymadagascar.seismic.angle import cos2ang_rsf, isin2ang_rsf
 from pymadagascar.seismic.avo import avo_rsf
 from pymadagascar.seismic.fold import fold_rsf
 from pymadagascar.seismic.halfint import halfint_rsf
+from pymadagascar.seismic.map2coh import map2coh_rsf
 from pymadagascar.seismic.moveout import moveout_rsf
 from pymadagascar.seismic.mute import mute_rsf, mutter_rsf
 from pymadagascar.seismic.nmo import inverse_nmo, nmo_correct
@@ -1773,6 +1775,80 @@ class RSFData:
             eps=eps,
             nw=nw,
             interpolation=interpolation,
+            inplace=inplace,
+        )
+
+    def cos2ang(
+        self,
+        *,
+        transform_axis: int = 2,
+        na: int | None = None,
+        a0: float = 0.0,
+        da: float | None = None,
+        fill_value: float = 0.0,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply bounded sfcos2ang angle-axis resampling."""
+
+        return self._from_file_op(
+            cos2ang_rsf,
+            transform_axis=transform_axis,
+            na=na,
+            a0=a0,
+            da=da,
+            fill_value=fill_value,
+            inplace=inplace,
+        )
+
+    def isin2ang(
+        self,
+        *,
+        transform_axis: int = 2,
+        na: int | None = None,
+        a0: float = 0.0,
+        da: float | None = None,
+        fill_value: float = 0.0,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply bounded sfisin2ang angle-axis resampling."""
+
+        return self._from_file_op(
+            isin2ang_rsf,
+            transform_axis=transform_axis,
+            na=na,
+            a0=a0,
+            da=da,
+            fill_value=fill_value,
+            inplace=inplace,
+        )
+
+    def map2coh(
+        self,
+        parameter_map: Any,
+        *,
+        nv: int,
+        v0: float,
+        dv: float,
+        axis_time: int = 1,
+        axis_map: int = 2,
+        min2: float | None = None,
+        max2: float | None = None,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply bounded sfmap2coh velocity-axis accumulation."""
+
+        return self._from_binary_file_op(
+            map2coh_rsf,
+            parameter_map,
+            operand_name="map.rsf",
+            operand_axis=axis_map,
+            nv=nv,
+            v0=v0,
+            dv=dv,
+            axis_time=axis_time,
+            axis_map=axis_map,
+            min2=min2,
+            max2=max2,
             inplace=inplace,
         )
 
