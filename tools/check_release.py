@@ -19,6 +19,7 @@ def main() -> int:
         ("import lower-level modules", _check_lower_level_imports),
         ("hybrid fallback is available", _check_hybrid_fallback),
         ("required docs and examples exist", _check_required_paths),
+        ("API surface boundary doc is enforceable", _check_api_surface_doc),
         ("CLI inventory and runtime targets are consistent", _check_cli_inventory),
         ("example inventory is consistent", _check_examples_inventory),
         ("learning notebook is consistent", _check_learning_notebook),
@@ -289,6 +290,20 @@ def _check_required_paths() -> None:
     missing = [path for path in required if not (ROOT / path).exists()]
     if missing:
         raise RuntimeError("missing required paths: " + ", ".join(missing))
+
+
+def _check_api_surface_doc() -> None:
+    text = (ROOT / "docs" / "API_SURFACE.md").read_text(encoding="utf-8").lower()
+    required_phrases = [
+        "not a complete clone",
+        "rsfdata",
+        "command coverage",
+        "workflow/prototype",
+        "root exports",
+    ]
+    missing = [phrase for phrase in required_phrases if phrase not in text]
+    if missing:
+        raise RuntimeError("API_SURFACE.md is missing boundary phrases: " + ", ".join(missing))
 
 
 def _check_cli_inventory() -> None:
