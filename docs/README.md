@@ -53,7 +53,7 @@ checks scan current `docs/` plus `examples/`; they do not scan `archive_docs/`.
 - Top-level examples: 34, plus 16 workflow scripts and 1 workflow helper.
 - Learning notebook: `PYMADAGASCAR_LEARNING_GUIDE.ipynb`, maintained as a
   study-oriented guide rather than an API or coverage authority.
-- Windows pytest: `1177 passed, 95 skipped`.
+- Windows pytest: `1181 passed, 95 skipped`.
 - Skips: 94 optional original Madagascar comparisons and 1 optional C++
   extension test.
 - WSL `ubuntu2204` pytest: `1006 passed, 94 skipped, 1 warning`.
