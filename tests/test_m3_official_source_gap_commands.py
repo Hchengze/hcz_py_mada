@@ -26,6 +26,8 @@ def _header_2d(n1: int, n2: int) -> RSFHeader:
 
 
 def test_tclip_numeric_rsf_and_rsfdata_no_inplace(tmp_path: Path) -> None:
+    # 小型 1-D RSF 振幅序列：sftclip 只按 lowercut/uppercut 改写越界样点，
+    # 中间样点保持原值；这里同时验证 topic API 不原地修改输入数组。
     data = np.array([-0.5, 0.2, 0.5, 0.8, 1.5], dtype=np.float32)
     expected = np.array([0.0, 0.2, 0.5, 0.8, 1.0], dtype=np.float32)
 
@@ -42,12 +44,15 @@ def test_tclip_numeric_rsf_and_rsfdata_no_inplace(tmp_path: Path) -> None:
 
     source = RSFData(data, _header_1d(data.size))
     result = source.tclip(lowercut=0.2, uppercut=0.8)
+    # RSFData chain 默认 no-inplace：返回新对象，source 中的原始振幅保持不变。
     assert result is not source
     np.testing.assert_array_equal(result.numpy(), expected)
     np.testing.assert_array_equal(source.numpy(), data)
 
 
 def test_tclip_invalid_params_and_cli(tmp_path: Path) -> None:
+    # invalid params 覆盖 bounded subset 的安全门槛：
+    # lowercut/uppercut 顺序必须明确，复数输入不属于 Mtclip.c 的实数 subset。
     with pytest.raises(TClipError, match="lowercut"):
         tclip([0.0, 1.0], lowercut=2.0, uppercut=1.0)
     with pytest.raises(TClipError, match="real-valued"):
@@ -77,6 +82,8 @@ def test_tclip_invalid_params_and_cli(tmp_path: Path) -> None:
 
 
 def test_otsu_threshold_rsf_cli_and_invalid_input(tmp_path: Path) -> None:
+    # hist 是 axis1 上的整数 histogram，不是原始振幅 trace；
+    # o1=10,d1=2 让阈值从 bin index 转成物理 bin 中心坐标。
     hist = np.array([6, 4, 0, 0, 4, 6], dtype=np.int32)
     assert otsu_threshold(hist, o1=10.0, d1=2.0) == 13.0
 
@@ -102,6 +109,8 @@ def test_otsu_threshold_rsf_cli_and_invalid_input(tmp_path: Path) -> None:
 
 
 def test_refl2ai_numeric_rsf_rsfdata_and_cli(tmp_path: Path) -> None:
+    # 2-D RSF fixture: NumPy shape=(n2,n1)，axis=1 表示 RSF n1 方向。
+    # 每一行是一条 reflectivity trace，a0 提供每条 trace 的初始 acoustic impedance。
     refl = np.array([[0.0, 0.2, -0.2], [0.1, 0.0, 0.25]], dtype=np.float32)
     a0 = np.array([1000.0, 2000.0], dtype=np.float32)
     expected = np.array(
@@ -125,6 +134,7 @@ def test_refl2ai_numeric_rsf_rsfdata_and_cli(tmp_path: Path) -> None:
 
     source = RSFData(refl, _header_2d(n1=3, n2=2))
     result = source.refl2ai(a0, axis=1)
+    # no-inplace 断言防止递推 impedance 更新误写回输入 reflectivity。
     assert result is not source
     np.testing.assert_allclose(result.numpy(), expected, rtol=1e-6)
     np.testing.assert_array_equal(source.numpy(), refl)
@@ -151,6 +161,8 @@ def test_refl2ai_numeric_rsf_rsfdata_and_cli(tmp_path: Path) -> None:
 
 
 def test_refl2ai_invalid_inputs() -> None:
+    # sfrefl2ai bounded subset 只接受标量 a0 或每条 trace 一个 a0；
+    # reflectivity=1 会导致 (1+r)/(1-r) 分母为零，必须显式拒绝。
     with pytest.raises(AI2ReflError, match="one initial impedance"):
         refl2ai(np.zeros((2, 3), dtype=np.float32), np.ones(3, dtype=np.float32), axis=1)
     with pytest.raises(AI2ReflError, match="reflectivity is 1"):

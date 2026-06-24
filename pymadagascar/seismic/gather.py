@@ -23,6 +23,9 @@ def cmp2shot(data: Any, *, dh: float, dy: float, oh: float, oy: float, positive:
     ``(n_shot, type * n_offset, n_time)``.
     """
 
+    # 对齐 ../src-master/system/seismic/Mcmp2shot.c 的规则 2-D geometry：
+    # RSF axes 为 n1=time, n2=offset, n3=cmp；NumPy shape=(n_cmp,n_offset,n_time)。
+    # 本 subset 不读取 SEG-Y trace headers，也不处理不规则 source/receiver 坐标。
     array = np.asarray(data)
     if array.ndim != 3:
         raise GatherError("cmp2shot requires input shape (n_cmp, n_offset, n_time)")
@@ -42,6 +45,7 @@ def cmp2shot(data: Any, *, dh: float, dy: float, oh: float, oy: float, positive:
 
     n_shot = (n_cmp - 1) // trace_type + n_offset
     output = np.zeros((n_shot, trace_type * n_offset, n_time), dtype=array.dtype)
+    # 三重循环保留 upstream 的离散索引关系；未落入规则 geometry 的位置填零。
     for ishot in range(n_shot):
         for ioffset in range(n_offset):
             for itype in range(trace_type):
@@ -71,6 +75,9 @@ def shot2cmp(
     ``(n_cmp, ceil(n_offset / type), n_time)`` where ``type = round(ds / dh)``.
     """
 
+    # 对齐 ../src-master/system/seismic/Mshot2cmp.c：
+    # 输入 RSF axes 为 n1=time, n2=offset, n3=shot；NumPy shape=(n_shot,n_offset,n_time)。
+    # M3-5 bounded subset 只支持 upstream 默认 half=y，不实现 mask side output。
     array = np.asarray(data)
     if array.ndim != 3:
         raise GatherError("shot2cmp requires input shape (n_shot, n_offset, n_time)")
@@ -93,6 +100,8 @@ def shot2cmp(
     n_cmp = n_shot * trace_type + n_offset - 1
     n_output_offset = (n_offset + trace_type - 1) // trace_type
     output = np.zeros((n_cmp, n_output_offset, n_time), dtype=array.dtype)
+    # output 的 n_cmp 对应 Madagascar 输出 axis3=Midpoint；
+    # output_offset 是压缩后的 offset axis2 位置。
     for icmp in range(n_cmp):
         output_offset = 0
         for ioffset in range(icmp % trace_type, n_offset + icmp % trace_type, trace_type):
@@ -121,6 +130,8 @@ def cmp2shot_rsf(
         raise GatherError("cmp2shot_rsf requires an RSF with n1=time, n2=offset, n3=cmp")
     offset_axis = cube.axis(2)
     cmp_axis = cube.axis(3)
+    # axis2/axis3 的 d/o 决定规则 geometry 的整数 type；
+    # 这里用 RSF header 传入的 offset/CMP 采样，不读取外部 geometry table。
     result = cmp2shot(
         rsf.data,
         dh=offset_axis.d,
@@ -161,6 +172,8 @@ def shot2cmp_rsf(
         raise GatherError("shot2cmp_rsf requires an RSF with n1=time, n2=offset, n3=shot")
     offset_axis = cube.axis(2)
     shot_axis = cube.axis(3)
+    # shot2cmp 的 source mapping 是 Mshot2cmp.c；输出 header 将 axis3 改为 Midpoint。
+    # 本函数只写主输出，不写 upstream 可选 mask side output。
     result = shot2cmp(
         rsf.data,
         dh=offset_axis.d,

@@ -22,6 +22,9 @@ def otsu_threshold(
 ) -> float:
     """Return the Otsu threshold for a one-dimensional integer histogram."""
 
+    # 对齐 ../src-master/system/generic/Motsu.c：
+    # 输入不是原始振幅数据，而是 axis1 上的一维整数 histogram。
+    # 返回值落在 bin 中心：o1 + (threshold_index + 0.5) * d1。
     hist = np.asarray(histogram)
     if hist.ndim != 1:
         raise OtsuError("otsu_threshold expects a 1D histogram")
@@ -42,6 +45,8 @@ def otsu_threshold(
     max_variance = -1.0
 
     for index, count in enumerate(counts):
+        # Otsu 的 between-class variance 只依赖直方图累计权重；
+        # 这里保持全局 1-D histogram 语义，不实现 axis-wise 数据阈值 convenience。
         weight1 += int(count)
         if weight1 == 0:
             continue
@@ -68,6 +73,8 @@ def otsu_rsf(input_path: str | Path) -> float:
         raise OtsuError("sfotsu expects a 1D histogram RSF input")
     o1 = float(rsf.header.get("o1", 0.0))
     d1 = float(rsf.header.get("d1", 1.0))
+    # RSF axis1 的 o1/d1 定义 histogram bin 坐标；sfotsu 是文本阈值输出，
+    # 因此没有 RSFData chain method，也不写新的 RSF 数据集。
     return otsu_threshold(data, o1=o1, d1=d1)
 
 

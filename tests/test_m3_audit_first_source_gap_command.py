@@ -25,9 +25,13 @@ def _poly_header(vertices: np.ndarray) -> RSFHeader:
 
 
 def test_polymask_values_rsfdata_cli_and_no_inplace(tmp_path: Path) -> None:
+    # 2-D grid fixture: RSF n1=5,n2=4 对应 NumPy shape=(4,5)。
+    # polygon 顶点表使用 upstream poly= 约定：n1=2 为 x/y，n2=nv 为顶点个数。
     grid = np.arange(20, dtype=np.float32).reshape(4, 5)
     vertices = np.array([[1.0, 4.0, 4.0, 1.0], [1.0, 1.0, 3.0, 3.0]], dtype=np.float32)
     expected = np.zeros((4, 5), dtype=np.int32)
+    # Franklin pnpoly crossing rule 不把所有边界点统一算作 inside；
+    # 对这个矩形，内部 mask 落在 y index 1..2、x index 1..3。
     expected[1:3, 1:4] = 1
 
     np.testing.assert_array_equal(polymask(grid.shape, vertices), expected)
@@ -47,6 +51,7 @@ def test_polymask_values_rsfdata_cli_and_no_inplace(tmp_path: Path) -> None:
 
     source = RSFData(grid, _grid_header())
     chained = source.polymask(poly_path)
+    # RSFData.polymask 读取 poly= side input 并返回新 mask dataset，不改原 grid。
     assert chained is not source
     np.testing.assert_array_equal(chained.numpy(), expected)
     np.testing.assert_array_equal(source.numpy(), grid)
@@ -72,6 +77,8 @@ def test_polymask_values_rsfdata_cli_and_no_inplace(tmp_path: Path) -> None:
 
 
 def test_polymask_invalid_params_and_help(tmp_path: Path) -> None:
+    # invalid params 覆盖 bounded subset 边界：只支持 2-D RSF grid、
+    # 至少三个有限顶点，以及 float RSF vertex table。
     with pytest.raises(PolyMaskError, match="2-D grid"):
         polymask((3, 3, 1), np.zeros((2, 3), dtype=np.float32))
     with pytest.raises(PolyMaskError, match="at least three"):

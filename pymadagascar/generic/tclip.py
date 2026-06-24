@@ -22,6 +22,9 @@ def tclip(
 ) -> np.ndarray:
     """Apply the bounded ``sftclip`` lower/upper threshold transform."""
 
+    # 对齐 ../src-master/system/generic/Mtclip.c：
+    # 本 bounded subset 只处理实数数组，低于 lowercut 的样点置 0，
+    # 高于 uppercut 的样点置 1，中间样点保持原值；不扩展额外滤波语义。
     lower = float(lowercut)
     upper = float(uppercut)
     if lower > upper:
@@ -45,6 +48,8 @@ def tclip_rsf(
     rsf = read_rsf(input_path)
     result = tclip(rsf.data, lowercut=lowercut, uppercut=uppercut)
     header = rsf.header.copy()
+    # 输出保持输入 RSF shape/header，只增加 source/subset 相关 provenance；
+    # 这样 RSFData chain 的 no-inplace 行为可由外层包装统一保证。
     header["tclip_source"] = "../src-master/system/generic/Mtclip.c"
     header["tclip_lowercut"] = float(lowercut)
     header["tclip_uppercut"] = float(uppercut)

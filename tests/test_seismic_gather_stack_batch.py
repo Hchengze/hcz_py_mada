@@ -117,6 +117,8 @@ def _header_table_header(nkey: int, ntr: int) -> RSFHeader:
 
 
 def test_cmp2shot_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> None:
+    # CMP gather fixture: RSF axes n1=time,n2=offset,n3=CMP；
+    # NumPy shape=(n_cmp,n_offset,n_time)。dh/dy=2 对应 upstream 的 integer type。
     data = np.arange(4 * 2 * 3, dtype=np.float32).reshape(4, 2, 3)
     input_path = tmp_path / "cmp.rsf"
     output_path = tmp_path / "shot.rsf"
@@ -130,6 +132,8 @@ def test_cmp2shot_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> 
     result = _run_cli("cmp2shot", [str(input_path), "out=" + str(cli_path)], tmp_path)
 
     expected = np.zeros((3, 4, 3), dtype=np.float32)
+    # expected 逐项复现 Mcmp2shot.c 的规则 geometry 索引关系；
+    # 没有对应 shot/offset 的位置保持零填充。
     for ishot in range(3):
         for ioffset in range(2):
             for itype in range(2):
@@ -154,6 +158,8 @@ def test_cmp2shot_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> 
 
 
 def test_shot2cmp_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> None:
+    # Shot gather fixture: RSF axes n1=time,n2=offset,n3=shot；
+    # NumPy shape=(n_shot,n_offset,n_time)。M3-5 subset 只验证 half=y。
     data = np.arange(3 * 4 * 2, dtype=np.float32).reshape(3, 4, 2)
     input_path = tmp_path / "shot.rsf"
     output_path = tmp_path / "cmp.rsf"
@@ -167,6 +173,8 @@ def test_shot2cmp_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> 
     result = _run_cli("shot2cmp", [str(input_path), "out=" + str(cli_path)], tmp_path)
 
     expected = np.zeros((9, 2, 2), dtype=np.float32)
+    # expected 对齐 Mshot2cmp.c 的 midpoint/offset 重排；
+    # output_offset 是压缩后的 CMP gather offset axis2。
     for icmp in range(9):
         output_offset = 0
         for ioffset in range(icmp % 2, 4 + icmp % 2, 2):
@@ -195,6 +203,8 @@ def test_shot2cmp_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> 
 
 
 def test_intbin_values_header_chain_cli_and_bounds(tmp_path: Path) -> None:
+    # 数值 header table fixture: headers 的列是整数 x/y key，行数与 trace 数一致。
+    # 这不是 SEG-Y trace header；它是 pymadagascar 的普通 RSF numeric table subset。
     traces = np.array(
         [
             [1.0, 1.5],
@@ -223,6 +233,7 @@ def test_intbin_values_header_chain_cli_and_bounds(tmp_path: Path) -> None:
     )
 
     expected = np.zeros((2, 2, 2), dtype=np.float32)
+    # bounds 只保留 x/y in [0,1] 的 trace；越界 header [3,3] 被丢弃为零。
     expected[0, 0] = traces[0]
     expected[0, 1] = traces[1]
     expected[1, 0] = traces[2]
@@ -243,6 +254,8 @@ def test_intbin_values_header_chain_cli_and_bounds(tmp_path: Path) -> None:
 
 
 def test_intbin3_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> None:
+    # 3-D integer binning fixture 在 x/y/z key 上生成规则网格；
+    # 输出 NumPy shape=(nz,ny,nx,ntime)，RSF header 对应 n1=time,n2=x,n3=y,n4=z。
     traces = np.array(
         [
             [1.0, 1.5],
@@ -266,6 +279,7 @@ def test_intbin3_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> N
     result = _run_cli("intbin3", [str(input_path), "head=" + str(header_path), "out=" + str(cli_path)], tmp_path)
 
     expected = np.zeros((2, 2, 2, 2), dtype=np.float32)
+    # expected 的索引顺序刻意按 NumPy (z,y,x,time) 写出，避免误读 RSF axis 顺序。
     expected[0, 0, 0] = traces[0]
     expected[1, 0, 1] = traces[1]
     expected[0, 1, 0] = traces[2]
@@ -287,6 +301,7 @@ def test_intbin3_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> N
 
 @pytest.mark.parametrize("module", ["cmp2shot", "shot2cmp", "intbin", "intbin3"])
 def test_console_script_help_smoke(module: str) -> None:
+    # CLI help smoke 不验证数值，只防止 module entry 和 Madagascar-style 参数说明漂移。
     result = subprocess.run(
         [sys.executable, "-m", f"pymadagascar.cli.{module}", "--help"],
         cwd=PROJECT_ROOT,

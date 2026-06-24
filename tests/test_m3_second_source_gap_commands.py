@@ -29,6 +29,8 @@ def _header_3d(n1: int, n2: int, n3: int) -> RSFHeader:
 
 
 def test_grad2_numeric_rsf_rsfdata_and_no_inplace(tmp_path: Path) -> None:
+    # 2-D RSF plane: NumPy shape=(n2,n1)。线性斜坡让 Sobel stencil 在内部
+    # 得到常数 gradient squared，外圈保持 edge.c 的 zero-edge 行为。
     data = np.arange(25, dtype=np.float32).reshape(5, 5)
     expected = np.zeros_like(data)
     expected[1:-1, 1:-1] = 1664.0
@@ -54,6 +56,8 @@ def test_grad2_numeric_rsf_rsfdata_and_no_inplace(tmp_path: Path) -> None:
 
 
 def test_grad3_numeric_rsf_rsfdata_and_cli(tmp_path: Path) -> None:
+    # 3-D RSF block: NumPy shape=(n3,n2,n1)。
+    # dim=0 验证梯度平方，dim=1/2/3 分别验证 edge.c 的三个 Sobel component。
     data = np.arange(125, dtype=np.float32).reshape(5, 5, 5)
     squared = grad3(data, dim=0)
     component = grad3(data, dim=1)
@@ -97,12 +101,15 @@ def test_grad3_numeric_rsf_rsfdata_and_cli(tmp_path: Path) -> None:
 
 
 def test_lpad_numeric_rsf_mask_rsfdata_and_cli(tmp_path: Path) -> None:
+    # sflpad fixture: RSF axes 为 n1=2,n2=3,n3=4，对应 NumPy shape=(4,3,2)。
+    # jump=2 后只在 axis2/axis3 的偶数位置保留原 trace/plane，其余补零。
     data = np.arange(2 * 3 * 4, dtype=np.float32).reshape(4, 3, 2)
     result = lpad(data, jump=2)
     expected = np.zeros((8, 6, 2), dtype=np.float32)
     expected[::2, ::2, :] = data
     expected_mask = np.zeros((8, 6, 2), dtype=np.int32)
     expected_mask[::2, ::2, :] = 1
+    # mask side output 中 1 表示 upstream Mlpad.c 保留的原始样点位置。
     np.testing.assert_array_equal(result.data, expected)
     np.testing.assert_array_equal(result.mask, expected_mask)
     np.testing.assert_array_equal(data, np.arange(24, dtype=np.float32).reshape(4, 3, 2))
@@ -151,6 +158,8 @@ def test_lpad_numeric_rsf_mask_rsfdata_and_cli(tmp_path: Path) -> None:
 
 
 def test_second_gap_invalid_params_and_help(tmp_path: Path) -> None:
+    # 参数错误覆盖 source-backed bounded subset 的边界：
+    # grad2/grad3 需要足够维度，lpad 需要至少 RSF axis1/axis2 和正 jump。
     with pytest.raises(EdgeError, match="at least two axes"):
         grad2(np.ones(4, dtype=np.float32))
     with pytest.raises(EdgeError, match="dim"):

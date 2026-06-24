@@ -35,6 +35,9 @@ def lpad(data: Any, *, jump: int = 2) -> LPadResult:
     if ndim < 2:
         raise LPadError("lpad requires at least two RSF axes")
 
+    # 对齐 ../src-master/system/generic/Mlpad.c：
+    # upstream 在 RSF axis2 上插入 zero traces，并在存在 axis3 时插入 zero planes。
+    # NumPy shape 与 RSF 轴顺序相反，因此先反转成 [n1,n2,n3,...] 再更新长度。
     rsf_dims = list(reversed(array.shape))
     if rsf_dims[1] > 1:
         rsf_dims[1] *= jump_value
@@ -44,6 +47,8 @@ def lpad(data: Any, *, jump: int = 2) -> LPadResult:
 
     output = np.zeros(output_shape, dtype=array.dtype)
     mask = np.zeros(output_shape, dtype=np.int32)
+    # target 表示原始样点在放大后网格中的位置；mask side output 用 1 标出
+    # 被保留的原始 trace/plane，0 表示插入的空 trace/plane。
     target = tuple(
         slice(None, None, jump_value) if _should_interleave_numpy_axis(axis, array.shape) else slice(None)
         for axis in range(ndim)
@@ -65,6 +70,7 @@ def lpad_rsf(
     rsf = read_rsf(input_path)
     result = lpad(rsf.data, jump=jump)
     output_header = _lpad_header(rsf.header, result.data.shape, jump=int(jump))
+    # bounded subset 保持 in-memory 数组语义；不声明 upstream streaming/pipe 行为。
     output_header["lpad_source"] = "../src-master/system/generic/Mlpad.c"
     output_header["lpad_jump"] = int(jump)
     written = write_rsf(output_path, result.data.astype(rsf.data.dtype, copy=False), output_header)
@@ -81,6 +87,8 @@ def _lpad_header(header: Any, shape: tuple[int, ...], *, jump: int) -> Any:
     cube = Hypercube.from_header(output_header)
     output_header.set_dimensions_from_shape(shape)
     ndim = len(shape)
+    # 插值式 lpad 不是改变物理范围，而是在 axis2/axis3 之间补零；
+    # 因此 n2/n3 变大，d2/d3 按 jump 缩小，o2/o3 保持输入 origin。
     if cube.ndim >= 2 and cube.axis(2).n > 1:
         axis = cube.axis(2)
         output_header["d2"] = axis.d / jump
