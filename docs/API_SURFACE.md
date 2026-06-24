@@ -82,7 +82,7 @@ User-facing CLI modules live under `pymadagascar.cli` and are runnable as:
 python -m pymadagascar.cli.<name>
 ```
 
-The CLI inventory currently contains 166 user-facing modules. Every module is
+The CLI inventory currently contains 167 user-facing modules. Every module is
 expected to import cleanly, expose `main()`, and provide a `__main__` guard.
 `tools/check_cli_inventory.py` is the authority for the module inventory check.
 
@@ -93,7 +93,7 @@ source-backed Madagascar command coverage.
 ### Console scripts
 
 Registered console scripts use the `pymada-<name>` convention and are declared
-in `pyproject.toml`. The current registered inventory is 64 scripts.
+in `pyproject.toml`. The current registered inventory is 65 scripts.
 
 Console scripts are checked by package metadata tests and release tools. A
 registered `pymada-*` command should have a matching CLI module and help smoke
@@ -133,10 +133,10 @@ Coverage rules:
 - Workflow/prototype surfaces do not increase command coverage.
 - Denominators must not be changed as part of ordinary feature work.
 
-At the M3-5 baseline, conservative coverage is:
+At the M3-6 baseline, conservative coverage is:
 
-- Full Madagascar/alias command surface: `128 / 2114 = 6.05%`.
-- Core `system/` + `plot/main`: `115 / 301 = 38.21%`.
+- Full Madagascar/alias command surface: `129 / 2114 = 6.10%`.
+- Core `system/` + `plot/main`: `116 / 301 = 38.54%`.
 - Direct `system/main`: `37 / 39 = 94.87%`.
 
 ## Rules For New API Surface

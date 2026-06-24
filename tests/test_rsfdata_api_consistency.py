@@ -58,6 +58,7 @@ EXPECTED_CHAIN_METHODS = {
     "grad2",
     "grad3",
     "lpad",
+    "polymask",
     "mutter",
     "diff",
     "abs",

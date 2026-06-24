@@ -28,6 +28,23 @@ concise and is not an API stability source or coverage source. This document
 remains authoritative for stable, stable-subset, partial, prototype,
 simplified-prototype, optional, and Pythonic-convenience boundaries.
 
+## M3-6 Audit-First Official Source Gap Fourth Pass
+
+M3-6 adds one bounded stable-subset command surface for `sfpolymask` without
+adding root exports. It maps to `../src-master/system/generic/Mpolymask.c` and
+supports regular 2D RSF grid masks using the input axes `n1/n2/o1/o2/d1/d2`
+and a floating-point `poly=` vertex table with `n1=2`, `n2=nv`.
+
+The bounded subset outputs `int32` 0/1 masks through
+`pymadagascar.generic.polymask`, `polymask_rsf`, `RSFData.polymask(...)`,
+`python -m pymadagascar.cli.polymask`, and `pymada-polymask`. It does not
+implement multi-dimensional masks, polygon repair, plotting/VPlot behavior,
+non-RSF vertex formats, or boundary-specialized geometry semantics beyond the
+source point-in-polygon test. M3-6 deliberately leaves `Mbandpass.c`,
+`Mricker1.c`, `Mmodrefl.c`, `Mmodrefl2.c`, `Mlinsincos.c`, `Mstretch.c`,
+`Mshifts.c`, `Mpow.c`, and plot/main rendering commands deferred, already
+counted, or Pythonic-only.
+
 ## M3-5 Strict Official Source Gap Third Pass
 
 M3-5 adds one bounded stable-subset command surface for `sfshot2cmp` without

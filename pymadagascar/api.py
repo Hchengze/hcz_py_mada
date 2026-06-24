@@ -20,6 +20,7 @@ from pymadagascar.generic.laplac import laplac_rsf
 from pymadagascar.generic.lpad import lpad_rsf
 from pymadagascar.generic.noise import noise_rsf
 from pymadagascar.generic.pad import pad_rsf
+from pymadagascar.generic.polymask import polymask_rsf
 from pymadagascar.generic.remap import remap1_rsf, spline_rsf, t2warp_rsf
 from pymadagascar.generic.rotate import rotate_rsf
 from pymadagascar.generic.sampling import linear_rsf, max1_rsf, slice_rsf
@@ -1174,6 +1175,17 @@ class RSFData:
         """Interleave zero traces/planes using the bounded ``sflpad`` subset."""
 
         return self._from_file_op(lpad_rsf, jump=jump, inplace=inplace)
+
+    def polymask(self, poly: Any, *, inplace: bool = False) -> "RSFData":
+        """Create a bounded ``sfpolymask`` 2-D polygon mask."""
+
+        return self._from_binary_file_op(
+            polymask_rsf,
+            poly,
+            operand_name="poly.rsf",
+            operand_axis=1,
+            inplace=inplace,
+        )
 
     def abs(self, *, inplace: bool = False) -> "RSFData":
         """Return sample magnitudes; complex input becomes real magnitude."""

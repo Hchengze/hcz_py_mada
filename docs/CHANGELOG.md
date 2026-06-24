@@ -8,6 +8,18 @@ optional compatibility checks.
 
 ### Added
 
+- M3-6 audit-first official source gap fourth pass adds source-aligned
+  `sfpolymask`, aligned to `../src-master/system/generic/Mpolymask.c`. It adds
+  `pymadagascar.generic.polymask.polymask`, `polymask_rsf`,
+  `RSFData.polymask(...)`, `python -m pymadagascar.cli.polymask`, and
+  `pymada-polymask` without adding new root exports.
+- M3-6 command-surface coverage increases the numerator only:
+  full coverage is `129 / 2114`, core `system/` + `plot/main` coverage is
+  `116 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No GitHub Actions Windows-only diagnostic,
+  Forward Modeling, DAS/Localization/solver branch, SciPy dependency,
+  migration/RTM/DMO/Kirchhoff/Gazdag system, original Madagascar source, tag,
+  release, or force-push work is included.
 - M3-5 strict official source gap third pass adds source-aligned `sfshot2cmp`,
   aligned to `../src-master/system/seismic/Mshot2cmp.c`. It adds
   `pymadagascar.seismic.gather.shot2cmp`, `shot2cmp_rsf`,

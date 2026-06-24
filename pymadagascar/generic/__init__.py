@@ -62,6 +62,7 @@ from .math import MathExpressionError, math_rsf, safe_eval_math
 from .mask import MaskError, mask_rsf
 from .noise import NoiseError, add_noise, noise, noise_rsf
 from .pad import PadError, pad_rsf
+from .polymask import PolyMaskError, polymask, polymask_rsf
 from .put import PutHeaderError, put_header
 from .reverse import ReverseError, reverse_rsf
 from .remap import RemapError, remap1, remap1_rsf, spline, spline_rsf, t2warp, t2warp_rsf
@@ -116,6 +117,7 @@ __all__ = [
     "LaplacError",
     "MaskError",
     "PadError",
+    "PolyMaskError",
     "PutHeaderError",
     "TransposeError",
     "WindowError",
@@ -230,6 +232,8 @@ __all__ = [
     "otsu_rsf",
     "otsu_threshold",
     "pad_rsf",
+    "polymask",
+    "polymask_rsf",
     "put_header",
     "read_header_table",
     "real_rsf",

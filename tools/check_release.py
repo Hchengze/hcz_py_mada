@@ -83,8 +83,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 64:
-        raise RuntimeError("expected exactly 64 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 65:
+        raise RuntimeError("expected exactly 65 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -109,6 +109,7 @@ def _check_lower_level_imports() -> None:
     from pymadagascar.generic.header_table import read_header_table, write_header_table
     from pymadagascar.generic.interleave import interleave_rsf
     from pymadagascar.generic.lpad import lpad
+    from pymadagascar.generic.polymask import polymask
     from pymadagascar.generic.linear_operator import MatrixOperator, conjugate_gradient_normal, dot_test
     from pymadagascar.generic.rotate import rotate_rsf
     from pymadagascar.generic.remap import remap1, spline, t2warp
@@ -177,6 +178,7 @@ def _check_lower_level_imports() -> None:
         "generic.tpow_rsf": tpow_rsf,
         "generic.interleave_rsf": interleave_rsf,
         "generic.lpad": lpad,
+        "generic.polymask": polymask,
         "generic.rotate_rsf": rotate_rsf,
         "generic.remap1": remap1,
         "generic.spline": spline,

@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 166 |
-| Registered `pymada-*` console scripts | 64 |
-| Pytest files | 99 |
+| User-facing CLI modules | 167 |
+| Registered `pymada-*` console scripts | 65 |
+| Pytest files | 100 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `128 / 2114 = 6.05%` |
-| Core `system/` + `plot/main` command surface | `115 / 301 = 38.21%` |
+| Full Madagascar/alias command surface | `129 / 2114 = 6.10%` |
+| Core `system/` + `plot/main` command surface | `116 / 301 = 38.54%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -50,7 +50,7 @@ D:\HczApp\Anaconda\envs\mywork\python.exe
 Latest Windows full-suite result:
 
 ```text
-1183 passed, 95 skipped
+1185 passed, 95 skipped
 ```
 
 Skip summary:
@@ -282,6 +282,18 @@ are no remaining comparison bridge failures.
   GitHub Actions Windows-only diagnostics, continue Forward Modeling,
   DAS/Localization/solver, workflow, migration/RTM/DMO/Kirchhoff/Gazdag,
   original-source, SciPy-dependency, or coverage-denominator work.
+- M3-6: audit-first official source gap fourth pass adds only source-aligned
+  `sfpolymask`, mapped to `../src-master/system/generic/Mpolymask.c`. The
+  bounded subset creates an `int32` 0/1 mask for a regular 2D RSF grid from a
+  floating-point `poly=` vertex table with `n1=2`, `n2=nv`. It adds Python
+  topic API, `RSFData.polymask(...)`, `python -m pymadagascar.cli.polymask`,
+  `pymada-polymask`, tests, docs, and coverage mapping without root exports.
+  `Mbandpass.c`, `Mricker1.c`, `Mmodrefl.c`, `Mmodrefl2.c`, `Mlinsincos.c`,
+  `Mstretch.c`, `Mshifts.c`, `Mpow.c`, and plot/VPlot commands remain
+  deferred, Pythonic convenience, already counted, or too high-risk. M3-6 does
+  not handle GitHub Actions Windows-only diagnostics, continue Forward
+  Modeling, DAS/Localization/solver, workflow, migration/RTM/DMO/Kirchhoff/
+  Gazdag, original-source, SciPy-dependency, or coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -724,7 +736,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 166 module entry points, 64 registered console scripts.
+- `pymadagascar/cli`: 167 module entry points, 65 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,
