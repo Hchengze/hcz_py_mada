@@ -98,7 +98,7 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 54 registered console scripts are:
+The 57 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
@@ -108,9 +108,10 @@ pymada-transp, pymada-fft, pymada-fft1, pymada-bandpass, pymada-byte, pymada-smo
 pymada-boxsmooth, pymada-laplac, pymada-trapez, pymada-cosft, pymada-spectra2,
 pymada-remap1, pymada-spline, pymada-t2warp, pymada-mask, pymada-cut, pymada-reverse, pymada-pad,
 pymada-spray, pymada-scale, pymada-rotate, pymada-stack,
-pymada-matmult, pymada-match, pymada-linefit,
+pymada-matmult, pymada-match, pymada-linefit, pymada-agc,
 pymada-avo, pymada-fold, pymada-ai2refl,
 pymada-nmo, pymada-halfint, pymada-moveout,
+pymada-slant, pymada-vscan,
 pymada-cos2ang, pymada-isin2ang, pymada-map2coh,
 pymada-cmp2shot, pymada-intbin, pymada-intbin3
 ```
@@ -132,12 +133,15 @@ pymada-t2warp win.rsf out=t2warp.rsf pad=9
 pymada-matmult vector.rsf matrix.rsf out=matmult.rsf
 pymada-match filter.rsf data.rsf out=matched.rsf
 pymada-linefit table.rsf out=linefit.rsf n=100 o=0 d=1
+pymada-agc gather.rsf out=agc.rsf rect=0.3 axis=1
 pymada-avo gather.rsf out=avo.rsf half=n
 pymada-fold headers.rsf out=fold.rsf n1=32 n2=64 n3=16 o1=0 o2=1 o3=1 d1=25 d2=1 d3=1
 pymada-ai2refl impedance.rsf out=refl.rsf axis=1
 pymada-nmo gather.rsf out=nmo.rsf velocity=2000 stretch=0
 pymada-halfint trace.rsf out=halfint.rsf axis=1
 pymada-moveout times.rsf out=moveout.rsf n1=500 o1=0 d1=0.004
+pymada-slant gather.rsf out=slant.rsf p0=-0.001 dp=0.0005 np=5
+pymada-vscan gather.rsf out=vscan.rsf v0=1500 dv=100 nv=16 half=n stretch=0
 pymada-cos2ang panel.rsf out=cosang.rsf axis=2 na=5 a0=0 da=15
 pymada-isin2ang panel.rsf out=sinang.rsf axis=2 na=5 a0=15 da=15
 pymada-map2coh semblance.rsf map=parameter.rsf out=coh.rsf nv=32 v0=1500 dv=50
@@ -153,12 +157,12 @@ pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 54-entry console-script inventory
+authoritative installed command list is the 57-entry console-script inventory
 above.
 
 ## CLI Module Inventory
 
-There are 157 user-facing CLI modules:
+There are 159 user-facing CLI modules:
 
 ```text
 abs, acoustic2d, add, agc, ai2refl, attr, autocorr, avo, bandenergy, bandpass, bandstop, bin, boxsmooth,
@@ -174,9 +178,9 @@ laplac, linear, linefit, localrms, log, lowpass, mask, math, match, matmult, max
 map2coh, moveout, mute, mutter, nmo, noise, normalize, notch, pad, pow, psd, put, quantile, radon,
 range, real,
 remap1, reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,
-semblance, shifts, sign, slice, smooth, snr, specnorm, spectra, spectra2, spectrogram,
+semblance, shifts, sign, slant, slice, smooth, snr, specnorm, spectra, spectra2, spectrogram,
 spike, spray, spline, sqrt, stack, stacks, std, t2warp, threshold, tile, tpow, transfer, trapez, transp,
-var, welch, welchcsd, whiten, wiggle, window, windowfunc, xcorr
+var, vscan, welch, welchcsd, whiten, wiggle, window, windowfunc, xcorr
 ```
 
 Module-only examples:

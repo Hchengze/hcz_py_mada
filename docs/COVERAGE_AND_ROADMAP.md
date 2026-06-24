@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `118 / 2114 = 5.58%` | Conservative denominator including `user/*` and aliases; M2-4 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `105 / 301 = 34.88%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `121 / 2114 = 5.72%` | Conservative denominator including `user/*` and aliases; M3-1 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `108 / 301 = 35.88%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -2223,9 +2223,12 @@ C-11.
 | `sfmatmult` | `../src-master/system/generic/Mmatmult.c` | bounded real matrix-vector multiplication subset with optional `adj=`; no complex, sparse, batched, solver, or out-of-core behavior |
 | `sfmatch` | `../src-master/system/generic/Mmatch.c` | bounded real symmetric matching-filter loop subset; no shaping-filter solver, frequency-domain matching, or streaming |
 | `sflinefit` | `../src-master/system/generic/Mlinefit.c` | bounded ordinary least-squares line fit from an `n1=2` table; no pattern files, multi-trace batches, or robust regression |
+| `sfagc` | `../src-master/system/generic/Magc.c` | bounded one-axis local-RMS AGC with physical `rect=` conversion; upstream smooths absolute amplitudes with multi-axis triangle filtering and `repeat=` |
 | `sfavo` | `../src-master/system/seismic/Mavo.c` | bounded real CMP-gather AVO intercept/gradient least-squares subset over RSF axis 2; no CDPtype shifts, SEG-Y gather handling, or production AVO workflow |
 | `sffold` | `../src-master/system/seismic/Mfold.c` | bounded numeric header-table 3D fold histogram subset; no SEG-Y key lookup layer or trace-header ecology |
 | `sfai2refl` | `../src-master/system/seismic/Mai2refl.c` | bounded one-axis acoustic impedance to reflectivity conversion; no angle-dependent or elastic reflectivity modeling |
+| `sfslant` | `../src-master/system/seismic/Mslant.c` with `slant.c` | bounded adjoint linear slant-stack wrapper over the existing direct time-domain Radon pair; no rho filter, anti-alias stretch, `p1=`, modeling direction, or high-resolution Radon |
+| `sfvscan` | `../src-master/system/seismic/Mvscan.c` | bounded velocity-panel semblance wrapper over the existing small-gather semblance implementation; no differential/AVO semblance, masks, weighting, slowness/squared velocity, or velocity picking |
 | `sfcos2ang` | `../src-master/system/seismic/Mcos2ang.c` | bounded inverse-cosine stack-panel-to-angle linear resampling; no `top=` velocity scaling or ray-parameter model |
 | `sfisin2ang` | `../src-master/system/seismic/Misin2ang.c` | bounded inverse-sine stack-panel-to-angle linear resampling; no anisotropic angle transform or ray-parameter model |
 | `sfmap2coh` | `../src-master/system/seismic/Mmap2coh.c` | bounded parameter-map accumulation into a velocity/coherence axis; no production coherence or local-similarity workflow |

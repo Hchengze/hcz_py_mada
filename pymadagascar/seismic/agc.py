@@ -48,7 +48,13 @@ def agc_rsf(
     dtype = real_output_dtype(rsf.data)
     data = np.asarray(rsf.data, dtype=dtype)
     result = _agc_along_axis(data, numpy_axis(axis, cube.ndim), window, eps)
-    return write_rsf(output_path, np.ascontiguousarray(result.astype(dtype, copy=False)), rsf.header.copy())
+    header = rsf.header.copy()
+    header["agc_source"] = "../src-master/system/generic/Magc.c"
+    header["agc_madagascar_subset"] = "local_rms_one_axis"
+    header["agc_rect"] = rect
+    header["agc_axis"] = axis
+    header["agc_window_samples"] = window
+    return write_rsf(output_path, np.ascontiguousarray(result.astype(dtype, copy=False)), header)
 
 
 def _agc_along_axis(data: np.ndarray, axis: int, window: int, eps: float) -> np.ndarray:

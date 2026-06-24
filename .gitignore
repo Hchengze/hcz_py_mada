@@ -12,6 +12,7 @@ dist/
 _skbuild/
 
 _tmp_*/
+.tmp_pytest/
 *_output/
 examples/_output/
 examples/*_output/

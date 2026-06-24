@@ -83,8 +83,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 54:
-        raise RuntimeError("expected exactly 54 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 57:
+        raise RuntimeError("expected exactly 57 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]

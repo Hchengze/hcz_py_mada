@@ -57,6 +57,8 @@ from pymadagascar.seismic.map2coh import map2coh_rsf
 from pymadagascar.seismic.moveout import moveout_rsf
 from pymadagascar.seismic.mute import mute_rsf, mutter_rsf
 from pymadagascar.seismic.nmo import inverse_nmo, nmo_correct
+from pymadagascar.seismic.radon import linear_radon
+from pymadagascar.seismic.semblance import semblance_scan
 from pymadagascar.seismic.stack import stack_rsf, stacks_rsf
 from pymadagascar.signal.calculus import causint_rsf, deriv_rsf, integral_rsf
 from pymadagascar.signal.conditioning import clip2_rsf, shifts_rsf
@@ -1656,6 +1658,117 @@ class RSFData:
         """Apply local RMS automatic gain control."""
 
         return self._from_file_op(agc_rsf, rect=rect, axis=axis, eps=eps, inplace=inplace)
+
+    def slant(
+        self,
+        *,
+        pmin: float,
+        pmax: float,
+        dp: float,
+        axis: int = 1,
+        offset_axis: int = 2,
+        offset: Any | None = None,
+        normalize: bool = False,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply a bounded sfslant-style adjoint slant stack."""
+
+        if offset is None:
+            return self._from_file_op(
+                linear_radon,
+                pmin=pmin,
+                pmax=pmax,
+                dp=dp,
+                axis=axis,
+                offset_axis=offset_axis,
+                offset=None,
+                normalize=normalize,
+                inplace=inplace,
+            )
+        with tempfile.TemporaryDirectory(prefix="pymada_rsfdata_") as tmp:
+            directory = Path(tmp)
+            input_path = directory / "input.rsf"
+            output_path = directory / "output.rsf"
+            write_rsf(input_path, self._data, self._header.copy())
+            offset_path = self._write_operand(
+                directory,
+                offset,
+                "offset.rsf",
+                axis=offset_axis,
+            )
+            result = linear_radon(
+                input_path,
+                output_path,
+                pmin=pmin,
+                pmax=pmax,
+                dp=dp,
+                axis=axis,
+                offset_axis=offset_axis,
+                offset=offset_path,
+                normalize=normalize,
+            )
+            loaded = read_rsf(result.header_path or output_path)
+        return self._from_result(RSFArray(loaded.data, loaded.header), inplace=inplace)
+
+    def vscan(
+        self,
+        *,
+        vmin: float,
+        vmax: float,
+        dv: float,
+        axis: int = 1,
+        offset_axis: int = 2,
+        offset: Any | None = None,
+        half: bool = True,
+        h0: float = 0.0,
+        stretch: float | None = 0.5,
+        smooth: int = 0,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Compute a bounded sfvscan-style velocity semblance panel."""
+
+        if offset is None:
+            return self._from_file_op(
+                semblance_scan,
+                vmin=vmin,
+                vmax=vmax,
+                dv=dv,
+                axis=axis,
+                offset_axis=offset_axis,
+                offset=None,
+                half=half,
+                h0=h0,
+                stretch=stretch,
+                smooth=smooth,
+                inplace=inplace,
+            )
+        with tempfile.TemporaryDirectory(prefix="pymada_rsfdata_") as tmp:
+            directory = Path(tmp)
+            input_path = directory / "input.rsf"
+            output_path = directory / "output.rsf"
+            write_rsf(input_path, self._data, self._header.copy())
+            offset_path = self._write_operand(
+                directory,
+                offset,
+                "offset.rsf",
+                axis=offset_axis,
+            )
+            result = semblance_scan(
+                input_path,
+                output_path,
+                vmin=vmin,
+                vmax=vmax,
+                dv=dv,
+                axis=axis,
+                offset_axis=offset_axis,
+                offset=offset_path,
+                half=half,
+                h0=h0,
+                stretch=stretch,
+                smooth=smooth,
+            )
+            loaded = read_rsf(result.header_path or output_path)
+        return self._from_result(RSFArray(loaded.data, loaded.header), inplace=inplace)
 
     def avo(self, *, half: bool = True, inplace: bool = False) -> "RSFData":
         """Compute bounded sfavo intercept and gradient from RSF axis 2."""

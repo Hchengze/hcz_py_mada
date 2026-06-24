@@ -6,8 +6,8 @@ testing details live in the other current docs.
 ## Scope
 
 - pymadagascar is not a complete Madagascar clone.
-- Full command-surface coverage remains low: `118 / 2114 = 5.58%`.
-- Core `system/` + `plot/main` coverage is `105 / 301 = 34.88%`.
+- Full command-surface coverage remains low: `121 / 2114 = 5.72%`.
+- Core `system/` + `plot/main` coverage is `108 / 301 = 35.88%`.
 - `user/*`, VPlot, SCons/book, IWAVE/RVL, MPI/CUDA/PETSc, and large research
   program families are not near-term targets.
 - `PYMADAGASCAR_LEARNING_GUIDE.ipynb` is a concise learning notebook. It
@@ -116,7 +116,7 @@ testing details live in the other current docs.
 
 ## CLI and Compatibility
 
-- Only 54 commands are registered as `pymada-*` console scripts.
+- Only 57 commands are registered as `pymada-*` console scripts.
 - Other CLI modules must be called with `python -m pymadagascar.cli.<name>`.
 - Text output and floating-point details are not byte-identical to Madagascar.
 - Optional original Madagascar comparisons skip when upstream commands are not
@@ -234,6 +234,17 @@ testing details live in the other current docs.
   do not implement SEG-Y key-name lookup, inverse mode, map/mask side outputs,
   duplicate-trace stacking policy, production binning, reconstruction, DMO,
   migration, or imaging.
+- M3-1 `sfagc` maps to `../src-master/system/generic/Magc.c` but preserves the
+  existing local-RMS one-axis subset. It does not implement upstream multi-axis
+  triangle smoothing, absolute-amplitude smoothing, streaming, or `repeat=`.
+- M3-1 `sfslant` maps to `../src-master/system/seismic/Mslant.c` but exposes
+  only the existing adjoint slant-stack direction. It does not implement rho
+  filtering, anti-alias stretch, `p1=`, modeling mode, or high-resolution
+  `sfradon`.
+- M3-1 `sfvscan` maps to `../src-master/system/seismic/Mvscan.c` but exposes
+  only the existing velocity-panel semblance subset. It does not implement
+  differential/AVO semblance, masks, weighting, slowness/squared velocity,
+  heterogeneity scans, velocity picking, or production velocity analysis.
 - `sfheaderwindow/sfheadercut` are ordinary-RSF mask/header subsets. They do
   not support full header tables or SEG-Y trace headers. `sfheaderwindow`
   requires continuous mask selections.

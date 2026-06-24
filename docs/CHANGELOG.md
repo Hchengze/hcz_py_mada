@@ -8,6 +8,22 @@ optional compatibility checks.
 
 ### Added
 
+- M3-1 source-aligns existing seismic processing modules instead of adding a
+  new algorithm family. It promotes bounded `sfagc`, `sfslant`, and `sfvscan`
+  surfaces from existing implementations, mapped to
+  `../src-master/system/generic/Magc.c`,
+  `../src-master/system/seismic/Mslant.c`, and
+  `../src-master/system/seismic/Mvscan.c`. It registers `pymada-agc`,
+  `pymada-slant`, and `pymada-vscan`, adds `RSFData.slant(...)` and
+  `RSFData.vscan(...)`, records `sfagc` source/subset metadata, and adds
+  focused source-alignment tests.
+- M3-1 command-surface coverage increases the numerator only: full coverage is
+  `121 / 2114`, core `system/` + `plot/main` coverage is `108 / 301`, and
+  direct `system/main` coverage remains `37 / 39`. Coverage denominators are
+  unchanged. No Forward Modeling, DAS/Localization/solver branch, SciPy
+  dependency, high-resolution `sfradon`, production velocity analysis,
+  migration/RTM/DMO/Kirchhoff/Gazdag system, original Madagascar source, tag,
+  release, or force-push work is included.
 - M2-4 continues source-aligned `system/seismic` command migration with
   `sfcmp2shot`, `sfintbin`, and `sfintbin3`, aligned to
   `../src-master/system/seismic/Mcmp2shot.c`,

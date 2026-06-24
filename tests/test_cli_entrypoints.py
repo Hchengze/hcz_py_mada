@@ -19,7 +19,7 @@ CONSOLE_SCRIPTS = PYPROJECT["project"]["scripts"]
 
 
 def test_all_cli_modules_import_and_expose_main() -> None:
-    assert len(CLI_MODULES) == 157
+    assert len(CLI_MODULES) == 159
     failures: list[str] = []
     for name in CLI_MODULES:
         module_name = f"pymadagascar.cli.{name}"
@@ -34,7 +34,7 @@ def test_all_cli_modules_import_and_expose_main() -> None:
 
 
 def test_console_script_targets_resolve() -> None:
-    assert len(CONSOLE_SCRIPTS) == 54
+    assert len(CONSOLE_SCRIPTS) == 57
     failures: list[str] = []
     for script, target in sorted(CONSOLE_SCRIPTS.items()):
         module_name, attribute = target.split(":", 1)

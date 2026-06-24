@@ -28,6 +28,27 @@ concise and is not an API stability source or coverage source. This document
 remains authoritative for stable, stable-subset, partial, prototype,
 simplified-prototype, optional, and Pythonic-convenience boundaries.
 
+## M3-1 Existing Seismic Source Alignment
+
+M3-1 adds command-surface closure for existing seismic processing modules
+without changing the root/stable API. `sfagc` is a stable-subset command mapped
+to `../src-master/system/generic/Magc.c`; the Python implementation keeps the
+existing one-axis local-RMS window behavior and records source/subset metadata,
+but it does not implement upstream multi-axis triangle smoothing, absolute
+amplitude smoothing, streaming, or `repeat=`.
+
+`sfslant` is a bounded source-aligned wrapper over the existing direct
+time-domain Radon adjoint direction. It maps to
+`../src-master/system/seismic/Mslant.c` and `slant.c`, exposes the existing
+`linear_radon` subset as an adjoint slant stack, and remains distinct from
+high-resolution `sfradon`.
+
+`sfvscan` is a bounded source-aligned wrapper over the existing small-gather
+semblance scan. It maps to `../src-master/system/seismic/Mvscan.c` and exposes
+the existing velocity-panel semblance subset. It does not implement
+differential or AVO semblance, masks, weights, slowness/squared velocity modes,
+heterogeneity scans, velocity picking, or production velocity analysis.
+
 ## Topic Architecture T1 Boundary
 
 Topic Architecture Pass T1 changes roadmap classification only. It adds no

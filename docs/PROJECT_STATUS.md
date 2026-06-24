@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 157 |
-| Registered `pymada-*` console scripts | 54 |
-| Pytest files | 96 |
+| User-facing CLI modules | 159 |
+| Registered `pymada-*` console scripts | 57 |
+| Pytest files | 97 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `118 / 2114 = 5.58%` |
-| Core `system/` + `plot/main` command surface | `105 / 301 = 34.88%` |
+| Full Madagascar/alias command surface | `121 / 2114 = 5.72%` |
+| Core `system/` + `plot/main` command surface | `108 / 301 = 35.88%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -244,6 +244,16 @@ are no remaining comparison bridge failures.
   scripts, tests, docs, and coverage mapping. M2-4 does not continue Forward
   Modeling, DAS, Localization, solver, workflow, production binning,
   reconstruction, migration/RTM/DMO/Kirchhoff/Gazdag, large-system,
+  original-source, SciPy-dependency, or coverage-denominator work.
+- M3-1: source-aligns existing seismic processing modules without adding new
+  algorithm families. `sfagc` is mapped to
+  `../src-master/system/generic/Magc.c`, while `sfslant` and `sfvscan` expose
+  bounded wrappers over the existing small slant-stack/Radon and semblance
+  implementations mapped to `../src-master/system/seismic/Mslant.c` and
+  `../src-master/system/seismic/Mvscan.c`. The batch adds console scripts,
+  RSFData chain methods, tests, docs, and coverage mapping, but does not
+  implement high-resolution `sfradon`, production velocity analysis, Forward
+  Modeling, DAS, Localization, solver, migration/RTM/DMO/Kirchhoff/Gazdag,
   original-source, SciPy-dependency, or coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
@@ -687,7 +697,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 157 module entry points, 54 registered console scripts.
+- `pymadagascar/cli`: 159 module entry points, 57 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,
