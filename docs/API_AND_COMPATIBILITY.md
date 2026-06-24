@@ -41,6 +41,18 @@ RSF axis/header contract, tests, docs, and coverage effect are explicit.
 Pythonic convenience and prototype surfaces remain uncounted unless a later
 source audit proves command-level alignment.
 
+## G4-3 Source Command Admission And Backlog
+
+G4-3 adds no API, command, CLI module, console script, `RSFData` method,
+algorithm behavior, or coverage change. It records the future command-admission
+checklist in `SOURCE_COMMAND_ADMISSION.md` and a conservative candidate pool in
+`SOURCE_COMMAND_BACKLOG.md`.
+
+The backlog is not an implementation promise. Future command work must still
+pass a fresh source audit, duplicate-count check, Pythonic-convenience check,
+RSF axis/header contract, bounded-subset design, tests, docs, and coverage
+decision before it can be counted.
+
 ## M3-6 Audit-First Official Source Gap Fourth Pass
 
 M3-6 adds one bounded stable-subset command surface for `sfpolymask` without

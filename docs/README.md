@@ -24,6 +24,10 @@ Read these files first:
   risk map, and post-M3 development priorities.
 - `CODE_COMMENT_GUIDE.md`: Chinese comment standards for future core
   algorithms, source mappings, RSF axis/header contracts, and bounded subsets.
+- `SOURCE_COMMAND_ADMISSION.md`: G4-3 checklist that must be read before a new
+  source-backed command is admitted.
+- `SOURCE_COMMAND_BACKLOG.md`: G4-3 candidate pool and risk tags; it is not an
+  implementation promise.
 - `TESTING_AND_ENVIRONMENT.md`: pytest, optional original Madagascar
   comparisons, WSL notes, hybrid build notes, and release checks.
 - `KNOWN_LIMITATIONS.md`: concise list of important current limitations.
@@ -31,7 +35,7 @@ Read these files first:
 
 The learning entry point is `PYMADAGASCAR_LEARNING_GUIDE.ipynb`. It is a
 Jupyter Notebook for study and usage orientation, not an authority for API or
-coverage. The eleven Markdown files above remain the authoritative written
+coverage. The thirteen Markdown files above remain the authoritative written
 documentation.
 
 ## Archived Documents

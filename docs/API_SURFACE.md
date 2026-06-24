@@ -2,8 +2,10 @@
 
 This document records the current public surface boundaries for pymadagascar.
 It is a hygiene guide for future development, not a new compatibility promise.
-For the G4-1 read-only source architecture pass and future Chinese comment
-rules, see `MADAGASCAR_SOURCE_READING.md` and `CODE_COMMENT_GUIDE.md`.
+For the G4-1 read-only source architecture pass, future Chinese comment rules,
+and G4-3 source-backed command admission gate, see
+`MADAGASCAR_SOURCE_READING.md`, `CODE_COMMENT_GUIDE.md`,
+`SOURCE_COMMAND_ADMISSION.md`, and `SOURCE_COMMAND_BACKLOG.md`.
 
 pymadagascar is not a complete clone of Madagascar's 2000+ commands, and it is
 not a standalone forward-modeling, DAS, localization, or seismic-demo library.
@@ -146,6 +148,9 @@ At the M3-6 baseline, conservative coverage is:
 Future additions should follow these rules:
 
 - Prefer source-aligned command work or clearly labeled Pythonic conveniences.
+- Read `SOURCE_COMMAND_ADMISSION.md` before admitting any new source-backed
+  command, and treat `SOURCE_COMMAND_BACKLOG.md` as candidates for future
+  audit rather than approval to implement.
 - Keep root exports conservative; prefer topic APIs plus `RSFData` chain methods
   for small command batches.
 - Keep algorithm implementations in topic modules, not in `api.py`.

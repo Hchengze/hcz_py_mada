@@ -232,6 +232,12 @@ The next phase should be design-first. A candidate should be implemented only
 after the source mapping, RSF axis/header contract, bounded subset, unsupported
 upstream modes, tests, docs, and coverage effect are all clear.
 
+G4-3 turns this rule into two follow-up documents:
+`SOURCE_COMMAND_ADMISSION.md` is the required checklist for future
+source-backed command admission, and `SOURCE_COMMAND_BACKLOG.md` is a
+candidate pool with low/medium/high risk labels. The backlog is not approval to
+implement a command.
+
 ## A. Low-Risk Source-Backed Candidates To Audit Later
 
 These are not approved for immediate implementation; they are candidates for

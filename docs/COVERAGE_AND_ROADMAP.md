@@ -20,6 +20,14 @@ M3-6 and records a read-only Original Madagascar source architecture review in
 that risk map plus `docs/CODE_COMMENT_GUIDE.md` before counting any new
 source-backed command.
 
+## G4-3 Source Command Admission Gate
+
+G4-3 intentionally adds no command coverage. It records the mandatory future
+admission checklist in `docs/SOURCE_COMMAND_ADMISSION.md` and the candidate
+backlog/risk map in `docs/SOURCE_COMMAND_BACKLOG.md`. The backlog is not an
+implementation promise, and it does not change the numerator, denominator, CLI
+inventory, console-script inventory, or API surface.
+
 ## Learning Roadmap Index
 
 `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` presents a study-oriented index for
