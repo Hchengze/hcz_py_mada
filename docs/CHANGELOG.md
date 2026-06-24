@@ -17,8 +17,8 @@ optional compatibility checks.
   `pymada-slant`, and `pymada-vscan`, adds `RSFData.slant(...)` and
   `RSFData.vscan(...)`, records `sfagc` source/subset metadata, and adds
   focused source-alignment tests.
-- M3-1 command-surface coverage increases the numerator only: full coverage is
-  `121 / 2114`, core `system/` + `plot/main` coverage is `108 / 301`, and
+- M3-3 command-surface coverage increases the numerator only: full coverage is
+  `124 / 2114`, core `system/` + `plot/main` coverage is `111 / 301`, and
   direct `system/main` coverage remains `37 / 39`. Coverage denominators are
   unchanged. No Forward Modeling, DAS/Localization/solver branch, SciPy
   dependency, high-resolution `sfradon`, production velocity analysis,

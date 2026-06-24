@@ -1,6 +1,6 @@
 """Basic seismic gather processing tools."""
 
-from .ai2refl import AI2ReflError, ai2refl, ai2refl_rsf
+from .ai2refl import AI2ReflError, ai2refl, ai2refl_rsf, refl2ai, refl2ai_rsf
 from .agc import AGCError, agc_rsf
 from .angle import AngleTransformError, cos2ang, cos2ang_rsf, isin2ang, isin2ang_rsf
 from .avo import AVOError, avo_intercept_gradient, avo_rsf
@@ -44,6 +44,8 @@ __all__ = [
     "StackError",
     "ai2refl",
     "ai2refl_rsf",
+    "refl2ai",
+    "refl2ai_rsf",
     "agc_rsf",
     "avo_intercept_gradient",
     "avo_rsf",

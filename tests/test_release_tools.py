@@ -20,8 +20,8 @@ def test_check_cli_inventory_tool_runs() -> None:
     result = _run_tool("check_cli_inventory.py")
     assert result.returncode == 0, result.stderr + result.stdout
     assert "CLI inventory check passed" in result.stdout
-    assert "159 CLI modules" in result.stdout
-    assert "57 console_scripts" in result.stdout
+    assert "162 CLI modules" in result.stdout
+    assert "60 console_scripts" in result.stdout
 
 
 def test_check_docs_commands_tool_runs() -> None:
@@ -42,9 +42,9 @@ def test_check_learning_notebook_tool_runs() -> None:
     result = _run_tool("check_learning_notebook.py")
     assert result.returncode == 0, result.stderr + result.stdout
     assert "Learning notebook check passed" in result.stdout
-    assert "159 CLI modules" in result.stdout
-    assert "57 console_scripts" in result.stdout
-    assert "97 pytest files" in result.stdout
+    assert "162 CLI modules" in result.stdout
+    assert "60 console_scripts" in result.stdout
+    assert "98 pytest files" in result.stdout
     assert "16 workflows" in result.stdout
 
 

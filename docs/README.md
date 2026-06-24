@@ -44,12 +44,12 @@ checks scan current `docs/` plus `examples/`; they do not scan `archive_docs/`.
 
 ## Current Baseline
 
-- CLI modules: 159.
-- Registered `pymada-*` console scripts: 57.
-- Full command-surface coverage: `121 / 2114 = 5.72%`.
-- Core `system/` + `plot/main` coverage: `108 / 301 = 35.88%`.
+- CLI modules: 162.
+- Registered `pymada-*` console scripts: 60.
+- Full command-surface coverage: `124 / 2114 = 5.87%`.
+- Core `system/` + `plot/main` coverage: `111 / 301 = 36.88%`.
 - Direct `system/main` source-backed count: `37 / 39 = 94.87%`.
-- Pytest files: 97.
+- Pytest files: 98.
 - Top-level examples: 34, plus 16 workflow scripts and 1 workflow helper.
 - Learning notebook: `PYMADAGASCAR_LEARNING_GUIDE.ipynb`, maintained as a
   study-oriented guide rather than an API or coverage authority.

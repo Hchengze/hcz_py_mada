@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `121 / 2114 = 5.72%` | Conservative denominator including `user/*` and aliases; M3-1 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `108 / 301 = 35.88%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `124 / 2114 = 5.87%` | Conservative denominator including `user/*` and aliases; M3-3 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `111 / 301 = 36.88%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 

@@ -98,7 +98,7 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 57 registered console scripts are:
+The 60 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
@@ -109,8 +109,8 @@ pymada-boxsmooth, pymada-laplac, pymada-trapez, pymada-cosft, pymada-spectra2,
 pymada-remap1, pymada-spline, pymada-t2warp, pymada-mask, pymada-cut, pymada-reverse, pymada-pad,
 pymada-spray, pymada-scale, pymada-rotate, pymada-stack,
 pymada-matmult, pymada-match, pymada-linefit, pymada-agc,
-pymada-avo, pymada-fold, pymada-ai2refl,
-pymada-nmo, pymada-halfint, pymada-moveout,
+pymada-avo, pymada-fold, pymada-ai2refl, pymada-otsu,
+pymada-refl2ai, pymada-tclip, pymada-nmo, pymada-halfint, pymada-moveout,
 pymada-slant, pymada-vscan,
 pymada-cos2ang, pymada-isin2ang, pymada-map2coh,
 pymada-cmp2shot, pymada-intbin, pymada-intbin3
@@ -157,12 +157,12 @@ pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 57-entry console-script inventory
+authoritative installed command list is the 60-entry console-script inventory
 above.
 
 ## CLI Module Inventory
 
-There are 159 user-facing CLI modules:
+There are 162 user-facing CLI modules:
 
 ```text
 abs, acoustic2d, add, agc, ai2refl, attr, autocorr, avo, bandenergy, bandpass, bandstop, bin, boxsmooth,
@@ -180,7 +180,8 @@ range, real,
 remap1, reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,
 semblance, shifts, sign, slant, slice, smooth, snr, specnorm, spectra, spectra2, spectrogram,
 spike, spray, spline, sqrt, stack, stacks, std, t2warp, threshold, tile, tpow, transfer, trapez, transp,
-var, vscan, welch, welchcsd, whiten, wiggle, window, windowfunc, xcorr
+  var, vscan, welch, welchcsd, whiten, wiggle, window, windowfunc, xcorr,
+  otsu, refl2ai, tclip
 ```
 
 Module-only examples:

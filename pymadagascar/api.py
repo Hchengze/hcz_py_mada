@@ -32,6 +32,7 @@ from pymadagascar.generic.statistics import (
     std_rsf,
     var_rsf,
 )
+from pymadagascar.generic.tclip import tclip_rsf
 from pymadagascar.generic.unary import (
     abs_rsf,
     exp_rsf,
@@ -46,7 +47,7 @@ from pymadagascar.generic.window import window as window_array
 from pymadagascar.io.rsf import RSFArray, RSFHeader, read_rsf, write_rsf
 from pymadagascar.plot.graph import graph
 from pymadagascar.plot.grey import grey
-from pymadagascar.seismic.ai2refl import ai2refl_rsf
+from pymadagascar.seismic.ai2refl import ai2refl_rsf, refl2ai_rsf
 from pymadagascar.seismic.agc import agc_rsf
 from pymadagascar.seismic.angle import cos2ang_rsf, isin2ang_rsf
 from pymadagascar.seismic.avo import avo_rsf
@@ -1141,6 +1142,22 @@ class RSFData:
             inplace=inplace,
         )
 
+    def tclip(
+        self,
+        *,
+        lowercut: float = 0.2,
+        uppercut: float = 0.8,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Apply bounded sftclip lower/upper threshold clipping."""
+
+        return self._from_file_op(
+            tclip_rsf,
+            lowercut=lowercut,
+            uppercut=uppercut,
+            inplace=inplace,
+        )
+
     def abs(self, *, inplace: bool = False) -> "RSFData":
         """Return sample magnitudes; complex input becomes real magnitude."""
 
@@ -1874,6 +1891,24 @@ class RSFData:
         """Convert acoustic impedance to reflectivity along one RSF axis."""
 
         return self._from_file_op(ai2refl_rsf, axis=axis, eps=eps, inplace=inplace)
+
+    def refl2ai(
+        self,
+        a0: Any,
+        *,
+        axis: int = 1,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Convert reflectivity to acoustic impedance with one a0 value per trace."""
+
+        return self._from_binary_file_op(
+            refl2ai_rsf,
+            a0,
+            operand_name="a0.rsf",
+            operand_axis=axis,
+            axis=axis,
+            inplace=inplace,
+        )
 
     def nmo(
         self,

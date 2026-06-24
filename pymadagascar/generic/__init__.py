@@ -79,7 +79,9 @@ from .sampling import (
 from .spike import spike
 from .spray import SprayError, spray_rsf, tile_rsf
 from .stats import StatError, StatResult, format_stat, max_rsf, min_rsf, minmax_rsf
+from .otsu import OtsuError, otsu_rsf, otsu_threshold
 from .transp import TransposeError, reshape_rsf, transpose_array, transpose_rsf
+from .tclip import TClipError, tclip, tclip_rsf
 from .unary import (
     UnaryMathError,
     abs_rsf,
@@ -131,6 +133,8 @@ __all__ = [
     "RotateError",
     "SamplingError",
     "StatError",
+    "OtsuError",
+    "TClipError",
     "CopyResult",
     "RemoveResult",
     "StatResult",
@@ -212,6 +216,8 @@ __all__ = [
     "multiply_rsf",
     "noise",
     "noise_rsf",
+    "otsu_rsf",
+    "otsu_threshold",
     "pad_rsf",
     "put_header",
     "read_header_table",
@@ -237,6 +243,8 @@ __all__ = [
     "tile_rsf",
     "transpose_array",
     "transpose_rsf",
+    "tclip",
+    "tclip_rsf",
     "tpow_rsf",
     "window",
     "window_rsf",
