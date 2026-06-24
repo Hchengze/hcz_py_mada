@@ -12,6 +12,14 @@
 Coverage is a command-surface audit, not a promise of full upstream parameter
 compatibility.
 
+## G4-1 Source Reading Pass
+
+G4-1 intentionally adds no command coverage. It pauses source-gap batches after
+M3-6 and records a read-only Original Madagascar source architecture review in
+`docs/MADAGASCAR_SOURCE_READING.md`. Future implementation passes should use
+that risk map plus `docs/CODE_COMMENT_GUIDE.md` before counting any new
+source-backed command.
+
 ## Learning Roadmap Index
 
 `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` presents a study-oriented index for

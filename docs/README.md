@@ -20,6 +20,10 @@ Read these files first:
 - `API_AND_COMPATIBILITY.md`: API stability levels and compatibility notes.
 - `COVERAGE_AND_ROADMAP.md`: coverage summary, completed batches, and next
   migration direction.
+- `MADAGASCAR_SOURCE_READING.md`: G4-1 source architecture reading, migration
+  risk map, and post-M3 development priorities.
+- `CODE_COMMENT_GUIDE.md`: Chinese comment standards for future core
+  algorithms, source mappings, RSF axis/header contracts, and bounded subsets.
 - `TESTING_AND_ENVIRONMENT.md`: pytest, optional original Madagascar
   comparisons, WSL notes, hybrid build notes, and release checks.
 - `KNOWN_LIMITATIONS.md`: concise list of important current limitations.
@@ -27,7 +31,7 @@ Read these files first:
 
 The learning entry point is `PYMADAGASCAR_LEARNING_GUIDE.ipynb`. It is a
 Jupyter Notebook for study and usage orientation, not an authority for API or
-coverage. The nine Markdown files above remain the authoritative written
+coverage. The eleven Markdown files above remain the authoritative written
 documentation.
 
 ## Archived Documents

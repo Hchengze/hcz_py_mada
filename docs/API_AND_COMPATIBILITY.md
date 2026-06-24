@@ -28,6 +28,19 @@ concise and is not an API stability source or coverage source. This document
 remains authoritative for stable, stable-subset, partial, prototype,
 simplified-prototype, optional, and Pythonic-convenience boundaries.
 
+## G4-1 Source Reading And Comment Rules
+
+G4-1 adds no API, command, CLI module, console script, `RSFData` method,
+algorithm behavior, or coverage change. It records a read-only architecture
+pass over Original Madagascar source areas in `MADAGASCAR_SOURCE_READING.md`
+and establishes future Chinese comment expectations in `CODE_COMMENT_GUIDE.md`.
+
+The practical compatibility rule is unchanged: a future feature is
+source-backed only when its Original Madagascar source mapping, bounded subset,
+RSF axis/header contract, tests, docs, and coverage effect are explicit.
+Pythonic convenience and prototype surfaces remain uncounted unless a later
+source audit proves command-level alignment.
+
 ## M3-6 Audit-First Official Source Gap Fourth Pass
 
 M3-6 adds one bounded stable-subset command surface for `sfpolymask` without

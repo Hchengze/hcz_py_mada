@@ -262,6 +262,8 @@ def _check_required_paths() -> None:
         "docs/API_SURFACE.md",
         "docs/API_AND_COMPATIBILITY.md",
         "docs/COVERAGE_AND_ROADMAP.md",
+        "docs/MADAGASCAR_SOURCE_READING.md",
+        "docs/CODE_COMMENT_GUIDE.md",
         "docs/TESTING_AND_ENVIRONMENT.md",
         "docs/KNOWN_LIMITATIONS.md",
         "docs/CHANGELOG.md",

@@ -2,6 +2,8 @@
 
 This document records the current public surface boundaries for pymadagascar.
 It is a hygiene guide for future development, not a new compatibility promise.
+For the G4-1 read-only source architecture pass and future Chinese comment
+rules, see `MADAGASCAR_SOURCE_READING.md` and `CODE_COMMENT_GUIDE.md`.
 
 pymadagascar is not a complete clone of Madagascar's 2000+ commands, and it is
 not a standalone forward-modeling, DAS, localization, or seismic-demo library.

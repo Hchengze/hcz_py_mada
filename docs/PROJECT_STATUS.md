@@ -24,7 +24,7 @@ and must never be a hard dependency.
 | Pytest files | 100 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
-| Current docs markdown files | 8 |
+| Current docs markdown files | 11 |
 | Learning notebooks | 1 |
 
 ## Current Coverage
@@ -79,6 +79,12 @@ are no remaining comparison bridge failures.
 
 ## Stage Progress
 
+- G4-1: Madagascar source architecture reading and implementation planning
+  pass completed. It adds `docs/MADAGASCAR_SOURCE_READING.md` and
+  `docs/CODE_COMMENT_GUIDE.md` to document Original Madagascar source-tree
+  roles, migration risk tiers, post-M3 priorities, and future Chinese comment
+  rules. G4-1 adds no command, CLI, console script, RSFData method, algorithm
+  behavior, coverage numerator, or coverage denominator change.
 - Stage 0: handoff and baseline audit completed.
 - Stage A: release stabilization docs, checks, and release tools completed.
 - Stage B-1: `sfcp`, `sfrm`, `sfmin`, and `sfmax` subsets completed.
