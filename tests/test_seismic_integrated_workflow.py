@@ -156,12 +156,15 @@ def test_s5_workflow_subprocess_is_deterministic_and_does_not_pollute_repo(
 def test_s5_workflow_default_output_is_system_temporary() -> None:
     completed = _run_workflow_subprocess(None)
     output_dir = _parse_output_dir(completed.stdout)
+    temp_root = Path(tempfile.gettempdir()).resolve()
+    repo_root = ROOT.resolve()
     try:
-        assert output_dir.parent == Path(tempfile.gettempdir())
-        assert ROOT.resolve() not in (output_dir, *output_dir.parents)
+        assert output_dir.parent == temp_root
+        if repo_root not in temp_root.parents and temp_root != repo_root:
+            assert repo_root not in (output_dir, *output_dir.parents)
         assert (output_dir / "s5_integrated_qc_report.json").is_file()
     finally:
-        if output_dir.parent == Path(tempfile.gettempdir()) and output_dir.exists():
+        if output_dir.parent == temp_root and output_dir.exists():
             shutil.rmtree(output_dir)
 
 

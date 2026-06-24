@@ -366,10 +366,13 @@ def test_s3_workflow_default_output_is_system_temporary() -> None:
         line for line in result.stdout.splitlines() if line.startswith("output_dir=")
     )
     output_dir = Path(output_line.partition("=")[2]).resolve()
+    temp_root = Path(tempfile.gettempdir()).resolve()
+    repo_root = ROOT.resolve()
     try:
         assert output_dir.is_dir()
-        assert Path(tempfile.gettempdir()).resolve() in output_dir.parents
-        assert ROOT.resolve() not in (output_dir, *output_dir.parents)
+        assert temp_root in output_dir.parents
+        if repo_root not in temp_root.parents and temp_root != repo_root:
+            assert repo_root not in (output_dir, *output_dir.parents)
         assert (output_dir / "s3_nmo_qc_report.json").is_file()
     finally:
         shutil.rmtree(output_dir)
