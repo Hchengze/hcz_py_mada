@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `124 / 2114 = 5.87%` | Conservative denominator including `user/*` and aliases; M3-3 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `111 / 301 = 36.88%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `127 / 2114 = 6.01%` | Conservative denominator including `user/*` and aliases; M3-4 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `114 / 301 = 37.87%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -581,6 +581,46 @@ M2-4:
   `sfradial`/`sfradial2` are radial stretch transforms, and `sfoway1` is an
   oriented one-way wave-equation propagator; all are deferred.
 - Coverage numerator changes to `118 / 2114` and core coverage to `105 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M3-4:
+
+- Performs an official source gap second pass after M3-3/M3-3A and does not
+  continue GitHub Actions Windows-only diagnostics, Forward Modeling, DAS,
+  Localization, solver, workflow, migration/RTM/DMO/Kirchhoff/Gazdag, large
+  system, original-source, SciPy-dependency, or coverage-denominator work.
+- The source audit covered
+  `../src-master/system/generic/Mgrad2.c`,
+  `../src-master/system/generic/Mgrad3.c`,
+  `../src-master/system/generic/Mlpad.c`,
+  `../src-master/system/seismic/Mshot2cmp.c`,
+  `../src-master/system/seismic/Mcmp2shot.c`,
+  `../src-master/system/seismic/Mmodrefl.c`,
+  `../src-master/system/seismic/Mmodrefl2.c`,
+  `../src-master/system/seismic/Mlinsincos.c`, and
+  `../src-master/system/seismic/Mricker1.c`.
+- Counts `sfgrad2`, `sfgrad3`, and `sflpad` because they map directly to small
+  `system/generic` source files and now have Python topic APIs, RSFData chain
+  methods, CLI modules, console-script surface, focused tests, docs, and
+  coverage mapping.
+- `sfgrad2` supports the fixed 2D Sobel gradient-squared stencil from
+  `../src-master/api/c/edge.c`, applied independently to each extra slice and
+  zeroing edge samples. `sfgrad3` supports the fixed 3D Sobel gradient-squared
+  mode plus `dim=1/2/3` component modes, also zeroing edge samples. These are
+  not scale-normalized physical derivatives and do not add smoothing/filter
+  ecology beyond the upstream stencil.
+- `sflpad` supports regular in-memory trace/plane interleaving with `jump=`
+  along RSF axes 2 and 3 and optional mask output. It updates `n2/n3` and
+  `d2/d3` like `Mlpad.c`, but does not implement streaming, pipe-specific
+  output behavior, non-regular geometry, or SEG-Y trace headers.
+- `sfcmp2shot` was already counted in M2-4; `sfshot2cmp` is source-clear but
+  deferred because the regular-geometry inverse needs a dedicated paired
+  geometry validation pass. `sfmodrefl`/`sfmodrefl2` require elastic
+  reflectivity modeling with spline interpolation, `sflinsincos` solves an
+  angle/velocity-grid integration problem, and `sfricker1` is an input-trace
+  convolution filter unlike the existing Pythonic Ricker wavelet generator.
+- Coverage numerator changes to `127 / 2114` and core coverage to `114 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -2235,6 +2275,9 @@ C-11.
 | `sfcmp2shot` | `../src-master/system/seismic/Mcmp2shot.c` | bounded regular 2D CMP-to-shot trace reorganization; no SEG-Y trace headers or irregular geometry reconstruction |
 | `sfintbin` | `../src-master/system/seismic/Mintbin.c` | bounded numeric integer-header trace sorting into a 2D bin grid; no SEG-Y key-name lookup, inverse mode, map/mask outputs, or production binning |
 | `sfintbin3` | `../src-master/system/seismic/Mintbin3.c` | bounded numeric integer-header trace sorting into a 3D bin grid; no SEG-Y key-name lookup, mask output, or production 3D survey binning |
+| `sfgrad2` | `../src-master/system/generic/Mgrad2.c` with `../src-master/api/c/edge.c` | bounded 2D Sobel gradient-squared stencil over each n1,n2 slice; no physical spacing normalization or alternative edge modes |
+| `sfgrad3` | `../src-master/system/generic/Mgrad3.c` with `../src-master/api/c/edge.c` | bounded 3D Sobel gradient-squared/component stencil with `dim=0/1/2/3`; no physical spacing normalization or alternative smoothing |
+| `sflpad` | `../src-master/system/generic/Mlpad.c` | bounded regular trace/plane interleaving with `jump=` and optional mask output; no streaming pipe semantics or irregular geometry |
 | `sfbin` | `../src-master/system/generic/Mbin.c` | table-to-grid mean/sum/count subset; no separate `head=`, fold, median, or interpolation modes |
 | `sfslice` | `../src-master/system/generic/Mslice.c` | fixed-index slice subset; upstream uses a picked surface and interpolation |
 | `sfmax1` | `../src-master/system/generic/Mmax1.c` | maximum value/index/coordinate subset; upstream emits complex local-maxima picks |
@@ -2329,8 +2372,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M2-4, coverage is
-`118 / 2114`, core coverage is `105 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M3-4, coverage is
+`127 / 2114`, core coverage is `114 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

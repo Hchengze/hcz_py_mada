@@ -9,6 +9,7 @@ from .complex_tools import ComplexToolError, cmplx_rsf, imag_rsf, real_rsf, rtoc
 from .cut import CutError, cut_rsf
 from .dd import DDError, convert_dtype_rsf, convert_endian_rsf, copy_rsf
 from .difference import DifferenceError, diff_rsf, difference_metric
+from .edge import EdgeError, grad2, grad2_rsf, grad3, grad3_rsf
 from .file_ops import CopyResult, FileToolError, RemoveResult, copy_rsf_dataset, remove_rsf_dataset
 from .header_mask import HeaderMaskError, header_cut_rsf, header_window_rsf
 from .header_table import (
@@ -38,6 +39,7 @@ from .info import (
 )
 from .interleave import InterleaveError, interleave_rsf
 from .laplac import LaplacError, laplac, laplac_rsf
+from .lpad import LPadError, LPadResult, lpad, lpad_rsf
 from .linear_operator import (
     CallableLinearOperator,
     ConjugateGradientResult,
@@ -122,6 +124,7 @@ __all__ = [
     "ComplexToolError",
     "DDError",
     "DifferenceError",
+    "EdgeError",
     "FileToolError",
     "HeaderMaskError",
     "HeaderTableError",
@@ -135,10 +138,12 @@ __all__ = [
     "StatError",
     "OtsuError",
     "TClipError",
+    "LPadError",
     "CopyResult",
     "RemoveResult",
     "StatResult",
     "HeaderTable",
+    "LPadResult",
     "CallableLinearOperator",
     "ConjugateGradientResult",
     "DotTestResult",
@@ -181,6 +186,10 @@ __all__ = [
     "format_stat",
     "get_header_value",
     "get_header_values",
+    "grad2",
+    "grad2_rsf",
+    "grad3",
+    "grad3_rsf",
     "header_attr_table",
     "header_cut_rsf",
     "header_math_table",
@@ -200,6 +209,8 @@ __all__ = [
     "linear_rsf",
     "linefit",
     "linefit_rsf",
+    "lpad",
+    "lpad_rsf",
     "clip_rsf",
     "dot_test",
     "math_rsf",

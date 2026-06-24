@@ -19,9 +19,9 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 162 |
-| Registered `pymada-*` console scripts | 60 |
-| Pytest files | 98 |
+| User-facing CLI modules | 165 |
+| Registered `pymada-*` console scripts | 63 |
+| Pytest files | 99 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
 | Current docs markdown files | 8 |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `124 / 2114 = 5.87%` |
-| Core `system/` + `plot/main` command surface | `111 / 301 = 36.88%` |
+| Full Madagascar/alias command surface | `127 / 2114 = 6.01%` |
+| Core `system/` + `plot/main` command surface | `114 / 301 = 37.87%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -50,7 +50,7 @@ D:\HczApp\Anaconda\envs\mywork\python.exe
 Latest Windows full-suite result:
 
 ```text
-1168 passed, 95 skipped
+1177 passed, 95 skipped
 ```
 
 Skip summary:
@@ -255,6 +255,20 @@ are no remaining comparison bridge failures.
   implement high-resolution `sfradon`, production velocity analysis, Forward
   Modeling, DAS, Localization, solver, migration/RTM/DMO/Kirchhoff/Gazdag,
   original-source, SciPy-dependency, or coverage-denominator work.
+- M3-4: official source gap second pass adds source-aligned `sfgrad2`,
+  `sfgrad3`, and `sflpad`, mapped to
+  `../src-master/system/generic/Mgrad2.c`,
+  `../src-master/system/generic/Mgrad3.c`, and
+  `../src-master/system/generic/Mlpad.c`, with Sobel stencil details drawn from
+  `../src-master/api/c/edge.c`. The bounded subsets add Python topic APIs,
+  RSFData chain methods, CLI modules, console scripts, tests, docs, and
+  coverage mapping. `sfshot2cmp` is deferred for paired geometry validation;
+  `sfmodrefl`/`sfmodrefl2`, `sflinsincos`, and `sfricker1` are deferred for
+  elastic modeling, angle-grid integration, or different upstream semantics.
+  M3-4 does not handle GitHub Actions Windows-only diagnostics, continue
+  Forward Modeling, DAS, Localization, solver, workflow,
+  migration/RTM/DMO/Kirchhoff/Gazdag, original-source, SciPy-dependency, or
+  coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -697,7 +711,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 162 module entry points, 60 registered console scripts.
+- `pymadagascar/cli`: 165 module entry points, 63 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,
@@ -706,7 +720,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
   generic sampling/bin/slice/max1 tools, whole-dataset difference metrics,
   unary transforms, histogram/quantile QC, robust statistics, non-finite
   masks/filling, remap/spline/t2warp utilities, complex tools, dd,
-  pad/spray/tile, cat/transp.
+  pad/spray/tile, Sobel gradient subsets, lpad interleaving, cat/transp.
 - `pymadagascar/signal`: FFT, source-aligned FFT1/cosft/spectra2 transforms,
   filters, smoothing, convolution/correlation,
   circular/envelope correlation, shifts, axis calculus, amplitude clipping,

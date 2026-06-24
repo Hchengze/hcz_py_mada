@@ -8,6 +8,23 @@ optional compatibility checks.
 
 ### Added
 
+- M3-4 official source gap second pass adds source-aligned `sfgrad2`,
+  `sfgrad3`, and `sflpad`, aligned to
+  `../src-master/system/generic/Mgrad2.c`,
+  `../src-master/system/generic/Mgrad3.c`, and
+  `../src-master/system/generic/Mlpad.c`, with Sobel stencil details from
+  `../src-master/api/c/edge.c`. It adds `pymadagascar.generic.edge.grad2`,
+  `pymadagascar.generic.edge.grad3`, `pymadagascar.generic.lpad.lpad`,
+  file-backed RSF wrappers, `pymada-grad2`, `pymada-grad3`, `pymada-lpad`, and
+  `RSFData.grad2(...)`, `RSFData.grad3(...)`, and `RSFData.lpad(...)` without
+  adding new root exports.
+- M3-4 command-surface coverage increases the numerator only:
+  full coverage is `127 / 2114`, core `system/` + `plot/main` coverage is
+  `114 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No GitHub Actions Windows-only diagnostic,
+  Forward Modeling, DAS/Localization/solver branch, SciPy dependency,
+  migration/RTM/DMO/Kirchhoff/Gazdag system, original Madagascar source, tag,
+  release, or force-push work is included.
 - M3-1 source-aligns existing seismic processing modules instead of adding a
   new algorithm family. It promotes bounded `sfagc`, `sfslant`, and `sfvscan`
   surfaces from existing implementations, mapped to

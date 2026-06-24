@@ -83,8 +83,8 @@ def _check_package_metadata() -> None:
     if any("pybind11" in str(item) or "ninja" in str(item) for item in dependencies):
         raise RuntimeError("C++ build tools must not be runtime dependencies")
     scripts = project.get("scripts", {})
-    if not isinstance(scripts, dict) or len(scripts) != 60:
-        raise RuntimeError("expected exactly 60 registered console scripts")
+    if not isinstance(scripts, dict) or len(scripts) != 63:
+        raise RuntimeError("expected exactly 63 registered console scripts")
 
     build_system = data.get("build-system", {})
     build_requires = [str(item).lower() for item in build_system.get("requires", [])]
@@ -103,10 +103,12 @@ def _check_lower_level_imports() -> None:
     from pymadagascar.generic.array_algebra import linefit, match, matmult
     from pymadagascar.generic.array_math import divide_rsf, multiply_rsf, tpow_rsf
     from pymadagascar.generic.difference import diff_rsf, difference_metric
+    from pymadagascar.generic.edge import grad2, grad3
     from pymadagascar.generic.file_ops import copy_rsf_dataset
     from pymadagascar.generic.header_mask import header_cut_rsf, header_window_rsf
     from pymadagascar.generic.header_table import read_header_table, write_header_table
     from pymadagascar.generic.interleave import interleave_rsf
+    from pymadagascar.generic.lpad import lpad
     from pymadagascar.generic.linear_operator import MatrixOperator, conjugate_gradient_normal, dot_test
     from pymadagascar.generic.rotate import rotate_rsf
     from pymadagascar.generic.remap import remap1, spline, t2warp
@@ -169,8 +171,11 @@ def _check_lower_level_imports() -> None:
         "generic.divide_rsf": divide_rsf,
         "generic.diff_rsf": diff_rsf,
         "generic.difference_metric": difference_metric,
+        "generic.grad2": grad2,
+        "generic.grad3": grad3,
         "generic.tpow_rsf": tpow_rsf,
         "generic.interleave_rsf": interleave_rsf,
+        "generic.lpad": lpad,
         "generic.rotate_rsf": rotate_rsf,
         "generic.remap1": remap1,
         "generic.spline": spline,

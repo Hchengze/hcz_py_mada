@@ -15,7 +15,9 @@ from pymadagascar.generic.array_algebra import linefit_rsf, match_rsf, matmult_r
 from pymadagascar.generic.array_math import clip_rsf, normalize_rsf, scale_rsf
 from pymadagascar.generic.attr import attr_rsf
 from pymadagascar.generic.difference import diff_rsf
+from pymadagascar.generic.edge import grad2_rsf, grad3_rsf
 from pymadagascar.generic.laplac import laplac_rsf
+from pymadagascar.generic.lpad import lpad_rsf
 from pymadagascar.generic.noise import noise_rsf
 from pymadagascar.generic.pad import pad_rsf
 from pymadagascar.generic.remap import remap1_rsf, spline_rsf, t2warp_rsf
@@ -1157,6 +1159,21 @@ class RSFData:
             uppercut=uppercut,
             inplace=inplace,
         )
+
+    def grad2(self, *, inplace: bool = False) -> "RSFData":
+        """Compute the bounded ``sfgrad2`` 2-D Sobel gradient squared."""
+
+        return self._from_file_op(grad2_rsf, inplace=inplace)
+
+    def grad3(self, *, dim: int = 0, inplace: bool = False) -> "RSFData":
+        """Compute the bounded ``sfgrad3`` 3-D Sobel gradient subset."""
+
+        return self._from_file_op(grad3_rsf, dim=dim, inplace=inplace)
+
+    def lpad(self, *, jump: int = 2, inplace: bool = False) -> "RSFData":
+        """Interleave zero traces/planes using the bounded ``sflpad`` subset."""
+
+        return self._from_file_op(lpad_rsf, jump=jump, inplace=inplace)
 
     def abs(self, *, inplace: bool = False) -> "RSFData":
         """Return sample magnitudes; complex input becomes real magnitude."""

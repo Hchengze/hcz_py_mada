@@ -98,7 +98,7 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 60 registered console scripts are:
+The 63 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
@@ -110,7 +110,8 @@ pymada-remap1, pymada-spline, pymada-t2warp, pymada-mask, pymada-cut, pymada-rev
 pymada-spray, pymada-scale, pymada-rotate, pymada-stack,
 pymada-matmult, pymada-match, pymada-linefit, pymada-agc,
 pymada-avo, pymada-fold, pymada-ai2refl, pymada-otsu,
-pymada-refl2ai, pymada-tclip, pymada-nmo, pymada-halfint, pymada-moveout,
+pymada-refl2ai, pymada-tclip, pymada-grad2, pymada-grad3, pymada-lpad,
+pymada-nmo, pymada-halfint, pymada-moveout,
 pymada-slant, pymada-vscan,
 pymada-cos2ang, pymada-isin2ang, pymada-map2coh,
 pymada-cmp2shot, pymada-intbin, pymada-intbin3
@@ -148,6 +149,9 @@ pymada-map2coh semblance.rsf map=parameter.rsf out=coh.rsf nv=32 v0=1500 dv=50
 pymada-cmp2shot cmp.rsf out=shot.rsf positive=y
 pymada-intbin traces.rsf head=headers.rsf out=binned.rsf xkey=0 ykey=1
 pymada-intbin3 traces.rsf head=headers.rsf out=binned3.rsf xkey=0 ykey=1 zkey=2
+pymada-grad2 image.rsf out=grad2.rsf
+pymada-grad3 cube.rsf out=grad3.rsf dim=0
+pymada-lpad panel.rsf out=lpad.rsf jump=2 mask=lpad_mask.rsf
 pymada-laplac win.rsf out=laplac.rsf axis=1 spacing_from_header=n
 pymada-trapez win.rsf out=trapez.rsf axis=1 frequency=0.05,0.1,0.4,0.45
 pymada-stack win.rsf out=stack.rsf axis=1 mode=sum
@@ -157,12 +161,12 @@ pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 60-entry console-script inventory
+authoritative installed command list is the 63-entry console-script inventory
 above.
 
 ## CLI Module Inventory
 
-There are 162 user-facing CLI modules:
+There are 165 user-facing CLI modules:
 
 ```text
 abs, acoustic2d, add, agc, ai2refl, attr, autocorr, avo, bandenergy, bandpass, bandstop, bin, boxsmooth,
@@ -171,10 +175,10 @@ cmp2shot, conjgrad, conv, convolve, corr, cos2ang, cosft, costaper, cp, csd, cut
 deriv, detrend,
 diff, disfil, div, dottest,
 envcorr, envelope, exp, fft, fft1, fillnan, filterbank, filtfilt, firfilter, firwin,
-fk, fkfilter, fold, freqattr, freqz, gain, get, graph, grey, halfint,
+fk, fkfilter, fold, freqattr, freqz, gain, get, grad2, grad3, graph, grey, halfint,
 headerattr, headercut, headermath, headersort, headerwindow, highpass,
 histogram, ifft, imag, info, integral, interleave, intbin, intbin3, iradon, isin2ang, isnan, kirchhoff,
-laplac, linear, linefit, localrms, log, lowpass, mask, math, match, matmult, max, max1, mean, median, min, mul,
+laplac, linear, linefit, localrms, log, lowpass, lpad, mask, math, match, matmult, max, max1, mean, median, min, mul,
 map2coh, moveout, mute, mutter, nmo, noise, normalize, notch, pad, pow, psd, put, quantile, radon,
 range, real,
 remap1, reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,

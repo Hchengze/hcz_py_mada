@@ -28,6 +28,27 @@ concise and is not an API stability source or coverage source. This document
 remains authoritative for stable, stable-subset, partial, prototype,
 simplified-prototype, optional, and Pythonic-convenience boundaries.
 
+## M3-4 Official Source Gap Second Pass
+
+M3-4 adds bounded stable-subset command surfaces for `sfgrad2`, `sfgrad3`, and
+`sflpad` without adding root exports. `sfgrad2` maps to
+`../src-master/system/generic/Mgrad2.c` and uses the fixed Sobel gradient
+squared stencil from `../src-master/api/c/edge.c` on each 2-D n1,n2 slice.
+`sfgrad3` maps to `../src-master/system/generic/Mgrad3.c` and supports
+`dim=0` gradient squared plus `dim=1/2/3` component modes from the same edge
+helper. These subsets zero edge samples like upstream and do not implement
+physical-spacing normalization, alternative boundary modes, or additional
+filtering ecology.
+
+`sflpad` maps to `../src-master/system/generic/Mlpad.c` and supports regular
+trace/plane zero interleaving with `jump=` plus optional mask output. It updates
+`n2/n3` and `d2/d3` for ordinary in-memory RSF datasets, but does not claim
+streaming pipe behavior, irregular acquisition geometry, or SEG-Y trace-header
+handling. M3-4 also records deferred candidates: `sfshot2cmp` needs paired
+geometry validation, `sfmodrefl`/`sfmodrefl2` need elastic reflectivity and
+interpolation scope, `sflinsincos` is an angle-grid integration problem, and
+the existing Ricker generator is not upstream `sfricker1` trace convolution.
+
 ## M3-1 Existing Seismic Source Alignment
 
 M3-1 adds command-surface closure for existing seismic processing modules
