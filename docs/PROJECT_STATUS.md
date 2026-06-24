@@ -19,8 +19,8 @@ and must never be a hard dependency.
 
 | Item | Current value |
 | --- | ---: |
-| User-facing CLI modules | 165 |
-| Registered `pymada-*` console scripts | 63 |
+| User-facing CLI modules | 166 |
+| Registered `pymada-*` console scripts | 64 |
 | Pytest files | 99 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
@@ -31,8 +31,8 @@ and must never be a hard dependency.
 
 | Coverage scope | Current value |
 | --- | ---: |
-| Full Madagascar/alias command surface | `127 / 2114 = 6.01%` |
-| Core `system/` + `plot/main` command surface | `114 / 301 = 37.87%` |
+| Full Madagascar/alias command surface | `128 / 2114 = 6.05%` |
+| Core `system/` + `plot/main` command surface | `115 / 301 = 38.21%` |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` |
 | `user/*` command surface | about `12 / 1792 = 0.67%` |
 
@@ -269,6 +269,19 @@ are no remaining comparison bridge failures.
   Forward Modeling, DAS, Localization, solver, workflow,
   migration/RTM/DMO/Kirchhoff/Gazdag, original-source, SciPy-dependency, or
   coverage-denominator work.
+- M3-5: stricter official source gap third pass adds only source-aligned
+  `sfshot2cmp`, mapped to `../src-master/system/seismic/Mshot2cmp.c`. The
+  bounded subset supports regular 2D shot-to-CMP reorganization for ordinary
+  RSF axes `n1=time`, `n2=offset`, `n3=shot`, default `half=y`, and
+  `positive=` orientation. It adds Python topic API, `RSFData.shot2cmp(...)`,
+  `python -m pymadagascar.cli.shot2cmp`, `pymada-shot2cmp`, tests, docs, and
+  coverage mapping without root exports. `Mbandpass.c`, `Mricker1.c`,
+  `Mmodrefl.c`, `Mmodrefl2.c`, `Mlinsincos.c`, `Mmutter.c`, and
+  `Mcmp2shot.c` remain deferred or already counted because they are
+  higher-risk, different semantics, or duplicates. M3-5 does not handle
+  GitHub Actions Windows-only diagnostics, continue Forward Modeling,
+  DAS/Localization/solver, workflow, migration/RTM/DMO/Kirchhoff/Gazdag,
+  original-source, SciPy-dependency, or coverage-denominator work.
 - Stage D-1: DAS engineering workflow skeleton completed. The new
   `das_void_diffraction_workflow.py` generates a small kinematic
   time-by-channel shot gather, applies the existing FK prototype, overlays
@@ -711,7 +724,7 @@ documentation contracts are maintained in `COVERAGE_AND_ROADMAP.md`.
 
 - `pymadagascar/io`: RSF header/sidecar I/O and small SEG-Y 2D prototype.
 - `pymadagascar/core`: `Axis`, `Hypercube`, and `RSFParams`.
-- `pymadagascar/cli`: 165 module entry points, 63 registered console scripts.
+- `pymadagascar/cli`: 166 module entry points, 64 registered console scripts.
 - `pymadagascar/generic`: spike/math/window/info/put/attr, file ops, stats,
   array math, interleave, header mask/window/cut, byte, mask/cut/reverse/rotate,
   minimal header table attr/math/sort, linear operators, composition helpers,

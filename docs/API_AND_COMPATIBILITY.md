@@ -28,6 +28,25 @@ concise and is not an API stability source or coverage source. This document
 remains authoritative for stable, stable-subset, partial, prototype,
 simplified-prototype, optional, and Pythonic-convenience boundaries.
 
+## M3-5 Strict Official Source Gap Third Pass
+
+M3-5 adds one bounded stable-subset command surface for `sfshot2cmp` without
+adding root exports. It maps to `../src-master/system/seismic/Mshot2cmp.c` and
+supports regular in-memory 2D shot-to-CMP trace reorganization for RSF axes
+`n1=time`, `n2=offset`, `n3=shot`, integer `d3/d2` geometry ratio, default
+`half=y`, and `positive=` orientation. It adds
+`pymadagascar.seismic.gather.shot2cmp`, `shot2cmp_rsf`,
+`RSFData.shot2cmp(...)`, `python -m pymadagascar.cli.shot2cmp`, and
+`pymada-shot2cmp`.
+
+The bounded subset does not implement upstream mask side output, native-byte
+streaming/pipe behavior, `half=n`, irregular acquisition geometry, SEG-Y trace
+headers, or production reconstruction workflows. M3-5 deliberately leaves
+`Mbandpass.c`, `Mricker1.c`, `Mmodrefl.c`, `Mmodrefl2.c`, and `Mlinsincos.c`
+deferred because they require Butterworth/DSP behavior, trace convolution,
+elastic reflectivity modeling, interpolation, or angle-grid integration that
+would exceed the strict low-risk gate.
+
 ## M3-4 Official Source Gap Second Pass
 
 M3-4 adds bounded stable-subset command surfaces for `sfgrad2`, `sfgrad3`, and

@@ -4,8 +4,8 @@
 
 | Scope | Current value | Notes |
 | --- | ---: | --- |
-| Full Madagascar/alias command surface | `127 / 2114 = 6.01%` | Conservative denominator including `user/*` and aliases; M3-4 changes numerator only. |
-| Core `system/` + `plot/main` command surface | `114 / 301 = 37.87%` | Better near-term project signal; denominator unchanged. |
+| Full Madagascar/alias command surface | `128 / 2114 = 6.05%` | Conservative denominator including `user/*` and aliases; M3-5 changes numerator only. |
+| Core `system/` + `plot/main` command surface | `115 / 301 = 38.21%` | Better near-term project signal; denominator unchanged. |
 | Direct `system/main` source-backed commands | `37 / 39 = 94.87%` | Includes B-1, B-2, B-3-1, `sfheadersort`, B-4, M0-1 `sfscale`/`sfrotate`, M0-2 `sfstack`, and M0-3 `sfpad`/`sfspray`. |
 | `user/*` command surface | about `12 / 1792 = 0.67%` | Not a near-term target. |
 
@@ -621,6 +621,42 @@ M3-4:
   angle/velocity-grid integration problem, and `sfricker1` is an input-trace
   convolution filter unlike the existing Pythonic Ricker wavelet generator.
 - Coverage numerator changes to `127 / 2114` and core coverage to `114 / 301`.
+  Direct `system/main` coverage remains `37 / 39`; all denominators remain
+  unchanged.
+
+M3-5:
+
+- Performs a stricter official source gap third pass and does not continue
+  GitHub Actions Windows-only diagnostics, Forward Modeling, DAS,
+  Localization, solver, workflow, migration/RTM/DMO/Kirchhoff/Gazdag, large
+  system, original-source, SciPy-dependency, or coverage-denominator work.
+- The source audit covered
+  `../src-master/system/generic/Mbandpass.c`,
+  `../src-master/system/generic/Mmutter.c`,
+  `../src-master/system/seismic/Mshot2cmp.c`,
+  `../src-master/system/seismic/Mcmp2shot.c`,
+  `../src-master/system/seismic/Mmodrefl.c`,
+  `../src-master/system/seismic/Mmodrefl2.c`,
+  `../src-master/system/seismic/Mlinsincos.c`,
+  `../src-master/system/seismic/Mricker1.c`, and related Ricker/filter
+  conveniences already present in Python.
+- Counts `sfshot2cmp` because it maps directly to
+  `../src-master/system/seismic/Mshot2cmp.c` and now has Python topic API,
+  RSFData chain method, CLI module, console-script surface, focused tests,
+  docs, and coverage mapping.
+- `sfshot2cmp` supports regular in-memory 2D shot-to-CMP trace
+  reorganization for finite 3D RSF arrays with axes `n1=time`, `n2=offset`,
+  `n3=shot`, integer `d3/d2` geometry ratio, default `half=y`, and
+  `positive=` orientation. It does not implement mask side output,
+  streaming/native-byte pipe behavior, `half=n`, irregular geometry, SEG-Y
+  trace headers, or production reconstruction.
+- `sfcmp2shot` was already counted in M2-4. `sfbandpass` remains a Pythonic
+  FFT taper convenience because upstream `Mbandpass.c` is Butterworth-based;
+  `sfricker1` is trace convolution unlike the existing Ricker generator;
+  `sfmodrefl`/`sfmodrefl2` require elastic reflectivity modeling with
+  interpolation; `sflinsincos` is an angle/velocity-grid integration problem;
+  and `sfmutter` was already source-counted in Stage C-4.
+- Coverage numerator changes to `128 / 2114` and core coverage to `115 / 301`.
   Direct `system/main` coverage remains `37 / 39`; all denominators remain
   unchanged.
 
@@ -2273,6 +2309,7 @@ C-11.
 | `sfisin2ang` | `../src-master/system/seismic/Misin2ang.c` | bounded inverse-sine stack-panel-to-angle linear resampling; no anisotropic angle transform or ray-parameter model |
 | `sfmap2coh` | `../src-master/system/seismic/Mmap2coh.c` | bounded parameter-map accumulation into a velocity/coherence axis; no production coherence or local-similarity workflow |
 | `sfcmp2shot` | `../src-master/system/seismic/Mcmp2shot.c` | bounded regular 2D CMP-to-shot trace reorganization; no SEG-Y trace headers or irregular geometry reconstruction |
+| `sfshot2cmp` | `../src-master/system/seismic/Mshot2cmp.c` | bounded regular 2D shot-to-CMP trace reorganization with default `half=y`; no mask side output, SEG-Y trace headers, irregular geometry, or streaming pipe semantics |
 | `sfintbin` | `../src-master/system/seismic/Mintbin.c` | bounded numeric integer-header trace sorting into a 2D bin grid; no SEG-Y key-name lookup, inverse mode, map/mask outputs, or production binning |
 | `sfintbin3` | `../src-master/system/seismic/Mintbin3.c` | bounded numeric integer-header trace sorting into a 3D bin grid; no SEG-Y key-name lookup, mask output, or production 3D survey binning |
 | `sfgrad2` | `../src-master/system/generic/Mgrad2.c` with `../src-master/api/c/edge.c` | bounded 2D Sobel gradient-squared stencil over each n1,n2 slice; no physical spacing normalization or alternative edge modes |
@@ -2372,8 +2409,8 @@ production inversion, and imaging remain outside the next pass.
 
 Stage D-1 remains retained without further API, CLI, console-script, or
 coverage changes. WSL-1 remains validation infrastructure, not a reason to
-count Pythonic conveniences or expand `user/*`. After M3-4, coverage is
-`127 / 2114`, core coverage is `114 / 301`, and direct `system/main` coverage is
+count Pythonic conveniences or expand `user/*`. After M3-5, coverage is
+`128 / 2114`, core coverage is `115 / 301`, and direct `system/main` coverage is
 `37 / 39`; denominators remain unchanged.
 
 Keep hybrid benchmarking evidence-driven and separate. If SEG-Y trace-header

@@ -47,7 +47,7 @@ def test_default_build_is_pure_python() -> None:
 
 def test_console_script_metadata_has_expected_size_and_targets() -> None:
     scripts = PYPROJECT["project"]["scripts"]
-    assert len(scripts) == 63
+    assert len(scripts) == 64
     assert all(name.startswith("pymada-") for name in scripts)
     assert all(target.startswith("pymadagascar.cli.") for target in scripts.values())
     assert all(target.endswith(":main") for target in scripts.values())

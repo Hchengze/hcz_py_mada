@@ -44,10 +44,10 @@ checks scan current `docs/` plus `examples/`; they do not scan `archive_docs/`.
 
 ## Current Baseline
 
-- CLI modules: 165.
-- Registered `pymada-*` console scripts: 63.
-- Full command-surface coverage: `127 / 2114 = 6.01%`.
-- Core `system/` + `plot/main` coverage: `114 / 301 = 37.87%`.
+- CLI modules: 166.
+- Registered `pymada-*` console scripts: 64.
+- Full command-surface coverage: `128 / 2114 = 6.05%`.
+- Core `system/` + `plot/main` coverage: `115 / 301 = 38.21%`.
 - Direct `system/main` source-backed count: `37 / 39 = 94.87%`.
 - Pytest files: 99.
 - Top-level examples: 34, plus 16 workflow scripts and 1 workflow helper.

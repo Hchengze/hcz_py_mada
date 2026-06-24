@@ -54,7 +54,7 @@ from pymadagascar.seismic.agc import agc_rsf
 from pymadagascar.seismic.angle import cos2ang_rsf, isin2ang_rsf
 from pymadagascar.seismic.avo import avo_rsf
 from pymadagascar.seismic.fold import fold_rsf
-from pymadagascar.seismic.gather import cmp2shot_rsf, intbin3_rsf, intbin_rsf
+from pymadagascar.seismic.gather import cmp2shot_rsf, intbin3_rsf, intbin_rsf, shot2cmp_rsf
 from pymadagascar.seismic.halfint import halfint_rsf
 from pymadagascar.seismic.map2coh import map2coh_rsf
 from pymadagascar.seismic.moveout import moveout_rsf
@@ -1835,6 +1835,17 @@ class RSFData:
         """Convert regular 2-D CMP gathers to shot gathers."""
 
         return self._from_file_op(cmp2shot_rsf, positive=positive, inplace=inplace)
+
+    def shot2cmp(
+        self,
+        *,
+        positive: bool = True,
+        half: bool = True,
+        inplace: bool = False,
+    ) -> "RSFData":
+        """Convert regular 2-D shot gathers to CMP gathers."""
+
+        return self._from_file_op(shot2cmp_rsf, positive=positive, half=half, inplace=inplace)
 
     def intbin(
         self,

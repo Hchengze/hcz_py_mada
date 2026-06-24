@@ -41,6 +41,7 @@ EXPECTED_CHAIN_METHODS = {
     "isin2ang",
     "map2coh",
     "cmp2shot",
+    "shot2cmp",
     "intbin",
     "intbin3",
     "autocorr",

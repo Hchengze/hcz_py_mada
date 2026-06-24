@@ -54,6 +54,59 @@ def cmp2shot(data: Any, *, dh: float, dy: float, oh: float, oy: float, positive:
     return np.ascontiguousarray(output)
 
 
+def shot2cmp(
+    data: Any,
+    *,
+    dh: float,
+    ds: float,
+    oh: float,
+    os: float,
+    positive: bool = True,
+    half: bool = True,
+) -> np.ndarray:
+    """Convert regular 2-D shot gathers to CMP gathers.
+
+    The input follows the bounded ``sfshot2cmp`` layout with NumPy shape
+    ``(n_shot, n_offset, n_time)``. The output shape is
+    ``(n_cmp, ceil(n_offset / type), n_time)`` where ``type = round(ds / dh)``.
+    """
+
+    array = np.asarray(data)
+    if array.ndim != 3:
+        raise GatherError("shot2cmp requires input shape (n_shot, n_offset, n_time)")
+    if not np.issubdtype(array.dtype, np.number):
+        raise GatherError("shot2cmp input must be numeric")
+    n_shot, n_offset, n_time = array.shape
+    if n_shot < 1 or n_offset < 1 or n_time < 1:
+        raise GatherError("shot2cmp input axes must be non-empty")
+    offset_sampling = _nonzero_float(dh, "dh")
+    shot_sampling = _nonzero_float(ds, "ds")
+    _finite_float(oh, "oh")
+    _finite_float(os, "os")
+    if not half:
+        raise GatherError("shot2cmp bounded subset supports half=y only")
+    ratio = shot_sampling / offset_sampling
+    trace_type = int(np.floor(ratio + 0.5))
+    if trace_type < 1 or not np.isclose(ratio, trace_type):
+        raise GatherError("ds/dh must be a positive integer for the bounded shot2cmp subset")
+
+    n_cmp = n_shot * trace_type + n_offset - 1
+    n_output_offset = (n_offset + trace_type - 1) // trace_type
+    output = np.zeros((n_cmp, n_output_offset, n_time), dtype=array.dtype)
+    for icmp in range(n_cmp):
+        output_offset = 0
+        for ioffset in range(icmp % trace_type, n_offset + icmp % trace_type, trace_type):
+            if ioffset < n_offset:
+                if positive:
+                    ishot = (icmp - ioffset) // trace_type
+                else:
+                    ishot = (icmp + ioffset) // trace_type - (n_offset - 1) // trace_type
+                if 0 <= ishot < n_shot:
+                    output[icmp, output_offset] = array[ishot, ioffset]
+            output_offset += 1
+    return np.ascontiguousarray(output)
+
+
 def cmp2shot_rsf(
     input_path: str | Path,
     output_path: str | Path,
@@ -90,6 +143,51 @@ def cmp2shot_rsf(
     header["cmp2shot_positive"] = "y" if positive else "n"
     header["cmp2shot_source"] = "../src-master/system/seismic/Mcmp2shot.c"
     header["cmp2shot_subset"] = "regular-2d-geometry-reorder"
+    return write_rsf(output_path, result, header)
+
+
+def shot2cmp_rsf(
+    input_path: str | Path,
+    output_path: str | Path,
+    *,
+    positive: bool = True,
+    half: bool = True,
+) -> RSFArray:
+    """Apply the bounded ``sfshot2cmp`` subset to RSF files."""
+
+    rsf = read_rsf(input_path)
+    cube = Hypercube.from_header(rsf.header)
+    if cube.ndim != 3:
+        raise GatherError("shot2cmp_rsf requires an RSF with n1=time, n2=offset, n3=shot")
+    offset_axis = cube.axis(2)
+    shot_axis = cube.axis(3)
+    result = shot2cmp(
+        rsf.data,
+        dh=offset_axis.d,
+        ds=shot_axis.d,
+        oh=offset_axis.o,
+        os=shot_axis.o,
+        positive=positive,
+        half=half,
+    )
+    trace_type = int(np.floor(float(shot_axis.d) / float(offset_axis.d) + 0.5))
+    cmp_origin = (
+        shot_axis.o + offset_axis.o
+        if positive
+        else shot_axis.o - offset_axis.o - trace_type * ((int(offset_axis.n) - 1) // trace_type) * offset_axis.d
+    )
+
+    header = rsf.header.copy()
+    header["n2"] = int(result.shape[1])
+    header["d2"] = float(trace_type * offset_axis.d)
+    header["n3"] = int(result.shape[0])
+    header["o3"] = float(cmp_origin)
+    header["d3"] = float(offset_axis.d)
+    header["label3"] = "Midpoint"
+    header["shot2cmp_positive"] = "y" if positive else "n"
+    header["shot2cmp_half"] = "y" if half else "n"
+    header["shot2cmp_source"] = "../src-master/system/seismic/Mshot2cmp.c"
+    header["shot2cmp_subset"] = "regular-2d-geometry-reorder-half-offset"
     return write_rsf(output_path, result, header)
 
 
@@ -350,6 +448,8 @@ __all__ = [
     "GatherError",
     "cmp2shot",
     "cmp2shot_rsf",
+    "shot2cmp",
+    "shot2cmp_rsf",
     "intbin",
     "intbin3",
     "intbin3_rsf",

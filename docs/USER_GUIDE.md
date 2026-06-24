@@ -98,7 +98,7 @@ detailed boundaries. The eight Markdown documents remain authoritative.
 
 ## Console Scripts
 
-The 63 registered console scripts are:
+The 64 registered console scripts are:
 
 ```text
 pymada-info, pymada-get, pymada-disfil, pymada-real, pymada-imag,
@@ -114,7 +114,7 @@ pymada-refl2ai, pymada-tclip, pymada-grad2, pymada-grad3, pymada-lpad,
 pymada-nmo, pymada-halfint, pymada-moveout,
 pymada-slant, pymada-vscan,
 pymada-cos2ang, pymada-isin2ang, pymada-map2coh,
-pymada-cmp2shot, pymada-intbin, pymada-intbin3
+pymada-cmp2shot, pymada-shot2cmp, pymada-intbin, pymada-intbin3
 ```
 
 Examples:
@@ -147,6 +147,7 @@ pymada-cos2ang panel.rsf out=cosang.rsf axis=2 na=5 a0=0 da=15
 pymada-isin2ang panel.rsf out=sinang.rsf axis=2 na=5 a0=15 da=15
 pymada-map2coh semblance.rsf map=parameter.rsf out=coh.rsf nv=32 v0=1500 dv=50
 pymada-cmp2shot cmp.rsf out=shot.rsf positive=y
+pymada-shot2cmp shot.rsf out=cmp.rsf positive=y
 pymada-intbin traces.rsf head=headers.rsf out=binned.rsf xkey=0 ykey=1
 pymada-intbin3 traces.rsf head=headers.rsf out=binned3.rsf xkey=0 ykey=1 zkey=2
 pymada-grad2 image.rsf out=grad2.rsf
@@ -161,12 +162,12 @@ pymada-spray win.rsf out=sprayed.rsf axis=2 n=3
 
 All other CLI modules are module-only and must be called with `python -m`.
 Names printed by older module help are compatibility labels only; the
-authoritative installed command list is the 63-entry console-script inventory
+authoritative installed command list is the 64-entry console-script inventory
 above.
 
 ## CLI Module Inventory
 
-There are 165 user-facing CLI modules:
+There are 166 user-facing CLI modules:
 
 ```text
 abs, acoustic2d, add, agc, ai2refl, attr, autocorr, avo, bandenergy, bandpass, bandstop, bin, boxsmooth,
@@ -182,7 +183,7 @@ laplac, linear, linefit, localrms, log, lowpass, lpad, mask, math, match, matmul
 map2coh, moveout, mute, mutter, nmo, noise, normalize, notch, pad, pow, psd, put, quantile, radon,
 range, real,
 remap1, reshape, reverse, rfft, ricker, rm, rms, rotate, rtoc, scale, segyread, segywrite,
-semblance, shifts, sign, slant, slice, smooth, snr, specnorm, spectra, spectra2, spectrogram,
+semblance, shifts, shot2cmp, sign, slant, slice, smooth, snr, specnorm, spectra, spectra2, spectrogram,
 spike, spray, spline, sqrt, stack, stacks, std, t2warp, threshold, tile, tpow, transfer, trapez, transp,
   var, vscan, welch, welchcsd, whiten, wiggle, window, windowfunc, xcorr,
   otsu, refl2ai, tclip

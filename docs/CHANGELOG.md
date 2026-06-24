@@ -8,6 +8,18 @@ optional compatibility checks.
 
 ### Added
 
+- M3-5 strict official source gap third pass adds source-aligned `sfshot2cmp`,
+  aligned to `../src-master/system/seismic/Mshot2cmp.c`. It adds
+  `pymadagascar.seismic.gather.shot2cmp`, `shot2cmp_rsf`,
+  `RSFData.shot2cmp(...)`, `python -m pymadagascar.cli.shot2cmp`, and
+  `pymada-shot2cmp` without adding new root exports.
+- M3-5 command-surface coverage increases the numerator only:
+  full coverage is `128 / 2114`, core `system/` + `plot/main` coverage is
+  `115 / 301`, and direct `system/main` coverage remains `37 / 39`. Coverage
+  denominators are unchanged. No GitHub Actions Windows-only diagnostic,
+  Forward Modeling, DAS/Localization/solver branch, SciPy dependency,
+  migration/RTM/DMO/Kirchhoff/Gazdag system, original Madagascar source, tag,
+  release, or force-push work is included.
 - M3-4 official source gap second pass adds source-aligned `sfgrad2`,
   `sfgrad3`, and `sflpad`, aligned to
   `../src-master/system/generic/Mgrad2.c`,

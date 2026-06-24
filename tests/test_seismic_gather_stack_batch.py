@@ -19,6 +19,8 @@ from pymadagascar.seismic.gather import (
     intbin3,
     intbin3_rsf,
     intbin_rsf,
+    shot2cmp,
+    shot2cmp_rsf,
 )
 
 
@@ -59,6 +61,26 @@ def _cmp_header(nt: int, nh: int, ny: int) -> RSFHeader:
             "o3": 10.0,
             "d3": 1.0,
             "label3": "CMP",
+        }
+    )
+
+
+def _shot_header(nt: int, nh: int, ns: int) -> RSFHeader:
+    return RSFHeader(
+        {
+            "n1": nt,
+            "o1": 0.0,
+            "d1": 0.004,
+            "label1": "Time",
+            "unit1": "s",
+            "n2": nh,
+            "o2": 0.0,
+            "d2": 1.0,
+            "label2": "Offset",
+            "n3": ns,
+            "o3": 8.0,
+            "d3": 2.0,
+            "label3": "Shot",
         }
     )
 
@@ -129,6 +151,47 @@ def test_cmp2shot_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> 
         cmp2shot(data[0], dh=2.0, dy=1.0, oh=0.0, oy=10.0)
     with pytest.raises(GatherError, match="dh/dy"):
         cmp2shot(data, dh=1.5, dy=1.0, oh=0.0, oy=10.0)
+
+
+def test_shot2cmp_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> None:
+    data = np.arange(3 * 4 * 2, dtype=np.float32).reshape(3, 4, 2)
+    input_path = tmp_path / "shot.rsf"
+    output_path = tmp_path / "cmp.rsf"
+    cli_path = tmp_path / "cmp_cli.rsf"
+    write_rsf(input_path, data, _shot_header(nt=2, nh=4, ns=3))
+
+    direct = shot2cmp(data, dh=1.0, ds=2.0, oh=0.0, os=8.0, positive=True)
+    original = RSFData(data, _shot_header(nt=2, nh=4, ns=3))
+    chained = original.shot2cmp()
+    shot2cmp_rsf(input_path, output_path)
+    result = _run_cli("shot2cmp", [str(input_path), "out=" + str(cli_path)], tmp_path)
+
+    expected = np.zeros((9, 2, 2), dtype=np.float32)
+    for icmp in range(9):
+        output_offset = 0
+        for ioffset in range(icmp % 2, 4 + icmp % 2, 2):
+            if ioffset < 4:
+                ishot = (icmp - ioffset) // 2
+                if 0 <= ishot < 3:
+                    expected[icmp, output_offset] = data[ishot, ioffset]
+            output_offset += 1
+    assert result.returncode == 0, result.stderr
+    np.testing.assert_array_equal(direct, expected)
+    np.testing.assert_array_equal(read_rsf(output_path).data, expected)
+    np.testing.assert_array_equal(read_rsf(cli_path).data, expected)
+    np.testing.assert_array_equal(chained.numpy(), expected)
+    np.testing.assert_array_equal(original.numpy(), data)
+    header = read_rsf(output_path).header
+    assert header.dimensions == (2, 2, 9)
+    assert header["label3"] == "Midpoint"
+    assert header["shot2cmp_source"] == "../src-master/system/seismic/Mshot2cmp.c"
+    assert not hasattr(pymadagascar, "shot2cmp_rsf")
+    with pytest.raises(GatherError, match="shape"):
+        shot2cmp(data[0], dh=1.0, ds=2.0, oh=0.0, os=8.0)
+    with pytest.raises(GatherError, match="ds/dh"):
+        shot2cmp(data, dh=1.5, ds=2.0, oh=0.0, os=8.0)
+    with pytest.raises(GatherError, match="half"):
+        shot2cmp(data, dh=1.0, ds=2.0, oh=0.0, os=8.0, half=False)
 
 
 def test_intbin_values_header_chain_cli_and_bounds(tmp_path: Path) -> None:
@@ -222,7 +285,7 @@ def test_intbin3_values_header_chain_cli_and_invalid_params(tmp_path: Path) -> N
         intbin3(traces, headers, xmin=2, xmax=1)
 
 
-@pytest.mark.parametrize("module", ["cmp2shot", "intbin", "intbin3"])
+@pytest.mark.parametrize("module", ["cmp2shot", "shot2cmp", "intbin", "intbin3"])
 def test_console_script_help_smoke(module: str) -> None:
     result = subprocess.run(
         [sys.executable, "-m", f"pymadagascar.cli.{module}", "--help"],
