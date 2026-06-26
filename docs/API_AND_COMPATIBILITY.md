@@ -53,6 +53,11 @@ pass a fresh source audit, duplicate-count check, Pythonic-convenience check,
 RSF axis/header contract, bounded-subset design, tests, docs, and coverage
 decision before it can be counted.
 
+G4-4 hardens the same planning rule without changing API behavior or coverage:
+`SOURCE_COMMAND_TEMPLATE.md` is a reusable pre-implementation proposal template,
+and `SOURCE_AUDIT_WORKSHEET.md` is a reusable read-only audit worksheet. Both
+are planning aids, not coverage authorities.
+
 ## M3-6 Audit-First Official Source Gap Fourth Pass
 
 M3-6 adds one bounded stable-subset command surface for `sfpolymask` without

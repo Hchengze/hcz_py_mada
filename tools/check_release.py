@@ -266,6 +266,8 @@ def _check_required_paths() -> None:
         "docs/CODE_COMMENT_GUIDE.md",
         "docs/SOURCE_COMMAND_ADMISSION.md",
         "docs/SOURCE_COMMAND_BACKLOG.md",
+        "docs/SOURCE_COMMAND_TEMPLATE.md",
+        "docs/SOURCE_AUDIT_WORKSHEET.md",
         "docs/TESTING_AND_ENVIRONMENT.md",
         "docs/KNOWN_LIMITATIONS.md",
         "docs/CHANGELOG.md",

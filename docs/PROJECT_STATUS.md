@@ -24,7 +24,7 @@ and must never be a hard dependency.
 | Pytest files | 100 |
 | Top-level example scripts | 34 |
 | Workflow scripts under `examples/my_workflows/` | 14 plus 1 helper |
-| Current docs markdown files | 13 |
+| Current docs markdown files | 15 |
 | Learning notebooks | 1 |
 
 ## Current Coverage
@@ -92,6 +92,13 @@ are no remaining comparison bridge failures.
   convenience boundary. G4-3 adds no command, CLI, console script, RSFData
   method, algorithm behavior, coverage numerator, or coverage denominator
   change.
+- G4-4: Source command planning docs hardening completed. It restructures
+  `docs/SOURCE_COMMAND_ADMISSION.md` and
+  `docs/SOURCE_COMMAND_BACKLOG.md`, and adds
+  `docs/SOURCE_COMMAND_TEMPLATE.md` plus `docs/SOURCE_AUDIT_WORKSHEET.md` as
+  reusable planning templates. G4-4 adds no command, CLI, console script,
+  RSFData method, API behavior, algorithm behavior, coverage numerator, or
+  coverage denominator change.
 - Stage 0: handoff and baseline audit completed.
 - Stage A: release stabilization docs, checks, and release tools completed.
 - Stage B-1: `sfcp`, `sfrm`, `sfmin`, and `sfmax` subsets completed.

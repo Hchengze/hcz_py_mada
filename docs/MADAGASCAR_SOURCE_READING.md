@@ -238,6 +238,11 @@ source-backed command admission, and `SOURCE_COMMAND_BACKLOG.md` is a
 candidate pool with low/medium/high risk labels. The backlog is not approval to
 implement a command.
 
+G4-4 adds two reusable planning templates: `SOURCE_COMMAND_TEMPLATE.md` for a
+pre-implementation command proposal and `SOURCE_AUDIT_WORKSHEET.md` for
+read-only source audit notes. Both documents support the source-reading process
+and do not replace `COVERAGE_AND_ROADMAP.md`.
+
 ## A. Low-Risk Source-Backed Candidates To Audit Later
 
 These are not approved for immediate implementation; they are candidates for

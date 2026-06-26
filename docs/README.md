@@ -28,6 +28,10 @@ Read these files first:
   source-backed command is admitted.
 - `SOURCE_COMMAND_BACKLOG.md`: G4-3 candidate pool and risk tags; it is not an
   implementation promise.
+- `SOURCE_COMMAND_TEMPLATE.md`: G4-4 reusable proposal template for planning a
+  source-backed command before implementation.
+- `SOURCE_AUDIT_WORKSHEET.md`: G4-4 reusable worksheet for read-only source
+  audits; it is not a coverage authority.
 - `TESTING_AND_ENVIRONMENT.md`: pytest, optional original Madagascar
   comparisons, WSL notes, hybrid build notes, and release checks.
 - `KNOWN_LIMITATIONS.md`: concise list of important current limitations.
@@ -35,7 +39,7 @@ Read these files first:
 
 The learning entry point is `PYMADAGASCAR_LEARNING_GUIDE.ipynb`. It is a
 Jupyter Notebook for study and usage orientation, not an authority for API or
-coverage. The thirteen Markdown files above remain the authoritative written
+coverage. The fifteen Markdown files above remain the authoritative written
 documentation.
 
 ## Archived Documents

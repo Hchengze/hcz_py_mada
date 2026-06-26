@@ -28,6 +28,12 @@ backlog/risk map in `docs/SOURCE_COMMAND_BACKLOG.md`. The backlog is not an
 implementation promise, and it does not change the numerator, denominator, CLI
 inventory, console-script inventory, or API surface.
 
+G4-4 hardens those planning docs and adds reusable planning templates:
+`docs/SOURCE_COMMAND_TEMPLATE.md` for command proposals and
+`docs/SOURCE_AUDIT_WORKSHEET.md` for read-only source audits. These templates
+are not coverage authorities and do not change any coverage numerator or
+denominator.
+
 ## Learning Roadmap Index
 
 `docs/PYMADAGASCAR_LEARNING_GUIDE.ipynb` presents a study-oriented index for
